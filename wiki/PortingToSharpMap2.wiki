@@ -235,12 +235,12 @@ SharpMap.Extensions/Layers/GdalRasterLayer.cs:
 	Change all references from OSGeo.GDAL.gdal.xxx  to OSGeo.GDAL.Gdal 
     (as defined in library SharpMap2\ExternalReferences\References4SharpMap.Extensions\gdal_csharp.dll)
 
-	*Commented all Namespace*
+*Commented all Namespace*
 
 SharpMap.Converters.WellKnownText.WtkStreamTokenizer.cs:
 	Changed `long.TryParse(this.ReadDoubleQuotedWord(),out authorityCode);`	No TryParse on CF		
 = =
-	*To be revised*:
+*To be revised*:
  		`TryParse(String s, out double value)` returns true if s was converted successfully; otherwise, false. But can we be sure that an exception is thrown if s is not converted successfully?
 
 SharpMap.Converters.WellKnownText.SpatialReference.cs:
@@ -255,12 +255,12 @@ SharpMap/UnitTests/TestWmsCapabilityParser.cs
 SharpMap.Web.Wms.Client.cs:
 	Changed in `ParseLayer()` all calls to double.TryParse;	No TryParse on CF		
 = = 
-	*To be revised*:
+*To be revised*:
  		TryParse(String s, out double value) returns true if s was converted successfully; otherwise, false.	 But can we be sure that an exception is thrown if s is not converted successfully?
 
 SharpMap.Utilities.Providers.cs:
 	Commented `public static Collection<Type> GetProviders()` 
-        *To be revised*
+*To be revised*
 
 
 SharpMap.Data.Providers.Shapefile.cs:
@@ -269,12 +269,13 @@ SharpMap.Data.Providers.Shapefile.cs:
 	Commented *BUT NOT SOLVED*:
 	´System.Diagnostics.Trace.TraceWarning("Coordinate system file '" + projfile + "' found, but could not be parsed. WKT parser returned:" + ex.Message);´
 
-	*Changes made to these lines have to be revised* 
+*Changes made to these lines have to be revised* 
 		`string wkt = System.IO.File.ReadAllText(projfile);`
 		`heur.maxdepth = (int)Math.Ceiling(Math.Log(this.GetFeatureCount(), 2));`
 
 
 
+ 
  
  
  
