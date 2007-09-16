@@ -2,7 +2,7 @@
 
 = Introduction =
 
-These are the steps followed trying to port !SharpMap v2.0 to the .NET Compact Framewok. It's based on the work made by Roger Bedell for the older version of SharpMap.
+These are the steps followed trying to port !SharpMap v2.0 to the .NET Compact Framewok. It's based on the work made by Roger Bedell for the older version of !SharpMap.
 = =  
 The original source code has not been removed, but commented using a preprocessing directive (CFBuild).  
 For example, there's no System.Runtime.Serialization in CF so we do
@@ -21,11 +21,11 @@ For example, there's no System.Runtime.Serialization in CF so we do
 References to assemblies to add to the VisualStudio project:
 
  * System.Drawing
- * System.Data.SqlClient
- * NetTopologySuite
+ * System.Data.!SqlClient
+ * !NetTopologySuite
  * ProjNET
- * OGR (for SharpMap.Extensions\Data\Providers\OgrProvider.cs: Using OSGeo.OGR)
- * GeoAPI for Classes SharpMap.Converters.NTS.GeometryConverter (SharpMap.Extensions\Data\Providers\NtsProvider.cs) and SharpMap.Data.Providers.NtsProvider (SharpMap.Extensions\Data\Providers\NtsGeometryConverter.cs) 
+ * OGR (for SharpMap.Extensions\Data\Providers\!OgrProvider.cs: Using OSGeo.OGR)
+ * GeoAPI for Classes !SharpMap.Converters.NTS.!GeometryConverter (!SharpMap.Extensions\Data\Providers\!NtsProvider.cs) and SharpMap.Data.Providers.NtsProvider (SharpMap.Extensions\Data\Providers\NtsGeometryConverter.cs) 
  * GDAL (for SharpMap.Extensions\Layers\GdalRasterLayer.cs) (?)
        Add "Using OSGeo.GDAL"
        Change all references from GDAL.xxx to OSGeo.GDAL.XXX
@@ -272,6 +272,7 @@ for `private System.Drawing.Size _CollisionBuffer;`  //System.Drawing.SizeF exis
 
 
 
+ 
  
  
  
