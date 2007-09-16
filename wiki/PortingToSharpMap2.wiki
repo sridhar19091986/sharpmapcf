@@ -63,8 +63,11 @@ Commenting all "[Serializable]" appearances in
 
 In VectorRenderer.cs:
  Substitute DrawLabel(Graphics, PointF,...) for a compatible version
+= =
  Substitute clipPolygon(PointF,...) for a compatible version
+= =
  Substitute void DrawPoint(,,,PointF,..) for a compatible version (REVISAR)
+= =
  Substitute void DrawMultiPoint(,,,PointF,..) for a compatible version (NEW)
 
 
@@ -165,6 +168,13 @@ In SharpMap.Layers.VectorLayer.cs:
 
 
 ==New features to update ==
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
  
  
