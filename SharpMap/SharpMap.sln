@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpMap", "SharpMap.csproj", "{24E6E926-F391-42FB-989D-1E2574337800}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpMap.Extensions", "..\SharpMap.Extensions\SharpMap.Extensions.csproj", "{58B55875-6A39-4A72-83A1-EFEE844A94C1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{24E6E926-F391-42FB-989D-1E2574337800} = {24E6E926-F391-42FB-989D-1E2574337800}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{24E6E926-F391-42FB-989D-1E2574337800}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24E6E926-F391-42FB-989D-1E2574337800}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24E6E926-F391-42FB-989D-1E2574337800}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24E6E926-F391-42FB-989D-1E2574337800}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58B55875-6A39-4A72-83A1-EFEE844A94C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58B55875-6A39-4A72-83A1-EFEE844A94C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58B55875-6A39-4A72-83A1-EFEE844A94C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58B55875-6A39-4A72-83A1-EFEE844A94C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
