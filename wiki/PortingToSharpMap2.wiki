@@ -61,7 +61,7 @@ Commenting all "[Serializable]" appearances in
 
 
 
-In VectorRenderer.cs:
+*In VectorRenderer.cs:*
  Substitute `DrawLabel(Graphics, PointF,...)` for a compatible version
 = =
  Substitute `clipPolygon(PointF,...)` for a compatible version
@@ -71,51 +71,51 @@ In VectorRenderer.cs:
  Substitute `void DrawMultiPoint(,,,PointF,..)` for a compatible version (NEW)
 
 
-In SharpMap.Geometries.LineString.cs:
+*In SharpMap.Geometries.LineString.cs:*
  Substitute `PointF[] TransformToImage(Map)` for a compatible version
    > This one depends on SharpMap.Utilities.Transform.WorldtoMap
 
 
-In SharpMap.Utilities.Transform.cs:
+*In SharpMap.Utilities.Transform.cs:*
 	Substitute `PointF WorldtoMap(Point, Map)` for a compatible version
 = =
 	Substitute `PointF MapToWorld(PointF, Map)` for a compatible version
    
-In SharpMap.Geometries.Point.cs:
+*In SharpMap.Geometries.Point.cs:*
 	Substitute `public System.Drawing.PointF TransformToImage(Map map)` for a compatible version
 
 
-In SharpMap.Data.Providers.OgrProvider.cs:
+*In SharpMap.Data.Providers.OgrProvider.cs:*
 	Change `Using OGR` for `Using OSGeo.OGR`; and all references to OGR for `OSGeo.OGR`
 
-In SharpMap.Layers.VectorLayer.cs:
+*In SharpMap.Layers.VectorLayer.cs:*
       Comment `private System.Drawing.Drawing2D.SmoothingMode _SmoothingMode;`
       No System.Drawing.Drawing2D in CF 
 
-In SharpMap.Data.FeatureDataSet.cs:
+*In SharpMap.Data.FeatureDataSet.cs:*
      Lost `protected FeatureDataSet(SerializationInfo info, StreamingContext context) `
 = =
      Commented Attribute `[System.ComponentModel.Browsable(false)]` of `Count` property. "//No Browsable in CF. Lost functionality?"
 
 
 
-In SharpMap.Styles.VectorStyle.cs
+*In SharpMap.Styles.VectorStyle.cs*
 	Change `_SymbolOffset` from PointF to Point
 = =
 	Change `System.Drawing.Brush Fill`
 
-In SharpMap.Rendering.Label.cs
+*In SharpMap.Rendering.Label.cs*
 	Change `public Label(string text, System.Drawing.PointF labelpoint, float rotation, int priority, LabelBox collisionbox, SharpMap.Styles.LabelStyle style)`
 = =
       to     `public Label(string text, System.Drawing.Point labelpoint, float rotation, int priority, LabelBox collisionbox, SharpMap.Styles.LabelStyle style)`
 = =
 	Change `_LabelPoint` from PointF to Point
 
-In SharpMap.Geometries.Polygon.cs:
+*In SharpMap.Geometries.Polygon.cs:*
       Change `public System.Drawing.PointF[] TransformToImage(SharpMap.Map map)` 
 	to     `public System.Drawing.Point[] TransformToImage(SharpMap.Map map)`
 
-In SharpMap.Rendering.Thematics.ColorBlend.cs:
+*In SharpMap.Rendering.Thematics.ColorBlend.cs:*
 	In ColorBlend.GetColor() change 
 		`return Color.FromArgb(A, R, G, B);`
 	for 
@@ -189,6 +189,7 @@ for `private System.Drawing.Size _CollisionBuffer;`  //System.Drawing.SizeF exis
 
 
 == New features to update ==
+ 
  
  
  
