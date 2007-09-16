@@ -11,6 +11,18 @@ The original source code has not been removed, but commented using a preprocessi
  * New features to update
 
 == External references ==
+References to assemblies to add to the VisualStudio project:
+
+ * System.Drawing
+ * System.Data.SqlClient
+ * NetTopologySuite
+ * ProjNET
+ * OGR (for SharpMap.Extensions\Data\Providers\OgrProvider.cs: Using OSGeo.OGR)
+ * GeoAPI for Classes SharpMap.Converters.NTS.GeometryConverter (SharpMap.Extensions\Data\Providers\NtsProvider.cs) and SharpMap.Data.Providers.NtsProvider (SharpMap.Extensions\Data\Providers\NtsGeometryConverter.cs) 
+ * GDAL (for SharpMap.Extensions\Layers\GdalRasterLayer.cs) (?)
+       Add "Using OSGeo.GDAL"
+       Change all references from GDAL.xxx to OSGeo.GDAL.XXX
+
 
 == Common part with the older port ==
 
