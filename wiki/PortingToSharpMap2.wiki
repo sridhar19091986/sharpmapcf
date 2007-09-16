@@ -134,7 +134,7 @@ for  		 `private System.Drawing.Point _Offset;`
 for 		 `public System.Drawing.Point Offset`
 = =
 	Change `private System.Drawing.SizeF _CollisionBuffer;`
-==
+= =
 for `private System.Drawing.Size _CollisionBuffer;`  //System.Drawing.SizeF exists in CF
 
 In SharpMap.Layers.LabelLayer.cs:
@@ -188,7 +188,8 @@ In SharpMap.Layers.VectorLayer.cs:
                `SmoothingMode` 
 
 
-==New features to update ==
+== New features to update ==
+ 
  
  
  
