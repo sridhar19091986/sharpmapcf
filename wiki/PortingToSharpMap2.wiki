@@ -137,14 +137,22 @@ for 		 public System.Drawing.Point Offset
 for private System.Drawing.Size _CollisionBuffer;  //System.Drawing.SizeF exists in CF
 
 In SharpMap.Layers.LabelLayer.cs:
-	Commented private System.Drawing.Drawing2D.SmoothingMode _SmoothingMode;
-		    public System.Drawing.Drawing2D.SmoothingMode SmoothingMode
-		    private System.Drawing.Text.TextRenderingHint _TextRenderingHint;
-		    public System.Drawing.Text.TextRenderingHint TextRenderingHint
-
+	Commented 
+= = 
+                private System.Drawing.Drawing2D.SmoothingMode _SmoothingMode;
+= = 
+		public System.Drawing.Drawing2D.SmoothingMode SmoothingMode
+= = 
+	        private System.Drawing.Text.TextRenderingHint _TextRenderingHint;
+= = 
+	        public System.Drawing.Text.TextRenderingHint TextRenderingHint
+= = 
 	And lines which uses those.
+= = 
 	Commented
+= = 
 		float.TryParse(feature[this.RotationColumn].ToString(), System.Globalization.NumberStyles.Any,SharpMap.Map.numberFormat_EnUS, out rotation);
+= = 
 	Changed CreateLabel(...)
 
 
@@ -152,20 +160,20 @@ In SharpMap.Layers.WmsLayer.cs:
 	Totally commented (To be revised)
 
 In SharpMap.Map.Map.cs:
-	Commented _MapTransform
- and MapTransformInverted
+	Commented _MapTransform and MapTransformInverted
+= = 
 	Changed public System.Drawing.PointF WorldToImage(SharpMap.Geometries.Point p)
       to      public System.Drawing.Point WorldToImage(SharpMap.Geometries.Point p)
-
+= = 
 	Changed public SharpMap.Geometries.Point ImageToWorld(System.Drawing.PointF p)
 	to      public SharpMap.Geometries.Point ImageToWorld(System.Drawing.Point p)
-
+= = 
 	Commented g.Transform = this.MapTransform;
 	and       g.PageUnit = System.Drawing.GraphicsUnit.Pixel;
-	
+= = 
 	Changed if (l.LayerName.Contains(layername))
 	for     if (l.LayerName.IndexOf(layername) != -1)
-
+= = 
 	Commented 	public System.Drawing.Drawing2D.Matrix MapTransform
 	cause no System.Drawing.Drawing2D.Matrix in CF
 
@@ -175,6 +183,7 @@ In SharpMap.Layers.VectorLayer.cs:
 
 
 ==New features to update ==
+ 
  
  
  
