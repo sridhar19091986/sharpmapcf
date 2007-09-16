@@ -163,15 +163,19 @@ In SharpMap.Map.Map.cs:
 	Commented _MapTransform and MapTransformInverted
 = = 
 	Changed public System.Drawing.PointF WorldToImage(SharpMap.Geometries.Point p)
+= = 
       to      public System.Drawing.Point WorldToImage(SharpMap.Geometries.Point p)
 = = 
 	Changed public SharpMap.Geometries.Point ImageToWorld(System.Drawing.PointF p)
+= = 
 	to      public SharpMap.Geometries.Point ImageToWorld(System.Drawing.Point p)
 = = 
 	Commented g.Transform = this.MapTransform;
+= = 
 	and       g.PageUnit = System.Drawing.GraphicsUnit.Pixel;
 = = 
 	Changed if (l.LayerName.Contains(layername))
+= = 
 	for     if (l.LayerName.IndexOf(layername) != -1)
 = = 
 	Commented 	public System.Drawing.Drawing2D.Matrix MapTransform
@@ -183,6 +187,7 @@ In SharpMap.Layers.VectorLayer.cs:
 
 
 ==New features to update ==
+ 
  
  
  
