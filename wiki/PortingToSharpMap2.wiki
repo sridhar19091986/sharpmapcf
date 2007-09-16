@@ -3,16 +3,18 @@
 = Introduction =
 
 These are the steps followed trying to port SharpMap v2.0 to the .NET Compact Framewok. It's based on the work made by Roger Bedell for the older version of SharpMap. 
-The original source code has not been removed, but commented using preprocessing directives. 
+The original source code has not been removed, but commented using a preprocessing directive (CFBuild).  
 
+= Procedure =
+ * External references
+ * Common part with the older port
+ * New features to update
 
-= Details =
+== External references ==
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+== Common part with the older port ==
 
+== New features to update ==
  
  
  
