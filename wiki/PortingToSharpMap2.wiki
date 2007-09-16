@@ -78,6 +78,7 @@ In SharpMap.Geometries.LineString.cs:
 
 In SharpMap.Utilities.Transform.cs:
 	Substitute PointF WorldtoMap(Point, Map) for a compatible version
+= =
 	Substitute PointF MapToWorld(PointF, Map) for a compatible version
    
 In SharpMap.Geometries.Point.cs:
@@ -93,17 +94,20 @@ In SharpMap.Layers.VectorLayer.cs:
 
 In SharpMap.Data.FeatureDataSet.cs
      Lost protected FeatureDataSet(SerializationInfo info, StreamingContext context) 
+= =
      Commented Attribute [System.ComponentModel.Browsable(false)] of Count property. "//No Browsable in CF. Lost functionality?"
 
 
 
 In SharpMap.Styles.VectorStyle.cs
 	Change _SymbolOffset from PointF to Point
+= =
 	Change System.Drawing.Brush Fill
+
 In SharpMap.Rendering.Label.cs
 	Change public Label(string text, System.Drawing.PointF labelpoint, float rotation, int priority, LabelBox collisionbox, SharpMap.Styles.LabelStyle style)
       to     public Label(string text, System.Drawing.Point labelpoint, float rotation, int priority, LabelBox collisionbox, SharpMap.Styles.LabelStyle style)
-
+= =
 	Change _LabelPoint from PointF to Point
 
 In SharpMap.Geometries.Polygon.cs:
@@ -115,17 +119,20 @@ In SharpMap.Rendering.Thematics.ColorBlend.cs:
 		return Color.FromArgb(A, R, G, B);
 	for 
 	      return System.Drawing.Color.FromArgb((int)(R * 0x10000 + G * 0x100 + B));
-      This has to be revised!
-
+        This has to be revised
+= =
 	Commented method
 		public System.Drawing.Drawing2D.LinearGradientBrush ToBrush(Rectangle rectangle, float angle)
 	//No LinearGradientBrush in CF Lost Functionality
 
+
 In SharpMap.Styles.LabelStyle.cs:
 	Change private System.Drawing.PointF _Offset;
 for  		 private System.Drawing.Point _Offset;
+= =
 	Change public System.Drawing.PointF Offset 
 for 		 public System.Drawing.Point Offset
+= =
 	Change private System.Drawing.SizeF _CollisionBuffer;
 for private System.Drawing.Size _CollisionBuffer;  //System.Drawing.SizeF exists in CF
 
@@ -168,6 +175,7 @@ In SharpMap.Layers.VectorLayer.cs:
 
 
 ==New features to update ==
+ 
  
  
  
