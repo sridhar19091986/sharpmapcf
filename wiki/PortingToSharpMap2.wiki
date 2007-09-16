@@ -23,10 +23,25 @@ References to assemblies to add to the VisualStudio project:
        Add "Using OSGeo.GDAL"
        Change all references from GDAL.xxx to OSGeo.GDAL.XXX
 
+== Removing files/unsuported features ==
+Files that will be removed:
+
+ * SharpMap.Data.Providers.Oracle.cs: SharpMap.Extensions\Data\Providers\Oracle.cs No Oracle client in CF.
+ * System.Web doesn't exist in CF. A number of items depend on this.
+  ** SharpMap\Web\HttpHandler.cs. 
+  ** SharpMap\Web\Wms\WmsServer.cs
+  ** SharpMap\Web\Wms\WmsException.cs
+ * SharpMap\Utilities\Surrogates.cs (No System.Runtime.Serialization)
+ * SharpMap\Data\Providers\OleDbPoint.cs Had to remove OleDB provider, no System.Data.OleDb in CF
+
+
+
 
 == Common part with the older port ==
 
 == New features to update ==
+ 
+ 
  
  
  
