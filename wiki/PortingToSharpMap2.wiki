@@ -62,132 +62,134 @@ Commenting all "[Serializable]" appearances in
 
 
 In VectorRenderer.cs:
- Substitute DrawLabel(Graphics, PointF,...) for a compatible version
+ Substitute `DrawLabel(Graphics, PointF,...)` for a compatible version
 = =
- Substitute clipPolygon(PointF,...) for a compatible version
+ Substitute `clipPolygon(PointF,...)` for a compatible version
 = =
- Substitute void DrawPoint(,,,PointF,..) for a compatible version (REVISAR)
+ Substitute `void DrawPoint(,,,PointF,..)` for a compatible version (REVISAR)
 = =
- Substitute void DrawMultiPoint(,,,PointF,..) for a compatible version (NEW)
+ Substitute `void DrawMultiPoint(,,,PointF,..)` for a compatible version (NEW)
 
 
 In SharpMap.Geometries.LineString.cs:
- Substitute PointF[] TransformToImage(Map) for a compatible version
+ Substitute `PointF[] TransformToImage(Map)` for a compatible version
    > This one depends on SharpMap.Utilities.Transform.WorldtoMap
 
 
 In SharpMap.Utilities.Transform.cs:
-	Substitute PointF WorldtoMap(Point, Map) for a compatible version
+	Substitute `PointF WorldtoMap(Point, Map)` for a compatible version
 = =
-	Substitute PointF MapToWorld(PointF, Map) for a compatible version
+	Substitute `PointF MapToWorld(PointF, Map)` for a compatible version
    
 In SharpMap.Geometries.Point.cs:
-	Substitute public System.Drawing.PointF TransformToImage(Map map) for a compatible version
+	Substitute `public System.Drawing.PointF TransformToImage(Map map)` for a compatible version
 
 
 In SharpMap.Data.Providers.OgrProvider.cs:
-	Change "Using OGR" for "Using OSGeo.OGR"; and all references to OGR by "OSGeo.OGR"
+	Change `Using OGR` for `Using OSGeo.OGR`; and all references to OGR for `OSGeo.OGR`
 
 In SharpMap.Layers.VectorLayer.cs:
-      Comment private System.Drawing.Drawing2D.SmoothingMode _SmoothingMode;
+      Comment `private System.Drawing.Drawing2D.SmoothingMode _SmoothingMode;`
       No System.Drawing.Drawing2D in CF 
 
-In SharpMap.Data.FeatureDataSet.cs
-     Lost protected FeatureDataSet(SerializationInfo info, StreamingContext context) 
+In SharpMap.Data.FeatureDataSet.cs:
+     Lost `protected FeatureDataSet(SerializationInfo info, StreamingContext context) `
 = =
-     Commented Attribute [System.ComponentModel.Browsable(false)] of Count property. "//No Browsable in CF. Lost functionality?"
+     Commented Attribute `[System.ComponentModel.Browsable(false)]` of `Count` property. "//No Browsable in CF. Lost functionality?"
 
 
 
 In SharpMap.Styles.VectorStyle.cs
-	Change _SymbolOffset from PointF to Point
+	Change `_SymbolOffset` from PointF to Point
 = =
-	Change System.Drawing.Brush Fill
+	Change `System.Drawing.Brush Fill`
 
 In SharpMap.Rendering.Label.cs
-	Change public Label(string text, System.Drawing.PointF labelpoint, float rotation, int priority, LabelBox collisionbox, SharpMap.Styles.LabelStyle style)
-      to     public Label(string text, System.Drawing.Point labelpoint, float rotation, int priority, LabelBox collisionbox, SharpMap.Styles.LabelStyle style)
+	Change `public Label(string text, System.Drawing.PointF labelpoint, float rotation, int priority, LabelBox collisionbox, SharpMap.Styles.LabelStyle style)`
 = =
-	Change _LabelPoint from PointF to Point
+      to     `public Label(string text, System.Drawing.Point labelpoint, float rotation, int priority, LabelBox collisionbox, SharpMap.Styles.LabelStyle style)`
+= =
+	Change `_LabelPoint` from PointF to Point
 
 In SharpMap.Geometries.Polygon.cs:
-      Change public System.Drawing.PointF[] TransformToImage(SharpMap.Map map) 
-	to     public System.Drawing.Point[] TransformToImage(SharpMap.Map map)
+      Change `public System.Drawing.PointF[] TransformToImage(SharpMap.Map map)` 
+	to     `public System.Drawing.Point[] TransformToImage(SharpMap.Map map)`
 
 In SharpMap.Rendering.Thematics.ColorBlend.cs:
 	In ColorBlend.GetColor() change 
-		return Color.FromArgb(A, R, G, B);
+		`return Color.FromArgb(A, R, G, B);`
 	for 
-	      return System.Drawing.Color.FromArgb((int)(R * 0x10000 + G * 0x100 + B));
+	      `return System.Drawing.Color.FromArgb((int)(R * 0x10000 + G * 0x100 + B));`
         This has to be revised
 = =
-	Commented method
-		public System.Drawing.Drawing2D.LinearGradientBrush ToBrush(Rectangle rectangle, float angle)
+	Commented `public System.Drawing.Drawing2D.LinearGradientBrush ToBrush(Rectangle rectangle, float angle)`
 	//No LinearGradientBrush in CF Lost Functionality
 
 
 In SharpMap.Styles.LabelStyle.cs:
-	Change private System.Drawing.PointF _Offset;
-for  		 private System.Drawing.Point _Offset;
+	Change `private System.Drawing.PointF _Offset;`
+for  		 `private System.Drawing.Point _Offset;`
 = =
-	Change public System.Drawing.PointF Offset 
-for 		 public System.Drawing.Point Offset
+	Change `public System.Drawing.PointF Offset` 
+for 		 `public System.Drawing.Point Offset`
 = =
-	Change private System.Drawing.SizeF _CollisionBuffer;
-for private System.Drawing.Size _CollisionBuffer;  //System.Drawing.SizeF exists in CF
+	Change `private System.Drawing.SizeF _CollisionBuffer;`
+==
+for `private System.Drawing.Size _CollisionBuffer;`  //System.Drawing.SizeF exists in CF
 
 In SharpMap.Layers.LabelLayer.cs:
 	Commented 
 = = 
-                private System.Drawing.Drawing2D.SmoothingMode _SmoothingMode;
+                `private System.Drawing.Drawing2D.SmoothingMode _SmoothingMode;`
 = = 
-		public System.Drawing.Drawing2D.SmoothingMode SmoothingMode
+		`public System.Drawing.Drawing2D.SmoothingMode SmoothingMode`
 = = 
-	        private System.Drawing.Text.TextRenderingHint _TextRenderingHint;
+	        `private System.Drawing.Text.TextRenderingHint _TextRenderingHint;`
 = = 
-	        public System.Drawing.Text.TextRenderingHint TextRenderingHint
+	        `public System.Drawing.Text.TextRenderingHint TextRenderingHint`
 = = 
 	And lines which uses those.
 = = 
 	Commented
 = = 
-		float.TryParse(feature[this.RotationColumn].ToString(), System.Globalization.NumberStyles.Any,SharpMap.Map.numberFormat_EnUS, out rotation);
+		`float.TryParse(feature[this.RotationColumn].ToString(), System.Globalization.NumberStyles.Any,SharpMap.Map.numberFormat_EnUS, out rotation);`
 = = 
-	Changed CreateLabel(...)
+	Changed `CreateLabel(...)`
 
 
 In SharpMap.Layers.WmsLayer.cs:
 	Totally commented (To be revised)
 
 In SharpMap.Map.Map.cs:
-	Commented _MapTransform and MapTransformInverted
+	Commented `_MapTransform` and `MapTransformInverted`
 = = 
-	Changed public System.Drawing.PointF WorldToImage(SharpMap.Geometries.Point p)
+	Changed `public System.Drawing.PointF WorldToImage(SharpMap.Geometries.Point p)`
 = = 
-      to      public System.Drawing.Point WorldToImage(SharpMap.Geometries.Point p)
+      to      `public System.Drawing.Point WorldToImage(SharpMap.Geometries.Point p)`
 = = 
-	Changed public SharpMap.Geometries.Point ImageToWorld(System.Drawing.PointF p)
+	Changed `public SharpMap.Geometries.Point ImageToWorld(System.Drawing.PointF p)`
 = = 
-	to      public SharpMap.Geometries.Point ImageToWorld(System.Drawing.Point p)
+	to      `public SharpMap.Geometries.Point ImageToWorld(System.Drawing.Point p)`
 = = 
-	Commented g.Transform = this.MapTransform;
+	Commented `g.Transform = this.MapTransform;`
 = = 
-	and       g.PageUnit = System.Drawing.GraphicsUnit.Pixel;
+	and       `g.PageUnit = System.Drawing.GraphicsUnit.Pixel;`
 = = 
-	Changed if (l.LayerName.Contains(layername))
+	Changed `if (l.LayerName.Contains(layername))`
 = = 
-	for     if (l.LayerName.IndexOf(layername) != -1)
+	for     `if (l.LayerName.IndexOf(layername) != -1)`
 = = 
-	Commented 	public System.Drawing.Drawing2D.Matrix MapTransform
+	Commented 	`public System.Drawing.Drawing2D.Matrix MapTransform`
 	cause no System.Drawing.Drawing2D.Matrix in CF
 
 In SharpMap.Layers.VectorLayer.cs:
       disabled `private System.Drawing.Drawing2D.SmoothingMode _SmoothingMode;`
 = =
-               SmoothingMode 
+               `SmoothingMode` 
 
 
 ==New features to update ==
+ 
  
  
  
