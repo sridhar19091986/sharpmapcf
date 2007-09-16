@@ -2,7 +2,8 @@
 
 = Introduction =
 
-These are the steps followed trying to port SharpMap v2.0 to the .NET Compact Framewok. It's based on the work made by Roger Bedell for the older version of SharpMap. 
+These are the steps followed trying to port SharpMap v2.0 to the .NET Compact Framewok. It's based on the work made by Roger Bedell for the older version of SharpMap.
+= =  
 The original source code has not been removed, but commented using a preprocessing directive (CFBuild).  
 For example, there's no System.Runtime.Serialization in CF so we do
 {{{
@@ -12,6 +13,7 @@ For example, there's no System.Runtime.Serialization in CF so we do
 }}}
 = Procedure =
  * External references
+ * Removing files/unsuported features
  * Common part with the older port
  * New features to update
 
@@ -39,12 +41,27 @@ Files that will be removed:
  * SharpMap\Utilities\Surrogates.cs (No System.Runtime.Serialization)
  * SharpMap\Data\Providers\OleDbPoint.cs Had to remove OleDB provider, no System.Data.OleDb in CF
 
-
-
-
 == Common part with the older port ==
+Commenting all "[Serializable]" appearances in
+ * SharpMap.Geometries.BoundingBox.cs
+ * SharpMap.Geometries.Point.cs
+ * SharpMap.Data.Providers.PostGIS.cs
+ * SharpMap.Data.FeatureDataSet.cs
+ * SharpMap.Geometries.LineString.cs
+ * SharpMap.Geometries.Point3D.cs
+ * SharpMap.Geometries.MultiLineString.cs
+ * SharpMap.Utilities.Indexing.BinaryTree.cs
+ * SharpMap.Data.Providers.MsSql.cs
+ * SharpMap.Data.Providers.MsSqlSpatial.cs
+ * SharpMap.Data.Providers.PostGIS2.cs
+ * SharpMap.Geometries.MultiPolygon.cs
+ * SharpMap.Geometries.Polygon.cs
+ * SharpMap.Styles.Style.cs
+ * SharpMap.Web.Wms.Client.cs
 
-== New features to update ==
+==New features to update ==
+ 
+ 
  
  
  
