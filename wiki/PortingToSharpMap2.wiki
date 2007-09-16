@@ -2,7 +2,7 @@
 
 = Introduction =
 
-These are the steps followed trying to port SharpMap v2.0 to the .NET Compact Framewok. It's based on the work made by Roger Bedell for the older version of SharpMap.
+These are the steps followed trying to port !SharpMap v2.0 to the .NET Compact Framewok. It's based on the work made by Roger Bedell for the older version of SharpMap.
 = =  
 The original source code has not been removed, but commented using a preprocessing directive (CFBuild).  
 For example, there's no System.Runtime.Serialization in CF so we do
@@ -272,6 +272,7 @@ for `private System.Drawing.Size _CollisionBuffer;`  //System.Drawing.SizeF exis
 
 
 
+ 
  
  
  
