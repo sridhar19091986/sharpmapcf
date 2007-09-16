@@ -182,11 +182,13 @@ In SharpMap.Map.Map.cs:
 	cause no System.Drawing.Drawing2D.Matrix in CF
 
 In SharpMap.Layers.VectorLayer.cs:
-      disabled private System.Drawing.Drawing2D.SmoothingMode _SmoothingMode;
-= =   SmoothingMode 
+      disabled `private System.Drawing.Drawing2D.SmoothingMode _SmoothingMode;`
+= =
+               SmoothingMode 
 
 
 ==New features to update ==
+ 
  
  
  
