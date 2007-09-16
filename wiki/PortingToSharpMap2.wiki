@@ -120,13 +120,13 @@ In SharpMap.Rendering.Thematics.ColorBlend.cs:
 		`return Color.FromArgb(A, R, G, B);`
 	for 
 	      `return System.Drawing.Color.FromArgb((int)(R * 0x10000 + G * 0x100 + B));`
-        This has to be revised
+*To be revised*
 = =
 	Commented `public System.Drawing.Drawing2D.LinearGradientBrush ToBrush(Rectangle rectangle, float angle)`
 	//No LinearGradientBrush in CF Lost Functionality
 
 
-In SharpMap.Styles.LabelStyle.cs:
+*In SharpMap.Styles.LabelStyle.cs:*
 	Change `private System.Drawing.PointF _Offset;`
 for  		 `private System.Drawing.Point _Offset;`
 = =
@@ -137,7 +137,7 @@ for 		 `public System.Drawing.Point Offset`
 = =
 for `private System.Drawing.Size _CollisionBuffer;`  //System.Drawing.SizeF exists in CF
 
-In SharpMap.Layers.LabelLayer.cs:
+*In SharpMap.Layers.LabelLayer.cs:*
 	Commented 
 = = 
                 `private System.Drawing.Drawing2D.SmoothingMode _SmoothingMode;`
@@ -157,10 +157,10 @@ In SharpMap.Layers.LabelLayer.cs:
 	Changed `CreateLabel(...)`
 
 
-In SharpMap.Layers.WmsLayer.cs:
+*In SharpMap.Layers.WmsLayer.cs:*
 	Totally commented (To be revised)
 
-In SharpMap.Map.Map.cs:
+*In SharpMap.Map.Map.cs:*
 	Commented `_MapTransform` and `MapTransformInverted`
 = = 
 	Changed `public System.Drawing.PointF WorldToImage(SharpMap.Geometries.Point p)`
@@ -182,13 +182,14 @@ In SharpMap.Map.Map.cs:
 	Commented 	`public System.Drawing.Drawing2D.Matrix MapTransform`
 	cause no System.Drawing.Drawing2D.Matrix in CF
 
-In SharpMap.Layers.VectorLayer.cs:
+*In SharpMap.Layers.VectorLayer.cs:*
       disabled `private System.Drawing.Drawing2D.SmoothingMode _SmoothingMode;`
 = =
                `SmoothingMode` 
 
 
 == New features to update ==
+ 
  
  
  
