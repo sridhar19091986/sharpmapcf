@@ -183,10 +183,12 @@ In SharpMap.Map.Map.cs:
 
 In SharpMap.Layers.VectorLayer.cs:
       disabled private System.Drawing.Drawing2D.SmoothingMode _SmoothingMode;
-		   SmoothingMode
+= =   SmoothingMode 
 
 
 ==New features to update ==
+ 
+ 
  
  
  
