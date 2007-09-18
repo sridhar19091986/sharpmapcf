@@ -176,7 +176,9 @@ namespace SharpMap.Utilities.SpatialIndexing
 			if (br.ReadDouble() != INDEXFILEVERSION) //Check fileindex version
 			{
 				fs.Close();
+#if !CFBuild //v2.0
 				fs.Dispose();
+#endif
 				throw new ObsoleteFileFormatException("Invalid index file version. Please rebuild the spatial index by either deleting the index");
 			}
 			QuadTree node = ReadNode(0, ref br);

@@ -52,6 +52,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalReferences\References4SharpMap.Extensions\gdal_csharp.dll</HintPath>
     </Reference>
+    <Reference Include="GeoAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a1a0da7def465678, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ExternalReferences\References4SharpMap.Extensions\GeoAPI.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalReferences\References4SharpMap.Extensions\Mono.Security.dll</HintPath>
@@ -87,15 +91,18 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.SqlClient, Version=3.0.3600.0, Culture=neutral, PublicKeyToken=3be235df1c8d2ad3, processorArchitecture=MSIL" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Providers\DataTablePoint.cs" />
     <Compile Include="Data\Providers\NtsGeometryConverter.cs" />
     <Compile Include="Data\Providers\NtsProvider.cs" />
     <Compile Include="Data\Providers\OgrProvider.cs" />
     <Compile Include="Data\Providers\PostGIS.cs" />
     <Compile Include="Data\Providers\PostGIS2.cs" />
+    <Compile Include="Data\Providers\SqlLite.cs" />
     <Compile Include="Layers\GdalRasterLayer.cs" />
     <Compile Include="Layers\GeoTransform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

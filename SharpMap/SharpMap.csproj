@@ -67,8 +67,8 @@
     <Compile Include="Converters\WellKnownText\TokenType.cs" />
     <Compile Include="Converters\WellKnownText\WKTStreamTokenizer.cs" />
     <Compile Include="CoordinateSystems\Transformations\GeometryTransform.cs" />
-    <Compile Include="Data\FeatureDataSet.cs" />
     <Compile Include="Data\Providers\DbaseReader.cs" />
+    <Compile Include="Data\FeatureDataSet.cs" />
     <Compile Include="Data\Providers\GeometryProvider.cs" />
     <Compile Include="Data\Providers\iProvider.cs" />
     <Compile Include="Data\Providers\MsSql.cs" />
@@ -96,6 +96,7 @@
     <Compile Include="Geometries\Polygon.cs" />
     <Compile Include="Geometries\SpatialRelations.cs" />
     <Compile Include="Geometries\Surface.cs" />
+    <Compile Include="Layers\DuplicateLayerException.cs" />
     <Compile Include="Layers\iLayer.cs" />
     <Compile Include="Layers\LabelLayer.cs" />
     <Compile Include="Layers\Layer.cs" />

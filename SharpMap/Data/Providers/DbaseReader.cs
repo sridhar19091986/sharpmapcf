@@ -167,7 +167,12 @@ namespace SharpMap.Data.Providers
 			for (int i = 0; i < DbaseColumns.Length;i++)
 			{
 				DbaseColumns[i] = new DbaseField();
+#if !CFBuild //v2.0
 				DbaseColumns[i].ColumnName = System.Text.Encoding.UTF7.GetString((br.ReadBytes(11))).Replace("\0", "").Trim();				
+#else
+                byte[] brBytes = br.ReadBytes(11);
+                DbaseColumns[i].ColumnName = System.Text.Encoding.UTF7.GetString(brBytes,0,brBytes.Length).Replace("\0", "").Trim();				
+#endif
 				char fieldtype = br.ReadChar();
 				switch (fieldtype)
 				{
@@ -418,56 +423,151 @@ namespace SharpMap.Data.Providers
 
 		private object ReadDbfValue(DbaseField dbf)
 		{
+#if CFBuild //v2.0 
+            byte[] brBytes;
+#endif
 			switch (dbf.DataType.ToString())
 			{
 				case "System.String":
+#if !CFBuild //v2.0
 					if(_Encoding==null)
 						return _FileEncoding.GetString(br.ReadBytes(dbf.Length)).Replace("\0", "").Trim();
 					else
 						return _Encoding.GetString(br.ReadBytes(dbf.Length)).Replace("\0", "").Trim();
+#else
+                    brBytes = br.ReadBytes(dbf.Length);
+                    if (_Encoding == null)
+                        return _FileEncoding.GetString(brBytes,0,brBytes.Length).Replace("\0", "").Trim();
+                    else
+                        return _Encoding.GetString(brBytes,0,brBytes.Length).Replace("\0", "").Trim();
+#endif
 				case "System.Double":
+#if !CFBuild //v2.0
 					string temp = System.Text.Encoding.UTF7.GetString(br.ReadBytes(dbf.Length)).Replace("\0", "").Trim();
+#else
+			        brBytes = br.ReadBytes(dbf.Length);
+                    string temp = System.Text.Encoding.UTF7.GetString(brBytes,0,brBytes.Length).Replace("\0", "").Trim();
+#endif
 					double dbl = 0;
+#if !CFBuild //v2.0
 					if(double.TryParse(temp, System.Globalization.NumberStyles.Float, SharpMap.Map.numberFormat_EnUS, out dbl))
 						return dbl;
 					else
 						return DBNull.Value;
+#else
+                    try{
+                        dbl = double.Parse(temp, System.Globalization.NumberStyles.Float, SharpMap.Map.numberFormat_EnUS);    
+                        return dbl;
+                    }catch(Exception e)
+                    {
+                        return DBNull.Value;    
+                    }
+#endif
 				case "System.Int16":
+#if !CFBuild //v2.0
 					string temp16 = System.Text.Encoding.UTF7.GetString((br.ReadBytes(dbf.Length))).Replace("\0", "").Trim();
+#else
+                    brBytes = br.ReadBytes(dbf.Length);
+                    string temp16 = System.Text.Encoding.UTF7.GetString(brBytes,0,brBytes.Length).Replace("\0", "").Trim();
+#endif
 					Int16 i16 = 0;
+#if !CFBuild //v2.0 No TryParse
 					if (Int16.TryParse(temp16, System.Globalization.NumberStyles.Float, SharpMap.Map.numberFormat_EnUS, out i16))
 						return i16;
 					else
 						return DBNull.Value;
+#else
+                    try
+                    {
+                        i16 = Int16.Parse(temp16, System.Globalization.NumberStyles.Float, SharpMap.Map.numberFormat_EnUS);
+                        
+                        return i16;
+                    }
+                    catch (Exception e)
+                    {
+                        return DBNull.Value;
+                    }
+#endif
 				case "System.Int32":
+#if !CFBuild //v2.0
 					string temp32 = System.Text.Encoding.UTF7.GetString((br.ReadBytes(dbf.Length))).Replace("\0", "").Trim();
+#else
+                    brBytes = br.ReadBytes(dbf.Length);
+                    string temp32 = System.Text.Encoding.UTF7.GetString(brBytes,0,brBytes.Length).Replace("\0", "").Trim();
+#endif
 					Int32 i32 = 0;
+#if !CFBuild //v2.0
 					if (Int32.TryParse(temp32, System.Globalization.NumberStyles.Float, SharpMap.Map.numberFormat_EnUS, out i32))
 						return i32;
 					else
 						return DBNull.Value;
+#else
+                    try
+                    {
+                        i32 = Int32.Parse(temp32, System.Globalization.NumberStyles.Float, SharpMap.Map.numberFormat_EnUS);
+                        return i32;
+                    }
+                    catch (Exception e)
+                    {
+                        return DBNull.Value;
+                    }
+#endif
 				case "System.Int64":
+#if !CFBuild //v2.0
 					string temp64 = System.Text.Encoding.UTF7.GetString((br.ReadBytes(dbf.Length))).Replace("\0", "").Trim();
+#else
+                    brBytes = br.ReadBytes(dbf.Length);
+                    string temp64 = System.Text.Encoding.UTF7.GetString(brBytes,0,brBytes.Length).Replace("\0", "").Trim();
+#endif
 					Int64 i64 = 0;
+#if !CFBuild //v2.0 No TryParse
 					if (Int64.TryParse(temp64, System.Globalization.NumberStyles.Float, SharpMap.Map.numberFormat_EnUS, out i64))
 						return i64;
 					else
 						return DBNull.Value;
+#else
+                    try
+                    {
+                        i64 = Int64.Parse(temp64, System.Globalization.NumberStyles.Float, SharpMap.Map.numberFormat_EnUS);
+                        return i64;
+                    }
+                    catch (Exception e)
+                    {
+                        return DBNull.Value;
+                    }
+#endif
 				case "System.Single":
+#if !CFBuild //v2.0
 					string temp4 = System.Text.Encoding.UTF8.GetString((br.ReadBytes(dbf.Length)));
+#else
+                    brBytes = br.ReadBytes(dbf.Length);
+                    string temp4 = System.Text.Encoding.UTF8.GetString(brBytes,0,brBytes.Length);
+#endif
 					float f = 0;
+#if !CFBuild //v2.0 No TryParse
 					if (float.TryParse(temp4, System.Globalization.NumberStyles.Float, SharpMap.Map.numberFormat_EnUS, out f))
 						return f;
 					else
 						return DBNull.Value;
+#else
+                    try
+                    {
+                        f = float.Parse(temp4, System.Globalization.NumberStyles.Float, SharpMap.Map.numberFormat_EnUS);
+                        return f;
+                    }
+                    catch (Exception e)
+                    {
+                        return DBNull.Value;
+                    }
+#endif
 				case "System.Boolean":
 					char tempChar = br.ReadChar();
 					return ((tempChar == 'T') || (tempChar == 't') || (tempChar == 'Y') || (tempChar == 'y'));
 				case "System.DateTime":
 					DateTime date;
 					// Mono has not yet implemented DateTime.TryParseExact
-					#if !MONO
-					if (DateTime.TryParseExact(System.Text.Encoding.UTF7.GetString((br.ReadBytes(8))),
+					#if !MONO && !CFBuild
+                    if (DateTime.TryParseExact(System.Text.Encoding.UTF7.GetString((br.ReadBytes(8))),
 						"yyyyMMdd", SharpMap.Map.numberFormat_EnUS, System.Globalization.DateTimeStyles.None, out date))	
 						return date;
 					else
@@ -475,8 +575,14 @@ namespace SharpMap.Data.Providers
 					#else
 					try 
 					{
+#if !CFBuild //v2.0
 						return date = DateTime.ParseExact ( System.Text.Encoding.UTF7.GetString((br.ReadBytes(8))), 	
 						"yyyyMMdd", SharpMap.Map.numberFormat_EnUS, System.Globalization.DateTimeStyles.None );
+#else
+                        brBytes = br.ReadBytes(8);
+                        return date = DateTime.ParseExact(System.Text.Encoding.UTF7.GetString(brBytes,0,brBytes.Length),
+                        "yyyyMMdd", SharpMap.Map.numberFormat_EnUS, System.Globalization.DateTimeStyles.None);
+#endif
 					}
 					catch ( Exception e )
 					{
