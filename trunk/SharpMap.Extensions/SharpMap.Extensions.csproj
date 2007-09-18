@@ -91,7 +91,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SqlClient, Version=3.0.3600.0, Culture=neutral, PublicKeyToken=3be235df1c8d2ad3, processorArchitecture=MSIL" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -102,7 +101,6 @@
     <Compile Include="Data\Providers\OgrProvider.cs" />
     <Compile Include="Data\Providers\PostGIS.cs" />
     <Compile Include="Data\Providers\PostGIS2.cs" />
-    <Compile Include="Data\Providers\SqlLite.cs" />
     <Compile Include="Layers\GdalRasterLayer.cs" />
     <Compile Include="Layers\GeoTransform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
