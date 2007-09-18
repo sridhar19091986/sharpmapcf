@@ -1,1 +1,9 @@
 obj\Debug\ResolveAssemblyReference.cache
+bin\Debug\SharpMap.dll
+bin\Debug\SharpMap.pdb
+bin\Debug\ProjNET.dll
+bin\Debug\System.Data.SqlClient.dll
+bin\Debug\System.Data.SqlClient.xml
+bin\Debug\ProjNET.xml
+obj\Debug\SharpMap.dll
+obj\Debug\SharpMap.pdb
