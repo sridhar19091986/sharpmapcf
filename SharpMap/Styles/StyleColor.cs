@@ -2176,7 +2176,7 @@ namespace SharpMap.Styles
         /// </remarks>
         public static StyleColor YellowGreen
         {
-            get { return FromBgra(50, 205, 154, 255); }
+            get { return FromBgra(50, 205, 154, 255); }
         }
 
         #endregion
