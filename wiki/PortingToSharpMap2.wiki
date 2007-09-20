@@ -15,8 +15,6 @@ For example, there's no System.Runtime.Serialization in CF so we do
 = Procedure =
  * External references
  * Removing unsupported features
- * Common part with the older port
- * New features to update
 
 == External references == 
  
@@ -203,3 +201,4 @@ Reason: //No System.Threading.EventWaitHandle
 
 *In SharpMap\Features\FeatureDataTable.cs*
       [Browsable(false)]
+ 
