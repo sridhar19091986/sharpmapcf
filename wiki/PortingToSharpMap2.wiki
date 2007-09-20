@@ -1,8 +1,9 @@
-#summary Initial porting steps
+#summary Project /SharpMap
 
 = Introduction =
 
 These are the steps followed trying to port !SharpMap v2.0 to the .NET Compact Framewok. 
+
 = =  
 The original source code has not been removed, but commented using a preprocessing directive (CFBuild).  
 For example, there's no System.Runtime.Serialization in CF so we do
@@ -61,3 +62,144 @@ Deleted [Serializable] Attribute on:
  * !SharpMap\Layers\LayersChangedEventArgs.cs
  * !SharpMap\Features\FeatureTableCollection.cs
  
+*Deleted "Using System.Runtime.Serialization" in*
+
+ * !SharpMap\Features\FeatureDataSet.cs
+ * !SharpMap\CoordinateSystems\Projections\ProjectionComputationException.cs
+ * !SharpMap\Rendering\Rendering2D\Symbol2D.cs
+ * !SharpMap\Data\Providers\Shapefile\DbfSchemaMismatchException.cs
+ * !SharpMap\Data\Providers\Shapefile\ShapeFileIsInvalidException.cs
+ * !SharpMap\Data\LayerDataLoadException.cs
+ * !SharpMap\Data\Providers\Shapefile\ShapeFileInvalidOperationException.cs
+ * !SharpMap\Indexing\ObsoleteIndexFileFormatException.cs
+ * !SharpMap\Converters\ParseException.cs
+ * !SharpMap\Data\Providers\Shapefile\InvalidDbaseFileException.cs
+ * !SharpMap\Layers\DuplicateLayerException.cs
+ * !SharpMap\Data\Providers\Shapefile\ShapeFileException.cs
+ * !SharpMap\Data\Providers\Shapefile\InvalidDbaseFileOperationException.cs
+ * !SharpMap\Data\SharpMapDataException.cs
+ * !SharpMap\Data\Providers\Shapefile\ShapeFileUnsupportedGeometryException.cs
+ * !SharpMap\Indexing\RTree\DynamicRTree.cs
+
+Deleted "Using System.Rflection.Emit" in:
+
+ * !SharpMap\Features\FeatureDataView.cs
+ * !SharpMap\Features\FeatureDataSet.cs
+ * !SharpMap\Features\FeatureDataRow.cs
+ * !SharpMap\Features\FeatureMerger.cs
+ * !SharpMap\Features\FeatureDataTable.cs
+
+
+Deleted "using System.Runtime.Serialization.Formatters.Binary;" in 
+ * !SharpMap\Indexing\RTree\DynamicRTree.cs
+
+Deleted "[global::System.Serializable]" in
+ * !SharpMap\Indexing\QuadTree\LinearQuadTreeEntryInsertStrategy.cs
+
+
+Deleted interface "ISerializable" in 
+ * !SharpMap\Rendering\Rendering2D\Symbol2D.cs
+ * !SharpMap\Indexing\RTree\DynamicRTree.cs
+
+
+*Deleted Methods:*
+
+*In SharpMap\Data\LayerDataLoadException.cs*
+Deleted
+	public LayerDataLoadException(SerializationInfo info, StreamingContext context)
+	public override void GetObjectData(SerializationInfo info, StreamingContext context)
+
+
+*In SharpMap\Features\FeatureDataSet.cs*
+ 
+        protected FeatureDataSet(SerializationInfo info, StreamingContext context)
+
+
+*In SharpMap\Rendering\Rendering2D\Symbol2D.cs*
+
+        private Symbol2D(SerializationInfo info, StreamingContext context)
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+
+
+*In SharpMap\Indexing\RTree\DynamicRTree.cs*
+	protected DynamicRTree(SerializationInfo info, StreamingContext context)
+  public void GetObjectData(SerializationInfo info, StreamingContext context)
+
+*In SharpMap\Data\Providers\Shapefile\ShapeFileUnsupportedGeometryException.cs*
+  public ShapeFileUnsupportedGeometryException(SerializationInfo info, StreamingContext context)
+
+
+*In SharpMap\CoordinateSystems\Projections\ProjectionComputationException.cs*
+
+	public ProjectionComputationException(SerializationInfo info, StreamingContext context)
+
+
+*In SharpMap\Data\Providers\Shapefile\InvalidDbaseFileOperationException.cs*
+        public InvalidDbaseFileOperationException(SerializationInfo info, StreamingContext context)
+
+
+*SharpMap\Data\SharpMapDataException.cs*
+  public SharpMapDataException(SerializationInfo info, StreamingContext context)
+
+
+*In SharpMap\Data\Providers\Shapefile\ShapeFileException.cs*
+  public ShapeFileException(SerializationInfo info, StreamingContext context)
+
+
+*In SharpMap\Indexing\QuadTree\LinearQuadTreeEntryInsertStrategy.cs*
+
+  protected QuadTreeIndexInsertOverflowException(
+
+*In SharpMap\Layers\DuplicateLayerException.cs*
+	protected DuplicateLayerException(SerializationInfo info, StreamingContext context)
+
+*In SharpMap\Layers\DuplicateLayerException.cs*
+	public override void GetObjectData(SerializationInfo info, StreamingContext context)
+
+
+*In SharpMap\Data\Providers\Shapefile\InvalidDbaseFileException.cs*
+	public InvalidDbaseFileException(SerializationInfo info, StreamingContext context)
+
+*In SharpMap\Data\Providers\Shapefile\InvalidDbaseFileException.cs*
+	public override void GetObjectData(SerializationInfo info, StreamingContext context)
+
+*In SharpMap\Converters\ParseException.cs*
+	protected ParseException(SerializationInfo info, StreamingContext context)
+
+*In SharpMap\Indexing\ObsoleteIndexFileFormatException.cs*
+        public ObsoleteIndexFileFormatException(SerializationInfo info, StreamingContext context)
+
+
+*In SharpMap\Data\Providers\Shapefile\ShapeFileInvalidOperationException.cs*
+	public ShapeFileInvalidOperationException(SerializationInfo info, StreamingContext context)
+
+In public ShapeFileIsInvalidException(SerializationInfo info, StreamingContext context)
+	public ShapeFileIsInvalidException(SerializationInfo info, StreamingContext context)
+
+
+*In SharpMap\Data\Providers\Shapefile\DbfSchemaMismatchException.cs*
+	public DbfSchemaMismatchException(SerializationInfo info, StreamingContext context)
+
+
+
+
+*Deleted fields:*
+
+*In SharpMap\Indexing\RTree\SelfOptimizingSpatialIndex.cs*
+	private readonly EventWaitHandle _userIdleEvent;
+	private readonly EventWaitHandle _machineIdleEvent;
+	private readonly EventWaitHandle _terminateEvent;
+Reason: No System.Threading.EventWaitHandle
+
+
+*In SharpMap\Indexing\RTree\DynamicRTree.cs*
+	private static readonly BinaryFormatter _keyFormatter = new BinaryFormatter();
+Reason: No System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+
+*In SharpMap\Utilities\IdleMonitor.cs*
+	  private EventWaitHandle _terminateEvent;
+Reason: //No System.Threading.EventWaitHandle
+
+
+*In SharpMap\Features\FeatureDataTable.cs*
+      [Browsable(false)]
