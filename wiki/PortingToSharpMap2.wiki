@@ -23,41 +23,42 @@ For example, there's no System.Runtime.Serialization in CF so we do
 == Removing unsupported features ==
 Deleted [Serializable] Attribute on:
 
-SharpMap/Rendering/Rendering2D/Size2D.cs
-SharpMap/Styles/Style.cs
-SharpMap/Styles/StyleColor.cs
-SharpMap/Styles/StyleBrush.cs
-SharpMap/Styles/StyleFont.cs
-SharpMap/Styles/StyleFontFamily.cs
-SharpMap/Styles/StyleFontPen.cs
-SharpMap/Presentation/ViewPointHoverEventArgs.cs
-SharpMap/Rendering/Rendering3D.ViewRectangle3D.cs
-SharpMap/Utilities/Tolerance.cs
-SharpMap\Presentation\LayerActionEventArgs.cs
-SharpMap\Indexing\BinaryTree\BinaryTreeNode.cs
-SharpMap\Data\LayerDataLoadException.cs
-SharpMap\Geometries\BoundingBox.cs
-SharpMap\Layers\Layer.cs
-SharpMap\Geometries\MultiPolygon.cs
-SharpMap\Converters\ParseException.cs
-SharpMap\Geometries\MultiLineString.cs
-SharpMap\Features\FeatureDataRow.cs
-SharpMap\Indexing\BinaryTree\BinaryTree.cs
-SharpMap\Rendering\Rendering2D\Point2D.cs
-SharpMap\Layers\DuplicateLayerException.cs
-SharpMap\Rendering\Rendering2D\Matrix2D.cs
-SharpMap\Features\FeatureDataTable.cs
-SharpMap\Presentation\MapViewPropertyChangeEventArgs.cs
-SharpMap\Data\SharpMapDataException.cs
-SharpMap\Presentation\MapZoomChangedEventArgs.cs
-SharpMap\Geometries\Polygon.cs
-SharpMap\Geometries\Polygon.cs
-SharpMap\Rendering\Rendering2D\Rectangle2D.cs
-SharpMap\Geometries\Point.cs
-SharpMap\CoordinateSystems\Projections\ProjectionComputationException.cs
-SharpMap\Features\FeatureDataSet.cs
-SharpMap\Geometries\Geometries3D\Point3D.cs
-SharpMap\Geometries\Geometry.cs
-SharpMap\Geometries\LineString.cs
-SharpMap\Layers\LayersChangedEventArgs.cs
-SharpMap\Features\FeatureTableCollection.cs
+ * SharpMap/Rendering/Rendering2D/Size2D.cs
+ * SharpMap/Styles/Style.cs
+ * SharpMap/Styles/StyleColor.cs
+ * SharpMap/Styles/StyleBrush.cs
+ * SharpMap/Styles/StyleFont.cs
+ * SharpMap/Styles/StyleFontFamily.cs
+ * SharpMap/Styles/StyleFontPen.cs
+ * SharpMap/Presentation/ViewPointHoverEventArgs.cs
+ * SharpMap/Rendering/Rendering3D.ViewRectangle3D.cs
+ * SharpMap/Utilities/Tolerance.cs
+ * SharpMap\Presentation\LayerActionEventArgs.cs
+ * SharpMap\Indexing\BinaryTree\BinaryTreeNode.cs
+ * SharpMap\Data\LayerDataLoadException.cs
+ * SharpMap\Geometries\BoundingBox.cs
+ * SharpMap\Layers\Layer.cs
+ * SharpMap\Geometries\MultiPolygon.cs
+ * SharpMap\Converters\ParseException.cs
+ * SharpMap\Geometries\MultiLineString.cs
+ * SharpMap\Features\FeatureDataRow.cs
+ * SharpMap\Indexing\BinaryTree\BinaryTree.cs
+ * SharpMap\Rendering\Rendering2D\Point2D.cs
+ * SharpMap\Layers\DuplicateLayerException.cs
+ * SharpMap\Rendering\Rendering2D\Matrix2D.cs
+ * SharpMap\Features\FeatureDataTable.cs
+ * SharpMap\Presentation\MapViewPropertyChangeEventArgs.cs
+ * SharpMap\Data\SharpMapDataException.cs
+ * SharpMap\Presentation\MapZoomChangedEventArgs.cs
+ * SharpMap\Geometries\Polygon.cs
+ * SharpMap\Geometries\Polygon.cs
+ * SharpMap\Rendering\Rendering2D\Rectangle2D.cs
+ * SharpMap\Geometries\Point.cs
+ * SharpMap\CoordinateSystems\Projections\ProjectionComputationException.cs
+ * SharpMap\Features\FeatureDataSet.cs
+ * SharpMap\Geometries\Geometries3D\Point3D.cs
+ * SharpMap\Geometries\Geometry.cs
+ * SharpMap\Geometries\LineString.cs
+ * SharpMap\Layers\LayersChangedEventArgs.cs
+ * SharpMap\Features\FeatureTableCollection.cs
+ 
