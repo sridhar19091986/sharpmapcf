@@ -7,7 +7,9 @@ namespace SharpMap.Indexing.BinaryTree
     // Binary Tree not working yet on Mono 
     // see bug: http://bugzilla.ximian.com/show_bug.cgi?id=78502
 #if !MONO
+#if !CFBuild
     [Serializable]
+#endif
     internal class BinaryTreeNode<TKey, TValue> where TValue : IComparable<TValue>
     {
         public BinaryTreeNode<TKey, TValue> LeftNode;

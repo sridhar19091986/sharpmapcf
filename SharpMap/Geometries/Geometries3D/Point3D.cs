@@ -25,8 +25,10 @@ namespace SharpMap.Geometries.Geometries3D
 	/// a y-coordinate value and a z-coordinate value. 
 	/// The boundary of a Point3D is the empty set.
 	/// </summary>
-	[Serializable]
-	public class Point3D : Point
+#if !CFBuild
+    [Serializable]
+#endif
+    public class Point3D : Point
 	{
 		private static readonly Point3D _empty = new Point3D();
 		private double _z;

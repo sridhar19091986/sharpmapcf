@@ -24,7 +24,9 @@ using GeoPoint = SharpMap.Geometries.Point;
 
 namespace SharpMap.Presentation
 {
+#if !CFBuild
     [Serializable]
+#endif
     public class MapZoomChangedEventArgs : EventArgs
     {
         private double _previousZoom;

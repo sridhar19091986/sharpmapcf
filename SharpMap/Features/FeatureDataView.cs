@@ -20,7 +20,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
+#if !CFBuild
 using System.Reflection.Emit;
+#endif
 using SharpMap.Geometries;
 using System.ComponentModel;
 

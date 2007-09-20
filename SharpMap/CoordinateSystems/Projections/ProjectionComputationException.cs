@@ -18,17 +18,23 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+#if !CFBuild
 using System.Runtime.Serialization;
+#endif
 
 namespace SharpMap.CoordinateSystems.Projections
 {
+#if !CFBuild
     [Serializable]
+#endif
     public class ProjectionComputationException : Exception
     {
         public ProjectionComputationException() : base() { }
         public ProjectionComputationException(string message) : base(message) { }
         public ProjectionComputationException(string message, Exception inner) : base(message, inner) { }
+#if !CFBuild
         public ProjectionComputationException(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
+#endif
     }
 }

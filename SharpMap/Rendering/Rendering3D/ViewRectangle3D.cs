@@ -23,7 +23,9 @@ using IVectorD = NPack.Interfaces.IVector<NPack.DoubleComponent>;
 
 namespace SharpMap.Rendering.Rendering3D
 {
+#if !CFBuild
     [Serializable]
+#endif
     public struct ViewRectangle3D : IMatrixD, IComparable<ViewRectangle3D>
     {
         private DoubleComponent _xMin;

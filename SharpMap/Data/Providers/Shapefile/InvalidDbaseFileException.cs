@@ -16,7 +16,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System;
+#if !CFBuild
 using System.Runtime.Serialization;
+#endif
+
 
 namespace SharpMap.Data.Providers.ShapeFile
 {
@@ -34,22 +37,23 @@ namespace SharpMap.Data.Providers.ShapeFile
         {
             _filename = filename;
         }
-
+#if !CFBuild
         public InvalidDbaseFileException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
             _filename = info.GetString("_filename");
         }
-
+#endif
         public string Filename
         {
             get { return _filename; }   
         }
-
+#if !CFBuild
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
             info.AddValue("_filename", _filename);
         }
+#endif
     }
 }

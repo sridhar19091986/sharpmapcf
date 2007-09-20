@@ -16,14 +16,19 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System;
+#if !CFBuild
 using System.Runtime.Serialization;
+#endif
+
 
 namespace SharpMap.Data
 {
     /// <summary>
     /// The base class for data exceptions in SharpMap.
     /// </summary>
+#if !CFBuild
     [Serializable]
+#endif
     public class SharpMapDataException : Exception
     {
         public SharpMapDataException()
@@ -39,10 +44,11 @@ namespace SharpMap.Data
             : base(message, inner)
         {
         }
-
+#if !CFBuild
         public SharpMapDataException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
+#endif
     }
 }

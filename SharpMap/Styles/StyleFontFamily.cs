@@ -21,7 +21,9 @@ using System.Text;
 
 namespace SharpMap.Styles
 {
+#if !CFBuild
     [Serializable]
+#endif
     public sealed class StyleFontFamily
     {
         private string _familyName;

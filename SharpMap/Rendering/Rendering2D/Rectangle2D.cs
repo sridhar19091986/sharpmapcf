@@ -32,7 +32,9 @@ namespace SharpMap.Rendering.Rendering2D
 	/// property is less than the <see cref="Bottom"/> property when the <see cref="Height"/>
 	/// is positive, and Bottom is less than Top when the Height is negative.
 	/// </remarks>
+#if !CFBuild
     [Serializable]
+#endif
     public struct Rectangle2D 
         : IViewRectangle<Point2D>, IEquatable<Rectangle2D>, IComparable<Rectangle2D>, IHasEmpty
     {

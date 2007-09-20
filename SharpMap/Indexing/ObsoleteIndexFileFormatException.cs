@@ -17,7 +17,10 @@
 
 using System;
 using System.Collections.Generic;
+#if !CFBuild
 using System.Runtime.Serialization;
+#endif
+
 using System.Text;
 
 namespace SharpMap.Indexing
@@ -39,7 +42,7 @@ namespace SharpMap.Indexing
             _versionExpected = versionExpected;
             _versionEncountered = versionEncountered;
         }
-
+#if !CFBuild
         /// <summary>
         /// Exception thrown when layer rendering has failed. This constructor is used by the runtime during serialization.
         /// </summary>
@@ -47,7 +50,7 @@ namespace SharpMap.Indexing
         /// <param name="context">Serialization context</param>
         public ObsoleteIndexFileFormatException(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
-
+#endif
         /// <summary>
         /// The version of the file expected
         /// </summary>

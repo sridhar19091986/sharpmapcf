@@ -21,8 +21,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using SharpMap.Geometries;
+#if !CFBuild
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+#endif
+
 
 using SharpMap.Indexing;
 using System.Runtime.InteropServices;
@@ -42,10 +45,15 @@ namespace SharpMap.Indexing.RTree
 	/// variants, such as R*Tree or R+Tree.
     /// </remarks>
     public class DynamicRTree<TValue> 
-		: RTree<TValue>, IUpdatableSpatialIndex<RTreeIndexEntry<TValue>>, ISerializable
+		: RTree<TValue>, IUpdatableSpatialIndex<RTreeIndexEntry<TValue>>
+#if !CFBuild
+        , ISerializable
+#endif
 	{
 		#region Fields
+#if !CFBuild //No System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
 		private static readonly BinaryFormatter _keyFormatter = new BinaryFormatter();
+#endif
         private DynamicRTreeBalanceHeuristic _heuristic = new DynamicRTreeBalanceHeuristic(4, 10, UInt16.MaxValue);
         private INodeSplitStrategy _nodeSplitStrategy;
         private IEntryInsertStrategy<RTreeIndexEntry<TValue>> _insertStrategy;
@@ -81,7 +89,7 @@ namespace SharpMap.Indexing.RTree
         protected DynamicRTree()
 		{
 		}
-
+#if !CFBuild
 		protected DynamicRTree(SerializationInfo info, StreamingContext context)
         {
             byte[] data = (byte[])info.GetValue("data", typeof(byte[]));
@@ -89,6 +97,7 @@ namespace SharpMap.Indexing.RTree
             DynamicRTree<TValue> tree = FromStream(buffer);
             Root = tree.Root;
 		}
+#endif
 		#endregion
 
         /// <summary>
@@ -310,13 +319,14 @@ namespace SharpMap.Indexing.RTree
         #endregion
 
         #region ISerializable Members
-
+#if !CFBuild
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             MemoryStream buffer = new MemoryStream();
             SaveIndex(buffer);
             info.AddValue("data", buffer.ToArray());
         }
+#endif
 
         #endregion
     }

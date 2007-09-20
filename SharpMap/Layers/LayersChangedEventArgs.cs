@@ -4,7 +4,9 @@ using SharpMap.Layers;
 
 namespace SharpMap
 {
+#if !CFBuild
     [Serializable]
+#endif
     public class LayersChangedEventArgs : EventArgs
     {
         private readonly LayersChangeType _changeType;

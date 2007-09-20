@@ -24,7 +24,9 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Reflection;
+#if !CFBuild
 using System.Reflection.Emit;
+#endif
 using System.Threading;
 using SharpMap.Data;
 using SharpMap.Geometries;
@@ -40,7 +42,9 @@ namespace SharpMap.Features
     /// <summary>
     /// Represents one feature table of in-memory spatial data. 
     /// </summary>
+#if !CFBuild
     [Serializable]
+#endif
     public class FeatureDataTable 
         : DataTable, IEnumerable<FeatureDataRow>, IEnumerable<IFeatureDataRecord>
     {
@@ -214,7 +218,9 @@ namespace SharpMap.Features
         /// <summary>
         /// Gets the number of feature rows in the feature table.
         /// </summary>
+#if !CFBuild
         [Browsable(false)]
+#endif
         public int FeatureCount
         {
             get { return base.Rows.Count; }

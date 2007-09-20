@@ -27,7 +27,9 @@ namespace SharpMap.Features
     /// <summary>
     /// Represents the collection of tables for the FeatureDataSet.
     /// </summary>
+#if !CFBuild
     [Serializable]
+#endif
     public class FeatureTableCollection : IList<FeatureDataTable>
     {
         private readonly DataTableCollection _tables;

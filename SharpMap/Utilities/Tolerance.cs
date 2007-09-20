@@ -24,8 +24,10 @@ namespace SharpMap.Utilities
 	/// Represents a tolerance used in comparing <see cref="float"/> 
 	/// and <see cref="double"/> floating point values.
 	/// </summary>
-	[Serializable]
-	public class Tolerance
+#if !CFBuild
+    [Serializable]
+#endif
+    public class Tolerance
 	{
 		/// <summary>
 		/// The default tolerance: 0.000000001 (1E-9).

@@ -29,8 +29,10 @@ namespace SharpMap.Geometries
 	/// Vertices of rings defining holes in polygons 
 	/// are in the opposite direction of the exterior ring.
 	/// </remarks>
-	[Serializable]
-	public class Polygon : Surface
+#if !CFBuild
+    [Serializable]
+#endif
+    public class Polygon : Surface
 	{
 		private LinearRing _exteriorRing;
 		private List<LinearRing> _interiorRings = new List<LinearRing>();

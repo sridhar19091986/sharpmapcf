@@ -33,8 +33,10 @@ namespace SharpMap.Geometries
 	/// <para>All instantiable geometry classes described in this specification are defined so that valid instances of a
 	/// geometry class are topologically closed (i.e. all defined geometries include their boundary).</para>
 	/// </remarks>
-	[Serializable]
-	public abstract class Geometry : IGeometry, IEquatable<Geometry>
+#if !CFBuild
+    [Serializable]
+#endif
+    public abstract class Geometry : IGeometry, IEquatable<Geometry>
 	{
 		private ICoordinateSystem _spatialReference;
 		private Tolerance _tolerance = null;

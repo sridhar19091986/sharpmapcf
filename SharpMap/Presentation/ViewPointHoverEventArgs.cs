@@ -26,7 +26,9 @@ using IVectorD = NPack.Interfaces.IVector<NPack.DoubleComponent>;
 
 namespace SharpMap.Presentation
 {
+#if !CFBuild
     [Serializable]
+#endif
     public class ViewPointActionEventArgs<TViewPoint> : EventArgs
         where TViewPoint : IVectorD
     {

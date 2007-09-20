@@ -24,7 +24,9 @@ namespace SharpMap.Geometries
     /// <summary>
     /// A MultiLineString is a MultiCurve whose elements are LineStrings.
     /// </summary>
+#if !CFBuild
     [Serializable]
+#endif
     public class MultiLineString : MultiCurve<LineString>
     {
         /// <summary>

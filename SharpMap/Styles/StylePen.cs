@@ -23,8 +23,10 @@ namespace SharpMap.Styles
 {
 	/// <summary>
 	/// Represents a style for drawing lines.
-	/// </summary>
+    /// </summary>
+#if !CFBuild
     [Serializable]
+#endif
     public class StylePen
 	{
 		#region Fields
