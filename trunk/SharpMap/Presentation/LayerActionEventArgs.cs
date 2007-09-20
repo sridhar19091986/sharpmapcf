@@ -20,7 +20,9 @@ using System.Collections.Generic;
 
 namespace SharpMap.Presentation
 {
+#if !CFBuild
     [Serializable]
+#endif
     public class LayerActionEventArgs : EventArgs
     {
         private readonly object _layers;

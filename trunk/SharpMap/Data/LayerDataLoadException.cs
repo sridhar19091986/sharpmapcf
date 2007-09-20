@@ -16,7 +16,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System;
+#if !CFBuild
 using System.Runtime.Serialization;
+#endif
+
 
 namespace SharpMap.Data
 {
@@ -24,7 +27,9 @@ namespace SharpMap.Data
     /// Exception thrown when the layer data specified to the provider can not be
     /// found or is not accessible.
     /// </summary>
+#if !CFBuild
     [Serializable]
+#endif
     public class LayerDataLoadException : SharpMapDataException
     {
         private readonly string _connectionId;
@@ -44,23 +49,24 @@ namespace SharpMap.Data
         {
             _connectionId = connectionId;
         }
-
+#if !CFBuild
         public LayerDataLoadException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
             _connectionId = info.GetString("_connectionId");
         }
-
+#endif
         public string ConnectionId
         {
             get { return _connectionId; }
         }
-
+#if !CFBuild
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
 
             info.AddValue("_connectionId", _connectionId);
         }
+#endif
     }
 }

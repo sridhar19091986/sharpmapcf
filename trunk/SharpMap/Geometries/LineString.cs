@@ -23,9 +23,11 @@ namespace SharpMap.Geometries
 	/// <summary>
 	/// A LineString is a Curve with linear interpolation between points. 
 	/// Each consecutive pair of points defines a line segment.
-	/// </summary>
-	[Serializable]
-	public class LineString : Curve
+    /// </summary>
+#if !CFBuild
+    [Serializable]
+#endif
+    public class LineString : Curve
 	{
 		private readonly List<Point> _vertices = new List<Point>();
 

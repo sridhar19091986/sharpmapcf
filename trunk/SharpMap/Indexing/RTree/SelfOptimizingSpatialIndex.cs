@@ -32,9 +32,11 @@ namespace SharpMap.Indexing.RTree
 		private readonly MersenneTwister _executionProbability = new MersenneTwister();
 		private readonly IIndexRestructureStrategy _restructureStrategy;
 		private RestructuringHuristic _restructuringHeuristic;
+#if !CFBuild //No System.Threading.EventWaitHandle
 		private readonly EventWaitHandle _userIdleEvent;
 		private readonly EventWaitHandle _machineIdleEvent;
 		private readonly EventWaitHandle _terminateEvent;
+#endif
 		private readonly Thread _restructureThread;
 		private readonly int _periodMilliseconds;
 		private int _terminating = 0;

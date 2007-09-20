@@ -27,7 +27,9 @@ namespace SharpMap.Rendering.Rendering2D
     /// <summary>
     /// A 2 dimensional measure of size.
     /// </summary>
+#if !CFBuild
     [Serializable]
+#endif
     public struct Size2D : IVectorD, IHasEmpty
     {
         private DoubleComponent _width, _height;

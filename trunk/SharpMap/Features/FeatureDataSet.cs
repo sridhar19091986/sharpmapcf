@@ -22,8 +22,10 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+#if !CFBuild
 using System.Reflection.Emit;
 using System.Runtime.Serialization;
+#endif
 using System.Threading;
 using System.Xml;
 using System.Xml.Schema;
@@ -37,7 +39,9 @@ namespace SharpMap.Features
     /// <remarks>
     /// The FeatureDataSet is an extension of System.Data.DataSet.
     /// </remarks>
+#if !CFBuild
     [Serializable()]
+#endif
     public class FeatureDataSet : DataSet
     {
         #region Nested Types
@@ -94,7 +98,7 @@ namespace SharpMap.Features
             //this.Tables.CollectionChanged += schemaChangedHandler;
             Relations.CollectionChanged += schemaChangedHandler;
         }
-
+#if !CFBuild //No SerializationInfo
         /// <summary>
         /// Initializes a new instance of the FeatureDataSet class.
         /// </summary>
@@ -133,7 +137,7 @@ namespace SharpMap.Features
             //Tables.CollectionChanged += schemaChangedHandler;
             Relations.CollectionChanged += schemaChangedHandler;
         }
-
+#endif
         #endregion
 
         public new FeatureDataViewManager DefaultViewManager

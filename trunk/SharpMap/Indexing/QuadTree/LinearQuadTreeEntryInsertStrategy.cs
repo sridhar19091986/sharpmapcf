@@ -60,15 +60,19 @@ namespace SharpMap.Indexing.QuadTree
         }
     }
 
+#if !CFBuild
     [global::System.Serializable]
+#endif
     public class QuadTreeIndexInsertOverflowException : Exception
     {
         public QuadTreeIndexInsertOverflowException() { }
         public QuadTreeIndexInsertOverflowException(string message) : base(message) { }
         public QuadTreeIndexInsertOverflowException(string message, Exception inner) : base(message, inner) { }
+#if !CFBuild
         protected QuadTreeIndexInsertOverflowException(
           System.Runtime.Serialization.SerializationInfo info,
           System.Runtime.Serialization.StreamingContext context)
             : base(info, context) { }
+#endif
     }
 }

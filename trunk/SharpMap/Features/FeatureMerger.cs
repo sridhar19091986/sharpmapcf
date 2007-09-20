@@ -19,7 +19,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
+#if !CFBuild
 using System.Reflection.Emit;
+#endif
 using System.Reflection;
 using SharpMap.Data;
 using System.Collections;

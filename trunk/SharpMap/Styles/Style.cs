@@ -22,7 +22,9 @@ namespace SharpMap.Styles
 	/// <summary>
 	/// Defines a style used for for defining layer styles.
 	/// </summary>
-	[Serializable]
+#if !CFBuild
+    [Serializable]
+#endif
 	public class Style : IStyle
 	{
 		private double _minVisible;

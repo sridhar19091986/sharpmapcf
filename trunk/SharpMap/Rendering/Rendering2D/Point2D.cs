@@ -28,7 +28,9 @@ namespace SharpMap.Rendering.Rendering2D
     /// <summary>
     /// A point in 2 dimensional Cartesian space.
     /// </summary>
+#if !CFBuild
     [Serializable]
+#endif
     public struct Point2D : IVectorD, IHasEmpty
     {
         public static readonly Point2D Empty = new Point2D();

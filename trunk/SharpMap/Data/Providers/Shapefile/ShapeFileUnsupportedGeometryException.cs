@@ -16,7 +16,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System;
+#if !CFBuild
 using System.Runtime.Serialization;
+#endif
+
 
 namespace SharpMap.Data.Providers.ShapeFile
 {
@@ -28,7 +31,9 @@ namespace SharpMap.Data.Providers.ShapeFile
         public ShapeFileUnsupportedGeometryException() : base() { }
         public ShapeFileUnsupportedGeometryException(string message) : base(message) { }
         public ShapeFileUnsupportedGeometryException(string message, Exception inner) : base(message, inner) { }
+#if !CFBuild
         public ShapeFileUnsupportedGeometryException(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
+#endif
     }
 }

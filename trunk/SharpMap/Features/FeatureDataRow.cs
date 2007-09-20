@@ -18,7 +18,9 @@
 
 using System;
 using System.Data;
+#if !CFBuild
 using System.Reflection.Emit;
+#endif
 using SharpMap.Data;
 using SharpMap.Geometries;
 using System.Reflection;
@@ -31,9 +33,11 @@ namespace SharpMap.Features
 	/// <summary>
 	/// Represents a geographic feature, stored as 
 	/// a row of data in a <see cref="FeatureDataTable"/>.
-	/// </summary>
-	[Serializable]
-	public class FeatureDataRow : DataRow, IFeatureDataRecord
+    /// </summary>
+#if !CFBuild
+    [Serializable]
+#endif
+    public class FeatureDataRow : DataRow, IFeatureDataRecord
 	{
 		#region Nested types
 		private delegate DataColumnCollection GetColumnsDelegate(DataRow row);

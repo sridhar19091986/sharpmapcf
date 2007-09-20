@@ -35,7 +35,9 @@ namespace SharpMap.Layers
     /// Implement this class instead of the ILayer interface to 
     /// obtain basic layer functionality.
     /// </remarks>
+#if !CFBuild
     [Serializable]
+#endif
     public abstract class Layer : ILayer, ICloneable
     {
         private static readonly PropertyDescriptorCollection _properties;

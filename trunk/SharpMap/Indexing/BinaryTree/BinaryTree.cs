@@ -32,7 +32,9 @@ namespace SharpMap.Indexing.BinaryTree
     /// </summary>
     /// <typeparam name="TKey">Value ID type</typeparam>
     /// <typeparam name="TValue">Value type to be indexed</typeparam>
+#if !CFBuild
     [Serializable]
+#endif
     public class BinaryTree<TKey, TValue> where TValue : IComparable<TValue>
     {
         private BinaryTreeNode<TKey, TValue> root;

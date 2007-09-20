@@ -21,7 +21,9 @@ using System.Text;
 
 namespace SharpMap.Styles
 {
+#if !CFBuild
     [Serializable]
+#endif
     public abstract class StyleBrush
     {
         private StyleColor _color = StyleColor.Transparent;

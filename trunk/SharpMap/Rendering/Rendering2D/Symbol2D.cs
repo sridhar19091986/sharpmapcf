@@ -17,7 +17,9 @@
 
 using System;
 using System.IO;
-using System.Runtime.Serialization;
+#if !CFBuild
+    using System.Runtime.Serialization;
+#endif
 using NPack;
 using NPack.Interfaces;
 using SharpMap.Utilities;
@@ -27,7 +29,10 @@ namespace SharpMap.Rendering.Rendering2D
     /// <summary>
     /// Represents a 2 dimensional graphic used for point data on a map.
     /// </summary>
-    public sealed class Symbol2D : ICloneable, IDisposable, ISerializable
+    public sealed class Symbol2D : ICloneable, IDisposable
+#if !CFBuild
+        ,ISerializable
+#endif
     {
         private ColorMatrix _colorTransform = ColorMatrix.Identity;
         private Matrix2D _rotationTransform = Matrix2D.Identity;
@@ -76,12 +81,12 @@ namespace SharpMap.Rendering.Rendering2D
             : this(new MemoryStream(symbolData), size)
         {
         }
-
+#if !CFBuild
         private Symbol2D(SerializationInfo info, StreamingContext context)
         {
             throw new NotImplementedException();
         }
-
+#endif
         #region Dispose Pattern
 
         ~Symbol2D()
@@ -299,12 +304,12 @@ namespace SharpMap.Rendering.Rendering2D
         #endregion
 
         #region ISerializable Members
-
+#if !CFBuild
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             throw new NotImplementedException();
         }
-
+#endif
         #endregion
     }
 }

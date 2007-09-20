@@ -16,7 +16,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System;
+#if !CFBuild
 using System.Runtime.Serialization;
+#endif
+
 using SharpMap;
 
 namespace SharpMap.Layers
@@ -25,7 +28,9 @@ namespace SharpMap.Layers
     /// Exception thrown when a layer with a name which is the same
     /// as an existing layer is added to a <see cref="Map.LayerCollection"/>.
     /// </summary>
+#if !CFBuild
     [Serializable]
+#endif
     public class DuplicateLayerException : InvalidOperationException
     {
         private readonly string _duplicateLayerName;
@@ -71,7 +76,7 @@ namespace SharpMap.Layers
         {
             _duplicateLayerName = duplicateLayerName;
         }
-
+#if !CFBuild
         /// <summary>
         /// Creates a new instance of DuplicateLayerException from serialized data,
         /// <paramref name="info"/>.
@@ -83,7 +88,7 @@ namespace SharpMap.Layers
         {
             _duplicateLayerName = info.GetString("_duplicateLayerName");
         }
-
+#endif
         /// <summary>
         /// Gets the existing layer name which was duplicated.
         /// </summary>
@@ -91,11 +96,12 @@ namespace SharpMap.Layers
         {
             get { return _duplicateLayerName; }
         }
-
+#if !CFBuild
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
             info.AddValue("_duplicateLayerName", _duplicateLayerName);
         }
+#endif
     }
 }

@@ -47,7 +47,9 @@ namespace SharpMap.Styles
     /// <summary>
     /// Represents a 32-bit color in BGRA (blue, green, red, alpha) format.
     /// </summary>
+#if !CFBuild
     [Serializable]
+#endif
     [StructLayout(LayoutKind.Explicit)]
     public struct StyleColor : IEquatable<StyleColor>
     {

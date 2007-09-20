@@ -16,17 +16,24 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System;
+#if !CFBuild
 using System.Runtime.Serialization;
+#endif
+
 
 namespace SharpMap.Converters
 {
+#if !CFBuild
     [Serializable]
+#endif
     public class ParseException : Exception
     {
         public ParseException() { }
         public ParseException(string message) : base(message) { }
         public ParseException(string message, Exception inner) : base(message, inner) { }
+#if !CFBuild
         protected ParseException(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
+#endif
     }
 }

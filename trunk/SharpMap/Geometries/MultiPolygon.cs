@@ -23,8 +23,10 @@ namespace SharpMap.Geometries
 	/// <summary>
 	/// A MultiPolygon is a MultiSurface whose elements are Polygons.
 	/// </summary>
-	[Serializable]
-	public class MultiPolygon : MultiSurface<Polygon>
+#if !CFBuild
+    [Serializable]
+#endif
+    public class MultiPolygon : MultiSurface<Polygon>
 	{
 		/// <summary>
 		/// Instantiates a MultiPolygon

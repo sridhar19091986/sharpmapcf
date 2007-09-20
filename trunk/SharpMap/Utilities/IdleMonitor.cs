@@ -29,7 +29,9 @@ namespace SharpMap.Utilities
         private int _machineIdleThresholdSeconds;
         private int _checkIdleFrequencyInSeconds = 1;
         private Thread _pollIdleThread;
+#if !CFBuild //No System.Threading.EventWaitHandle
         private EventWaitHandle _terminateEvent;
+#endif
         private bool _isDisposed;
         private int _terminating = 0;
         private bool _wasUserIdle = false;

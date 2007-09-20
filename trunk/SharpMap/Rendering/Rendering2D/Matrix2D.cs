@@ -29,7 +29,9 @@ namespace SharpMap.Rendering.Rendering2D
     /// Matrix2D is arranged in row-major format, like GDI+, WPF and DirectX matrixes, where
     /// the translate components are in the 3rd row.
     /// </remarks>
+#if !CFBuild
     [Serializable]
+#endif
     public class Matrix2D : AffineMatrix<DoubleComponent>
     {
         private static readonly Matrix2D _identity

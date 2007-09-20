@@ -25,8 +25,10 @@ namespace SharpMap.Geometries
     /// A Point has an x coordinate value and a y-coordinate value. 
     /// The boundary of a Point is the empty set.
 	/// </summary>
-	[Serializable]
-	public class Point : Geometry, IComparable<Point>
+#if !CFBuild
+    [Serializable]
+#endif
+    public class Point : Geometry, IComparable<Point>
 	{
         private static readonly Point _empty = new Point();
 		private static readonly Point _zero = new Point(0, 0);

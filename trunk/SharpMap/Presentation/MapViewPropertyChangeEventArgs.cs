@@ -23,8 +23,10 @@ namespace SharpMap.Presentation
     /// Represents arguments for map view property changes.
     /// </summary>
     /// <typeparam name="TParam">Type of the propery which changed.</typeparam>
-	[Serializable]
-	public class MapViewPropertyChangeEventArgs<TParam> : EventArgs
+#if !CFBuild
+    [Serializable]
+#endif
+    public class MapViewPropertyChangeEventArgs<TParam> : EventArgs
 	{
 		private readonly TParam _currentValue;
 		private readonly TParam _requestedValue;

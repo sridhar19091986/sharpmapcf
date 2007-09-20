@@ -16,7 +16,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System;
+#if !CFBuild
 using System.Runtime.Serialization;
+#endif
+
 
 namespace SharpMap.Data.Providers.ShapeFile
 {    
@@ -29,7 +32,9 @@ namespace SharpMap.Data.Providers.ShapeFile
         public InvalidDbaseFileOperationException() { }
         public InvalidDbaseFileOperationException(string message) : base(message) { }
         public InvalidDbaseFileOperationException(string message, Exception inner) : base(message, inner) { }
+#if !CFBuild
         public InvalidDbaseFileOperationException(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
+#endif
     }
 }

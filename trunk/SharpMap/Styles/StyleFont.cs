@@ -24,7 +24,9 @@ using SharpMap.Rendering.Rendering2D;
 
 namespace SharpMap.Styles
 {
+#if !CFBuild
     [Serializable]
+#endif
     public class StyleFont
     {
         private Size2D _size;

@@ -31,7 +31,9 @@ namespace SharpMap.Geometries
     /// <remarks>
     /// The BoundingBox represents a 2D box whose sides are parallel to the two axes of the coordinate system.
     /// </remarks>
+#if !CFBuild
     [Serializable]
+#endif
     public struct BoundingBox : IEquatable<BoundingBox>
     {
         private static readonly BoundingBox _empty = new BoundingBox();
