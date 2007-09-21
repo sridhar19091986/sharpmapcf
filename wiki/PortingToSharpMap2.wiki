@@ -260,6 +260,29 @@ we can use instead:
  
  
  
+
+*In SharpMap\Data\Providers\Shapefile\DbaseReader.cs*
+
+ Problem:
+{{{
+ if (DateTime.TryParseExact(Encoding.UTF8.GetString((_dbaseReader.ReadBytes(8))),
+     "yyyyMMdd", DbaseConstants.StorageNumberFormat, DateTimeStyles.None, out date))
+ {
+     return date;
+ }
+}}}
+ In CF Encoding.UTF8.GetString takes 3 arguments so we use instead
+{{{
+ try
+ {
+    brBytes = _dbaseReader.ReadBytes(8);
+    return date = DateTime.ParseExact(Encoding.UTF7.GetString(brBytes,0,brBytes.Length),
+                 "yyyyMMdd", DbaseConstants.StorageNumberFormat, DateTimeStyles.None);
+ }
+}}}
+
+ 
+ 
  
  
  
