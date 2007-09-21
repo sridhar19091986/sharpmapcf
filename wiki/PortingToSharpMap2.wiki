@@ -209,7 +209,7 @@ Reason: //No System.Threading.EventWaitHandle
 
 *Problem:*
 	There's no System.ComponentModel.BackgroundWorker() on the CF. This thread is used
-when property VisibleRegion changes, in order to request the data (that covers the new region) asynchronously (if AsyncQuery is true)
+when property VisibleRegion changes. It triggers the request of the data (that covers the new region) asynchronously (if AsyncQuery is true)
 
 *Workaround:*
         new /Util/CFBackgroundWorker.cs that extends System.ComponentModel.Component 
@@ -224,5 +224,6 @@ when property VisibleRegion changes, in order to request the data (that covers t
 
 
 
+ 
  
  
