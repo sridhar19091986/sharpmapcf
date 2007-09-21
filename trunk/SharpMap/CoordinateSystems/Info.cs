@@ -24,7 +24,7 @@ namespace SharpMap.CoordinateSystems
 {
 	/// <summary>
 	/// The Info object implements the standard metadata
-	/// for spatial reference objects.
+    /// for spatial reference objects.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -196,26 +196,48 @@ namespace SharpMap.CoordinateSystems
 			get
 			{
 				StringBuilder sb = new StringBuilder();
+#if !CFBuild
 				sb.AppendFormat("<CS_Info");
+#else
+       			sb.Append("<CS_Info");
+#endif
 
 				if (AuthorityCode > 0)
 				{
+#if !CFBuild
 					sb.AppendFormat(" AuthorityCode=\"{0}\"", AuthorityCode);
+#else
+                    sb.AppendFormat(null," AuthorityCode=\"{0}\"", AuthorityCode);
+#endif
 				}
 
 				if (!String.IsNullOrEmpty(Abbreviation))
 				{
+#if !CFBuild
 					sb.AppendFormat(" Abbreviation=\"{0}\"", Abbreviation);
+#else
+                    sb.AppendFormat(null, " Abbreviation=\"{0}\"", Abbreviation);
+#endif
 				}
 
 				if (!String.IsNullOrEmpty(Authority))
 				{
+#if !CFBuild
 					sb.AppendFormat(" Authority=\"{0}\"", Authority);
+#else
+                    sb.AppendFormat(null, " Authority=\"{0}\"", Authority);
+#endif
+	
 				}
 
 				if (!String.IsNullOrEmpty(Name))
 				{
+#if !CFBuild
 					sb.AppendFormat(" Name=\"{0}\"", Name);
+#else
+                    sb.AppendFormat(null, " Name=\"{0}\"", Name);
+#endif
+
 				}
 
 				sb.Append("/>");
