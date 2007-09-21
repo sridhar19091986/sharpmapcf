@@ -227,7 +227,16 @@ when property VisibleRegion changes. It triggers the request of the data (that c
 }}}
 
 
+*In SharpMap\CoordinateSystems\Info.cs*
+Problem:
+	`sb.AppendFormat("<CS_Info");` 
+	No overload for method 'AppendFormat' (StringBuilder) takes '1' arguments. In CF only overload is
+     StringBuilder.AppendFormat(System.IFormatProvider provider, string format, params object[] args) 
+Workaround:
 
+	`sb.AppendFormat("<CS_Info");`
+
+ 
  
  
  
