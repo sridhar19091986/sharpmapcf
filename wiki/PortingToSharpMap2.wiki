@@ -270,6 +270,10 @@ we can use instead:
  {
      return date;
  }
+ else
+ {
+     return DBNull.Value;
+ }
 }}}
  In CF Encoding.UTF8.GetString takes 3 arguments so we use instead
 {{{
@@ -279,8 +283,13 @@ we can use instead:
     return date = DateTime.ParseExact(Encoding.UTF7.GetString(brBytes,0,brBytes.Length),
                  "yyyyMMdd", DbaseConstants.StorageNumberFormat, DateTimeStyles.None);
  }
+ catch (Exception e)
+ {
+        return DBNull.Value;
+ }
 }}}
 
+ 
  
  
  
