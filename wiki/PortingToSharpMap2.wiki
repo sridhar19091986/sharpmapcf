@@ -202,3 +202,27 @@ Reason: //No System.Threading.EventWaitHandle
 *In SharpMap\Features\FeatureDataTable.cs*
       [Browsable(false)]
  
+
+
+
+*In SharpMap\Layers\FeatureLayer.cs:*
+
+*Problem:*
+	There's no System.ComponentModel.BackgroundWorker() on the CF. This thread is used
+when property VisibleRegion changes, in order to request the data (that covers the new region) asynchronously (if AsyncQuery is true)
+
+*Workaround:*
+        new /Util/CFBackgroundWorker.cs that extends System.ComponentModel.Component 
+
+{{{
+#if !CFBuild
+        private readonly BackgroundWorker _dataQueryWorker = new BackgroundWorker();
+#else
+        private readonly CFBackgroundWorker _dataQueryWorker = CFBackgroundWorker();
+#endif
+}}}
+
+
+
+ 
+ 
