@@ -17,7 +17,7 @@ For example, there's no System.Runtime.Serialization in CF so we do
  * Removing unsupported features
  * Deleted Methods 
  * Deleted fields
- * Complex features
+ * Other things
 
 
 == External references == 
@@ -207,7 +207,7 @@ Reason: //No System.Threading.EventWaitHandle
       [Browsable(false)]
  
 
-== Complex features ==
+== Other Things ==
 
 *In SharpMap\Layers\FeatureLayer.cs:*
 
@@ -257,6 +257,7 @@ we can use instead:
 
  `sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);`
 
+ 
  
  
  
