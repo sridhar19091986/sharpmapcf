@@ -15,6 +15,10 @@ For example, there's no System.Runtime.Serialization in CF so we do
 = Procedure =
  * External references
  * Removing unsupported features
+ * Deleted Methods 
+ * Deleted fields
+ * Complex features
+
 
 == External references == 
  
@@ -100,7 +104,7 @@ Deleted interface "ISerializable" in
  * !SharpMap\Indexing\RTree\DynamicRTree.cs
 
 
-*Deleted Methods:*
+== Deleted Methods ==
 
 *In SharpMap\Data\LayerDataLoadException.cs*
 Deleted
@@ -181,7 +185,7 @@ In public ShapeFileIsInvalidException(SerializationInfo info, StreamingContext c
 
 
 
-*Deleted fields:*
+== Deleted fields ==
 
 *In SharpMap\Indexing\RTree\SelfOptimizingSpatialIndex.cs*
 	private readonly EventWaitHandle _userIdleEvent;
@@ -203,7 +207,7 @@ Reason: //No System.Threading.EventWaitHandle
       [Browsable(false)]
  
 
-
+== Complex features ==
 
 *In SharpMap\Layers\FeatureLayer.cs:*
 
@@ -224,6 +228,7 @@ when property VisibleRegion changes. It triggers the request of the data (that c
 
 
 
+ 
  
  
  
