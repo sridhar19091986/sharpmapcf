@@ -245,6 +245,23 @@ when property VisibleRegion changes. It triggers the request of the data (that c
 we can use instead:
 	`sb.AppendFormat(null," AuthorityCode=\"{0}\"", AuthorityCode);`
 
+
+*In SharpMap\CoordinateSystems\AngularUnit.cs*
+
+ Problem:
+ The same as in Info.cs
+
+ `sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);`
+
+ Workaround:
+
+ `sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);`
+
+ 
+ 
+ 
+ 
+ 
  
  
  
