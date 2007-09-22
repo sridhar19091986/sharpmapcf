@@ -189,7 +189,9 @@ namespace SharpMap.Data.Providers.ShapeFile
                 {
                     throw new ArgumentNullException("dbf");
                 }
-
+#if CFBuild 
+                byte[] brBytes;
+#endif
                 switch (Type.GetTypeCode(dbf.DataType))
                 {
                     case TypeCode.Boolean:
@@ -199,7 +201,8 @@ namespace SharpMap.Data.Providers.ShapeFile
                     case TypeCode.DateTime:
                         DateTime date;
                         // Mono has not yet implemented DateTime.TryParseExact
-#if !MONO
+#if !MONO 
+#if !CFBuild
                         if (DateTime.TryParseExact(Encoding.UTF8.GetString((_dbaseReader.ReadBytes(8))),
                                                    "yyyyMMdd", DbaseConstants.StorageNumberFormat, 
                                                    DateTimeStyles.None, out date))
@@ -211,8 +214,25 @@ namespace SharpMap.Data.Providers.ShapeFile
                             return DBNull.Value;
                         }
 #else
+                        try
+                        {
+                            brBytes = _dbaseReader.ReadBytes(8);
+
+                            return date = DateTime.ParseExact(Encoding.UTF7.GetString(brBytes,0,brBytes.Length),
+                            "yyyyMMdd", DbaseConstants.StorageNumberFormat, DateTimeStyles.None);
+                        }
+                        catch (Exception e)
+                        {
+                            return DBNull.Value;
+                        }
+#endif
+
+                        
+#else
 					try 
 					{
+                        //No  Map.numberFormat_EnUS
+                        //IFormatProvider culture = new CultureInfo("en-US", true);
 						return date = DateTime.ParseExact ( Encoding.UTF7.GetString((br.ReadBytes(8))), 	
 						"yyyyMMdd", Map.numberFormat_EnUS, DateTimeStyles.None );
 					}
