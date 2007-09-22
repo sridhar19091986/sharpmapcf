@@ -34,7 +34,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 		{
 			parseHeader(reader);
 		}
-
+        
 		public override string ToString()
 		{
 			return String.Format("[ShapeFileHeader] ShapeType: {0}; Envelope: {1}; FileLengthInWords: {2}", 

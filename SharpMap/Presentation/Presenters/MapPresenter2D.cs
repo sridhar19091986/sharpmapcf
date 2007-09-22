@@ -537,10 +537,14 @@ namespace SharpMap.Presentation
                     renderAllLayers();
                     break;
                 case ListChangedType.ItemChanged:
+#if !CFBuild //issue http://code.google.com/p/sharpmapcf/issues/detail?id=1 
                     if(e.PropertyDescriptor.Name == Layer.EnabledProperty.Name)
                     {
                         renderAllLayers();   
                     }
+#else  //Provisional: let's render all layers whenever any changes
+                    renderAllLayers();   
+#endif
                     break;
                 default:
                     break;
