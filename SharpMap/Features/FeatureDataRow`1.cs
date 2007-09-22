@@ -24,7 +24,7 @@ namespace SharpMap.Features
     /// Represents a row of data in a <see cref="FeatureDataTable{TOid}"/>.
     /// </summary>
     /// <typeparam name="TOid">Type of the object id (OID).</typeparam>
-    public class FeatureDataRow<TOid>
+    public class FeatureDataRow<TOid>: FeatureDataRow
     {
         #region Constructors
 

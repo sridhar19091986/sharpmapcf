@@ -80,11 +80,20 @@ namespace SharpMap.Data.Providers.ShapeFile
 							case CodePageChoice.Ansi:
 								return Encoding.GetEncoding(CultureInfo.TextInfo.ANSICodePage);
 							case CodePageChoice.Mac:
+#if !CFBuild
 								return Encoding.GetEncoding(CultureInfo.TextInfo.MacCodePage);
+#else
+                                return Encoding.GetEncoding(CultureInfo.TextInfo.ANSICodePage);
+#endif
 							case CodePageChoice.Oem:
 							case CodePageChoice.Custom:
 							default:
+#if !CFBuild
 								return Encoding.GetEncoding(CultureInfo.TextInfo.OEMCodePage);
+#else
+                                return Encoding.GetEncoding(CultureInfo.TextInfo.ANSICodePage);
+#endif
+
 						}
 					}
 					else
