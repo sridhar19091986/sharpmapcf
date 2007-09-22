@@ -215,16 +215,20 @@ Reason: //No System.Threading.EventWaitHandle
 	There's no System.ComponentModel.BackgroundWorker() on the CF. This thread is used
 when property VisibleRegion changes. It triggers the request of the data (that covers the new region) asynchronously (if AsyncQuery is true)
 
-*Workaround:*
-        new /Util/CFBackgroundWorker.cs that extends System.ComponentModel.Component 
 
-{{{
-#if !CFBuild
-        private readonly BackgroundWorker _dataQueryWorker = new BackgroundWorker();
-#else
-        private readonly CFBackgroundWorker _dataQueryWorker = CFBackgroundWorker();
-#endif
-}}}
+*In SharpMap\Layers\FeatureLayer.cs:*
+
+Problem:
+	There's no System.ComponentModel.BackgroundWorker() on the CF. This thread is used
+when property VisibleRegion changes for requesting the data (that covers the new region) asynchronously (if AsyncQuery is true)
+
+Workaround:
+        new /Util/BackgroundWorker.cs that extends System.ComponentModel.Component 
+
+	
+ FeatureLayer.cs does not change, but /Util/BackgroundWorker.cs is totally commented out if the build is not for CF
+
+
 
 
 *In SharpMap\CoordinateSystems\Info.cs*
@@ -288,6 +292,13 @@ we can use instead:
         return DBNull.Value;
  }
 }}}
+
+ 
+*In SharpMap\CoordinateSystems\Projection.cs*
+ Problem: 
+	`sb.AppendFormat("PROJECTION[\"{0}\"", Name);`
+ Workaround:
+	 Use `sb.AppendFormat(null, "PROJECTION[\"{0}\"", Name);`
 
  
  
