@@ -537,7 +537,12 @@ namespace SharpMap.Rendering.Rendering2D
         {
             if (index != 0 && index != 1)
             {
+#if !CFBuild
                 throw new ArgumentOutOfRangeException("index", index, "The element index must be either 0 or 1 for a 2D point.");
+#else
+                throw new ArgumentOutOfRangeException("index",
+                    "indes("+index+") The element index must be either 0 or 1 for a 2D point.");
+#endif
             }
         }
 
@@ -545,12 +550,20 @@ namespace SharpMap.Rendering.Rendering2D
         {
             if (row != 0)
             {
+#if !CFBuild
                 throw new ArgumentOutOfRangeException("row", row, "A Point2D has only 1 row.");
+#else
+                throw new ArgumentOutOfRangeException("row", "row("+row+") A Point2D has only 1 row.");
+#endif
             }
 
             if (column < 0 || column > 1)
             {
+#if !CFBuild
                 throw new ArgumentOutOfRangeException("column", row, "A Point2D has only 2 columns.");
+#else
+                throw new ArgumentOutOfRangeException("column", "column("+row+") A Point2D has only 2 columns.");
+#endif
             }
         }
         #endregion

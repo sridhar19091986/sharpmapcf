@@ -113,8 +113,11 @@ namespace SharpMap.CoordinateSystems
 			get
 			{
 				StringBuilder sb = new StringBuilder();
-				
+#if !CFBuild
                 sb.AppendFormat("GEOCCS[\"{0}\", {1}, {2}, {3}", Name, HorizontalDatum.Wkt, PrimeMeridian.Wkt, LinearUnit.Wkt);
+#else
+                sb.AppendFormat(null, "GEOCCS[\"{0}\", {1}, {2}, {3}", Name, HorizontalDatum.Wkt, PrimeMeridian.Wkt, LinearUnit.Wkt);
+#endif
 				
                 //Skip axis info if they contain default values				
                 if (AxisInfo.Count != 3 ||
@@ -124,13 +127,21 @@ namespace SharpMap.CoordinateSystems
                 {
                     for (int i = 0; i < AxisInfo.Count; i++)
                     {
+#if !CFBuild
                         sb.AppendFormat(", {0}", GetAxis(i).WKT);
+#else
+                        sb.AppendFormat(null, ", {0}", GetAxis(i).WKT);
+#endif
                     }
                 }
 
                 if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
                 {
-                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+#if !CFBuild
+                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);                        sb.AppendFormat(", {0}", GetAxis(i).WKT);
+#else
+                    sb.AppendFormat(null, ", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+#endif
                 }
 
 				sb.Append("]");
@@ -155,9 +166,15 @@ namespace SharpMap.CoordinateSystems
                 {
                     sb.Append(ai.XML);
                 }
-
+#if !CFBuild
 				sb.AppendFormat("{0}{1}{2}</CS_GeocentricCoordinateSystem></CS_CoordinateSystem>",
 					HorizontalDatum.Xml, LinearUnit.Xml, PrimeMeridian.Xml);
+
+#else
+                sb.AppendFormat(null, "{0}{1}{2}</CS_GeocentricCoordinateSystem></CS_CoordinateSystem>",
+                    HorizontalDatum.Xml, LinearUnit.Xml, PrimeMeridian.Xml);
+
+#endif
 
 				return sb.ToString();
 			}
