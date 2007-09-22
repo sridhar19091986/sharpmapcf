@@ -173,8 +173,13 @@ namespace SharpMap.Data.Providers.ShapeFile
 
                 for (Int32 i = 0; i < columns.Length; i++)
                 {
+#if !CFBuild
                     String colName = header.FileEncoding.GetString(
                         reader.ReadBytes(11)).Replace("\0", "").Trim();
+#else
+                    byte[] brByte = reader.ReadBytes(11);
+                    String colName = header.FileEncoding.GetString(brByte, 0, brByte.Length).Replace("\0", "").Trim();
+#endif
 
                     Char fieldtype = reader.ReadChar();
 

@@ -270,7 +270,11 @@ namespace SharpMap.Data.Providers.ShapeFile
                 // Create number format string
                 _format.Length = 0;
                 _format.Append(NumberFormatTemplate);
+#if !CFBuild
                 _format.Insert(5, decimalPlaces).Insert(3, length);
+#else
+                _format.Insert(5, decimalPlaces.ToString()).Insert(3, length.ToString());
+#endif
                 string number = String.Format(DbaseConstants.StorageNumberFormat, _format.ToString(), value);
                 byte[] bytes = Encoding.ASCII.GetBytes(number);
                 _binaryWriter.Write(bytes);
