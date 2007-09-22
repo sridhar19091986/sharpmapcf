@@ -455,6 +455,15 @@ we can use instead:
 
 	let's make TextInfo.ANSICodePage default
 
+*In SharpMap\Rendering\Rendering2D\Point2D.cs*
+ Problem (3 of this kind):
+ 
+ `throw new ArgumentOutOfRangeException("column", row, "A Point2D has only 2 columns.");`
+  Error	No overload for method 'ArgumentOutOfRangeException' takes '3' arguments
+
+ Workaround:
+ 
+ `throw new ArgumentOutOfRangeException("column", "column ("+row+") A Point2D has only 2 columns.");`
 
 
 
@@ -493,6 +502,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
