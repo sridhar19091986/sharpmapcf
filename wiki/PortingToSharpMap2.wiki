@@ -429,6 +429,34 @@ we can use instead:
     `buffer.AppendFormat(null, "N3", value);`
 
 
+*In SharpMap\Rendering\Rendering2D\Symbol2D.cs*
+ Problem:
+
+	`_symbolData.Dispose();` (Stream _symbolData)
+
+         In CF Stream, Dispose() is protected
+
+ Workaround:
+
+	let's close it
+
+	_symbolData.Close();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 == NOT Resolved ==
 
@@ -454,5 +482,6 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
