@@ -429,7 +429,7 @@ we can use instead:
     `buffer.AppendFormat(null, "N3", value);`
 
 
-*In SharpMap\Rendering\Rendering2D\Symbol2D.cs*
+*In SharpMap\Rendering\Rendering2D\Symbol2D.cs (medium) *
  Problem:
 
 	`_symbolData.Dispose();` (Stream _symbolData)
@@ -440,7 +440,7 @@ we can use instead:
 
 	let's close it
 
-	_symbolData.Close();
+	`_symbolData.Close();`
 
 
 
@@ -482,6 +482,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
