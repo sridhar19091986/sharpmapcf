@@ -558,6 +558,43 @@ we can use instead:
 
 
 
+*In SharpMap\Data\Providers\Shapefile\DbaseReader.cs*
+ Problem ( like this):
+{{{
+ if (double.TryParse(temp, NumberStyles.Float, DbaseConstants.StorageNumberFormat, out dbl))
+ {
+    return dbl;
+ }
+ else
+ {
+    return DBNull.Value;
+ }
+}}}
+   //Error no TryParse in CF
+   //The TryParse method is like the Parse method, except the TryParse method does not  throw an exception if the conversion fails.
+
+ Workaround:
+{{{
+  try{
+         bl = double.Parse(temp, NumberStyles.Float, DbaseConstants.StorageNumberFormat);
+         return dbl;
+  }
+  catch (Exception e){
+     return DBNull.Value;
+  }
+}}}
+
+ *Problem (x like this):*
+
+ `string temp = Encoding.UTF8.GetString(_dbaseReader.ReadBytes(dbf.Length)).Replace("\0", "").Trim();`
+
+      //Encoding.GetString takes 3 arguments
+
+ Workaround:
+
+  `brBytes = _dbaseReader.ReadBytes(dbf.Length);
+   string temp = Encoding.UTF8.GetString(brBytes,0,brBytes.Length).Replace("\0", "").Trim();`
+
 
 
 
@@ -600,6 +637,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
