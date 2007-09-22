@@ -260,7 +260,11 @@ namespace SharpMap.Styles
 
             foreach (float value in values)
             {
+#if !CFBuild
                 buffer.AppendFormat("N3", value);
+#else
+                buffer.AppendFormat(null, "N3", value);
+#endif
                 buffer.Append(", ");
             }
 

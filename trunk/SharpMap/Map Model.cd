@@ -38,7 +38,7 @@
     <Position X="9.5" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <FileName>Layers\FeatureLayer.cs</FileName>
-      <HashCode>AAAAAAIAAAAAAoBAQgABAgAACAHAAAIAAAgAAAAIAAA=</HashCode>
+      <HashCode>AAAAAAIAAAAAAoBAQgABAgAACAHAgAIAAAgAAAAIAAA=</HashCode>
     </TypeIdentifier>
     <Compartments>
       <Compartment Name="Private" Collapsed="true" />
@@ -51,25 +51,6 @@
       <FileName>Layers\RasterLayer.cs</FileName>
       <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAGAAAAAAAAAAAAAABA=</HashCode>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="SharpMap.Layers.LabelLayer&lt;TLabel&gt;">
-    <Position X="7.25" Y="6.25" Width="1.75" />
-    <TypeIdentifier>
-      <FileName>Layers\LabelLayer.cs</FileName>
-      <HashCode>ASAAAAKBACAAEqCEAAAFAgAEEAHlAIAAAAAAACAABBA=</HashCode>
-    </TypeIdentifier>
-    <Compartments>
-      <Compartment Name="Protected" Collapsed="true" />
-      <Compartment Name="Private" Collapsed="true" />
-    </Compartments>
-    <NestedTypes>
-      <Delegate Name="SharpMap.Layers.LabelLayer&lt;TLabel&gt;.GenerateLabelTextDelegate" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Model\Layers\LabelLayer.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Delegate>
-    </NestedTypes>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="SharpMap.Layers.LayerGroup">
@@ -87,7 +68,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="System.Data.DataRow" Collapsed="true">
-    <Position X="15.75" Y="0.75" Width="1.5" />
+    <Position X="15.75" Y="0.5" Width="1.5" />
     <TypeIdentifier />
   </Class>
   <Class Name="System.Data.DataTable" Collapsed="true">
@@ -101,7 +82,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="SharpMap.Features.FeatureDataSet">
-    <Position X="10.5" Y="2.75" Width="1.5" />
+    <Position X="10.5" Y="2.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>Features\FeatureDataSet.cs</FileName>
       <HashCode>gQAAAAAAUiAAQAIAAAAA0AAABFAAABAAAAAAAAgRBBA=</HashCode>
@@ -123,7 +104,7 @@
       </Delegate>
     </NestedTypes>
   </Class>
-  <Class Name="SharpMap.Features.FeatureDataTable" Collapsed="true">
+  <Class Name="SharpMap.Features.FeatureDataTable">
     <Position X="13" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>Features\FeatureDataTable.cs</FileName>
@@ -132,11 +113,34 @@
     <Compartments>
       <Compartment Name="Protected" Collapsed="true" />
       <Compartment Name="Private" Collapsed="true" />
+      <Compartment Name="Internal" Collapsed="true" />
     </Compartments>
+    <NestedTypes>
+      <Delegate Name="SharpMap.Features.FeatureDataTable.GetDefaultViewDelegate" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Features\FeatureDataTable.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="SharpMap.Features.FeatureDataTable.CloneToDelegate" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Features\FeatureDataTable.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="SharpMap.Features.FeatureDataTable.SuspendIndexEventsDelegate" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Features\FeatureDataTable.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="SharpMap.Features.FeatureDataTable.RestoreIndexEventsDelegate" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Features\FeatureDataTable.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="SharpMap.Features.FeatureDataTable&lt;TOid&gt;" Collapsed="true">
-    <Position X="12.75" Y="7" Width="2" />
+  <Class Name="SharpMap.Features.FeatureDataTable&lt;TOid&gt;">
+    <Position X="12.75" Y="9.75" Width="2" />
     <TypeIdentifier>
       <FileName>Features\FeatureDataTable`1.cs</FileName>
       <HashCode>AAAABAAAACAgAhAACAAEIAAAAAAAAAAAkIAEUAAAgBA=</HashCode>
@@ -146,13 +150,6 @@
       <Compartment Name="Private" Collapsed="true" />
     </Compartments>
     <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="SharpMap.Features.FeatureDataRow&lt;TOid&gt;">
-    <Position X="15.5" Y="7" Width="2" />
-    <TypeIdentifier>
-      <FileName>Features\FeatureDataRow`1.cs</FileName>
-      <HashCode>AAACAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-    </TypeIdentifier>
   </Class>
   <Class Name="SharpMap.Features.FeatureDataRow">
     <Position X="15.5" Y="2.75" Width="2" />
@@ -168,6 +165,32 @@
       </Delegate>
     </NestedTypes>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SharpMap.Layers.GeometryLayer">
+    <Position X="7.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Layers\GeometryLayer.cs</FileName>
+      <HashCode>AAAAAAAAACAAAAAAAgAAAAAAAAAAAAAABAAAAAAAABA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SharpMap.Layers.LabelLayer">
+    <Position X="10.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Layers\LabelLayer.cs</FileName>
+      <HashCode>AQAAAACBACAAECAEAAAAAAAEEABBAIAAAAAAACAABBA=</HashCode>
+    </TypeIdentifier>
+    <Compartments>
+      <Compartment Name="Protected" Collapsed="true" />
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Delegate Name="SharpMap.Layers.LabelLayer.GenerateLabelTextDelegate" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Layers\LabelLayer.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
   </Class>
   <Interface Name="SharpMap.Layers.ILayer">
     <Position X="3.75" Y="3" Width="1.5" />

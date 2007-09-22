@@ -98,6 +98,7 @@ namespace SharpMap.Features
             //this.Tables.CollectionChanged += schemaChangedHandler;
             Relations.CollectionChanged += schemaChangedHandler;
         }
+
 #if !CFBuild //No SerializationInfo
         /// <summary>
         /// Initializes a new instance of the FeatureDataSet class.

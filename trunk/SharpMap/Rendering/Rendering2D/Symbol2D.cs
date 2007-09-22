@@ -127,7 +127,11 @@ namespace SharpMap.Rendering.Rendering2D
             {
                 if (_symbolData != null)
                 {
+#if !CFBuild
                     _symbolData.Dispose();
+#else
+                    _symbolData.Close();
+#endif
                 }
             }
         }
