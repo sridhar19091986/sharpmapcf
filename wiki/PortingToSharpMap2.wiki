@@ -585,7 +585,7 @@ we can use instead:
   }
 }}}
 
- *Problem (x like this):*
+*Problem (x like this):*
 
  `string temp = Encoding.UTF8.GetString(_dbaseReader.ReadBytes(dbf.Length)).Replace("\0", "").Trim();`
 
@@ -596,6 +596,16 @@ we can use instead:
   `brBytes = _dbaseReader.ReadBytes(dbf.Length);`
    `string temp = Encoding.UTF8.GetString(brBytes,0,brBytes.Length).Replace("\0","").Trim();`
 
+
+*In SharpMap\Rendering\Rendering3D\ViewSize3D.cs*
+ Problem:
+
+`throw new ArgumentOutOfRangeException("element", element, "Index must be 0, 1 or 2 for a 3D size.");`
+ //in cf takes 2 args
+
+ Workaround:
+  
+ `throw new ArgumentOutOfRangeException("element","element ("+element+") Index must be 0, 1 or 2 for a 3D size.");`
 
 
 
@@ -638,6 +648,8 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
+ 
  
  
  
