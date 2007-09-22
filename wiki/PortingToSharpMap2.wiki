@@ -486,6 +486,28 @@ we can use instead:
               yield return layer;
 }}}
 
+ Problem:
+
+  `_layerProperties = new PropertyDescriptorCollection(propsArray, true);`
+
+   Error No overload for method 'PropertyDescriptorCollection' takes '2' arguments
+
+ WorkAround:
+
+   `_layerProperties = new PropertyDescriptorCollection(propsArray);`
+
+
+ Problem:
+
+	`throw new ArgumentOutOfRangeException(string, value, string);`
+
+         Error	No overload for method 'ArgumentOutOfRangeException' takes '3' arguments
+
+ Workaround:
+
+     `throw new ArgumentOutOfRangeException(string, string+" ("+value+") " + string);`
+
+
 
 
 
@@ -523,6 +545,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
