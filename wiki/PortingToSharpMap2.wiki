@@ -314,6 +314,15 @@ we can use instead:
 	`sb.AppendFormat(null,", {0}", _wgs84ConversionInfo.WKT);`
 
  
+*In SharpMap\CoordinateSystems\GeographicCoordinateSystem.cs*
+ Problem (4 of this kind): 
+
+   `sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);`
+
+ Workaround:
+
+   `sb.AppendFormat(null, ", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);`
+ 
  
  
  
