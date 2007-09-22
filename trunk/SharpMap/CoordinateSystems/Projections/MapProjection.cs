@@ -190,9 +190,18 @@ namespace SharpMap.CoordinateSystems.Projections
 				StringBuilder sb = new StringBuilder();
 				if (_isInverse)
 					sb.Append("INVERSE_MT[");
+#if !CFBuild
 				sb.AppendFormat("PARAM_MT[\"{0}\"", this.Name);
+#else
+                sb.AppendFormat(null, "PARAM_MT[\"{0}\"", this.Name);
+#endif
 				for (int i = 0; i < this.NumParameters; i++)
+#if !CFBuild
 					sb.AppendFormat(", {0}", this.GetParameter(i).WKT);
+#else
+                    sb.AppendFormat(null, ", {0}", this.GetParameter(i).WKT);
+#endif
+
 				//if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
 				//	sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
 				sb.Append("]");
@@ -211,12 +220,22 @@ namespace SharpMap.CoordinateSystems.Projections
 			{
 				StringBuilder sb = new StringBuilder();
 				sb.Append("<CT_MathTransform>");
+#if !CFBuild
 				if (_isInverse)
 					sb.AppendFormat("<CT_InverseTransform Name=\"{0}\">", ClassName);
 				else
 					sb.AppendFormat("<CT_ParameterizedMathTransform Name=\"{0}\">", ClassName);
 				for (int i = 0; i < this.NumParameters; i++)
 					sb.AppendFormat(this.GetParameter(i).XML);
+#else
+                if (_isInverse)
+                    sb.AppendFormat(null, "<CT_InverseTransform Name=\"{0}\">", ClassName);
+                else
+                    sb.AppendFormat(null, "<CT_ParameterizedMathTransform Name=\"{0}\">", ClassName);
+                for (int i = 0; i < this.NumParameters; i++)
+                    sb.AppendFormat(null, this.GetParameter(i).XML);
+
+#endif
 				if (_isInverse)
 					sb.Append("</CT_InverseTransform>");
 				else
@@ -673,7 +692,12 @@ namespace SharpMap.CoordinateSystems.Projections
 			{
 				return  Degrees2Radians(x);
 			}
+#if !CFBuild
 			throw new ArgumentOutOfRangeException("x",x," not a valid longitude in degrees.");
+#else
+            throw new ArgumentOutOfRangeException("x", " x:"+x+ " not a valid longitude in degrees.");
+#endif
+
 		}
 
   
@@ -689,7 +713,11 @@ namespace SharpMap.CoordinateSystems.Projections
 			{
 				return  Degrees2Radians(y);
 			}
+#if !CFBuild
 			throw new ArgumentOutOfRangeException("x",y," not a valid latitude in degrees.");
+#else
+            throw new ArgumentOutOfRangeException("x"," x:"+y + " not a valid latitude in degrees.");
+#endif
 		}
 		#endregion
 	}

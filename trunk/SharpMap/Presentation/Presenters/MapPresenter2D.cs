@@ -178,8 +178,14 @@ namespace SharpMap.Presentation
             {
                 if (value <= 0)
                 {
+#if !CFBuild
                     throw new ArgumentOutOfRangeException("value",
                         value, "Maximum world width must greater than 0.");
+#else
+                    throw new ArgumentOutOfRangeException("value",
+                        "value("+value+") Maximum world width must greater than 0.");
+#endif
+
                 }
 
                 if (_maximumWorldWidth != value)
@@ -199,8 +205,13 @@ namespace SharpMap.Presentation
             {
                 if (value < 0)
                 {
+#if !CFBuild
                     throw new ArgumentOutOfRangeException("value",
                         value, "Minimum world width must be 0 or greater.");
+#else
+                    throw new ArgumentOutOfRangeException("value",
+                        "value("+value+") Minimum world width must be 0 or greater.");
+#endif
                 }
 
                 if (_minimumWorldWidth != value)
@@ -306,8 +317,14 @@ namespace SharpMap.Presentation
             {
                 if (value <= 0)
                 {
+#if !CFBuild
                     throw new ArgumentOutOfRangeException("value",
                         value, "Invalid pixel aspect ratio.");
+#else
+                    throw new ArgumentOutOfRangeException("value",
+                        "value("+value+") Invalid pixel aspect ratio.");
+#endif
+
                 }
 
                 double currentRatio = WorldAspectRatioInternal;

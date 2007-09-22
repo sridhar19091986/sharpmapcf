@@ -80,7 +80,12 @@ namespace SharpMap.Indexing.BinaryTree
         /// <param name="items"></param>
         public void Add(params ItemValue[] items)
         {
+#if !CFBuild
             Array.ForEach(items, Add);
+#else
+            foreach (ItemValue item in items)
+                Add(item);
+#endif
         }
 
         /// <summary>
@@ -308,8 +313,10 @@ namespace SharpMap.Indexing.BinaryTree
                 traceInOrder(root.LeftNode);
             }
 
+#if !CFBuild
             Trace.WriteLine(root.Item.ToString());
-
+#endif
+            
             if (root.RightNode != null)
             {
                 traceInOrder(root.RightNode);

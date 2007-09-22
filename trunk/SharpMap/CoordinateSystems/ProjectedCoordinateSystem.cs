@@ -136,14 +136,20 @@ namespace SharpMap.CoordinateSystems
 			get
 			{
 				StringBuilder sb = new StringBuilder();
+#if !CFBuild
 				sb.AppendFormat("PROJCS[\"{0}\", {1}, {2}",Name, GeographicCoordinateSystem.Wkt, Projection.Wkt);
-                
+#else
+                sb.AppendFormat(null,"PROJCS[\"{0}\", {1}, {2}", Name, GeographicCoordinateSystem.Wkt, Projection.Wkt);
+#endif
                 for (int i = 0; i < Projection.NumParameters; i++)
                 {
                     sb.AppendFormat(NumberFormat, ", {0}", Projection.GetParameter(i).WKT);
                 }
-
+#if !CFBuild
 				sb.AppendFormat(", {0}", LinearUnit.Wkt);
+#else
+                sb.AppendFormat(null, ", {0}", LinearUnit.Wkt);
+#endif
 				
                 //Skip axis info if they contain default values
                 if (AxisInfo.Count != 2 ||
@@ -152,13 +158,23 @@ namespace SharpMap.CoordinateSystems
                 {
                     for (int i = 0; i < AxisInfo.Count; i++)
                     {
+#if !CFBuild
                         sb.AppendFormat(", {0}", GetAxis(i).WKT);
+#else
+                        sb.AppendFormat(null, ", {0}", GetAxis(i).WKT);
+#endif
+
                     }
                 }
 
                 if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
                 {
+#if !CFBuild
                     sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+#else
+                    sb.AppendFormat(null, ", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+#endif
+
                 }
 
 				sb.Append("]");
@@ -182,8 +198,12 @@ namespace SharpMap.CoordinateSystems
                 {
                     sb.Append(ai.XML);
                 }
-
+#if !CFBuild
 				sb.AppendFormat("{0}{1}{2}</CS_ProjectedCoordinateSystem></CS_CoordinateSystem>",
+#else
+                sb.AppendFormat(null, "{0}{1}{2}</CS_ProjectedCoordinateSystem></CS_CoordinateSystem>",
+#endif
+
 					GeographicCoordinateSystem.Xml, LinearUnit.Xml, Projection.Xml);
 				
                 return sb.ToString();
