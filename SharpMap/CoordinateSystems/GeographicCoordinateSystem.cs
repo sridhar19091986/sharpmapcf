@@ -141,7 +141,12 @@ namespace SharpMap.CoordinateSystems
 			get
 			{
 				StringBuilder sb = new StringBuilder();
+#if !CFBuild
 				sb.AppendFormat("GEOGCS[\"{0}\", {1}, {2}, {3}",Name, HorizontalDatum.Wkt, PrimeMeridian.Wkt, AngularUnit.Wkt);
+#else
+                sb.AppendFormat(null, "GEOGCS[\"{0}\", {1}, {2}, {3}", Name, HorizontalDatum.Wkt, PrimeMeridian.Wkt, AngularUnit.Wkt);
+#endif
+
 				//Skip axis info if they contain default values
                 if (AxisInfo.Count != 2 ||
                     AxisInfo[0].Name != "Lon" || AxisInfo[0].Orientation != AxisOrientationEnum.East ||
@@ -149,13 +154,21 @@ namespace SharpMap.CoordinateSystems
                 {
                     for (int i = 0; i < AxisInfo.Count; i++)
                     {
+#if !CFBuild
                         sb.AppendFormat(", {0}", GetAxis(i).WKT);
+#else
+                        sb.AppendFormat(null, ", {0}", GetAxis(i).WKT);
+#endif
                     }
                 }
 
                 if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
                 {
-                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+#if !CFBuild
+                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);    
+#else
+                    sb.AppendFormat(null, ", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+#endif
                 }
 
 				sb.Append("]");
@@ -180,9 +193,14 @@ namespace SharpMap.CoordinateSystems
                 {
                     sb.Append(ai.XML);
                 }
-
+#if !CFBuild
 				sb.AppendFormat("{0}{1}{2}</CS_GeographicCoordinateSystem></CS_CoordinateSystem>",
 					HorizontalDatum.Xml, AngularUnit.Xml, PrimeMeridian.Xml);
+#else
+                sb.AppendFormat(null, "{0}{1}{2}</CS_GeographicCoordinateSystem></CS_CoordinateSystem>",
+                    HorizontalDatum.Xml, AngularUnit.Xml, PrimeMeridian.Xml);
+#endif
+
 				
                 return sb.ToString();				
 			}
