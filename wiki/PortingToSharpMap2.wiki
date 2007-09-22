@@ -336,6 +336,46 @@ we can use instead:
  
  
  
+*In SharpMap\CoordinateSystems\GeocentricCoordinateSystem.cs*
+ Problem (4 of this kind): 
+
+	`sb.AppendFormat(string, args);`
+
+ Workaround:
+
+	`sb.AppendFormat(null, string, args);`
+
+
+*In SharpMap\CoordinateSystems\Unit.cs*
+ Problem (1 of this kind): 
+
+	`sb.AppendFormat(string, args);`
+
+ Workaround:
+
+	`sb.AppendFormat(null, string, args);`
+
+
+*In SharpMap\CoordinateSystems\Projections\MapProjection.cs*
+ Problem (5 of this kind): 
+
+	`sb.AppendFormat(string, args);`
+
+ Workaround:
+
+	`sb.AppendFormat(null, string, args);`
+
+
+ Problem (2 of this kind): 
+ `throw new ArgumentOutOfRangeException("x",y," not a valid latitude in degrees.");`
+ 
+ Workaround:
+ `throw new ArgumentOutOfRangeException("x"," x:"+y + " not a valid latitude in degrees.");`
+
+
+
+
+ 
  
  
  
