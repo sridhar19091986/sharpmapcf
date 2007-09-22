@@ -624,6 +624,18 @@ we can use instead:
     _keyFormatter Was commented because No System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
 
 
+*In SharpMap\Converters\WellKnownText\WKTStreamTokenizer.cs*
+
+ Problem:
+
+  `Int64.TryParse(this.ReadDoubleQuotedWord(), out authorityCode);`
+
+  No TryParse
+
+ Workaround:
+
+   `authorityCode = Int64.Parse(this.ReadDoubleQuotedWord());`
+
 
 
 
@@ -665,6 +677,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
