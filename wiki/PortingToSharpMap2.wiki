@@ -374,15 +374,3 @@ we can use instead:
 
  `throw new ArgumentOutOfRangeException("x"," x:"+y + " not a valid latitude in degrees.");`
  
-
-
-
-
-
-
-
-
-
-
-
-a
