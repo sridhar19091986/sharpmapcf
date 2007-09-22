@@ -468,6 +468,27 @@ we can use instead:
 
 
 
+*In C:\Desarrollo\VisualStudio\proyects\SharpMapCFv2.0\SharpMap\Map.cs*
+ Problem:
+{{{
+         if (layerName.Contains(layerNamePart))
+         {
+             yield return layer;
+         }
+
+}}}
+
+ Workaround:
+ String.Contains return true if the value parameter occurs within this string, or if value
+  is the empty string (""); otherwise, false. So we can do
+{{{
+       if (layerNamePart.Equals("") || layerName.IndexOf(layerNamePart) != -1)
+              yield return layer;
+}}}
+
+
+
+
 
 
 
@@ -502,6 +523,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
