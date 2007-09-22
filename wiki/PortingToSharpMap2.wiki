@@ -324,6 +324,15 @@ we can use instead:
    `sb.AppendFormat(null, ", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);`
  
  
+*In SharpMap\CoordinateSystems\ProjectedCoordinateSystem.cs*
+ Problem (5 of this kind): 
+
+	`sb.AppendFormat(", {0}", LinearUnit.Wkt);`
+
+ Workaround:
+
+	`sb.AppendFormat(null, ", {0}", LinearUnit.Wkt);`
+ 
  
  
  
