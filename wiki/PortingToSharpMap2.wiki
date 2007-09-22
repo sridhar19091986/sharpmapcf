@@ -346,6 +346,8 @@ we can use instead:
 	`sb.AppendFormat(null, string, args);`
 
 
+
+
 *In SharpMap\CoordinateSystems\Unit.cs*
  Problem (1 of this kind): 
 
@@ -367,10 +369,50 @@ we can use instead:
 
 
  Problem (2 of this kind): 
-
+ 
  `throw new ArgumentOutOfRangeException("x",y," not a valid latitude in degrees.");`
  
  Workaround:
-
- `throw new ArgumentOutOfRangeException("x"," x:"+y + " not a valid latitude in degrees.");`
  
+ `throw new ArgumentOutOfRangeException("x"," x:"+y + " not a valid latitude in degrees.");`
+
+
+*In SharpMap\Presentation\Presenters\MapPresenter2D.cs*
+ Problem (2 of this kind): 
+ 
+ `throw new ArgumentOutOfRangeException("value", value, "Invalid pixel aspect ratio.");`
+ 
+ Workaround:
+ 
+ `throw new ArgumentOutOfRangeException("value","value("+value+") Invalid pixel aspect ratio.");`
+
+*In SharpMap\Rendering\Rendering2D\Size2D.cs*
+ Problem (3 of this kind): 
+
+ `throw new ArgumentOutOfRangeException("row", row, "A Point2D has only 1 row.");`
+ 
+ Workaround:
+ 
+`throw new ArgumentOutOfRangeException("row", "row("+row+") A Point2D has only 1 row.");`
+
+
+*In SharpMap\Indexing\BinaryTree\BinaryTree.cs*
+ Problem: 
+  
+ `Array.ForEach(items, Add);` 
+   //Error:System.Array' does not contain a definition for 'ForEach'
+
+ Workaround:
+{{{
+	foreach (ItemValue item in items)
+                Add(item);
+}}}
+
+
+ Problem:
+ `Trace.WriteLine(root.Item.ToString());`
+ //Error 136 'System.Diagnostics.Trace' does not contain a definition for 'WriteLine'
+
+ Workaround:
+
+	Commented out  
