@@ -637,6 +637,21 @@ we can use instead:
    `authorityCode = Int64.Parse(this.ReadDoubleQuotedWord());`
 
 
+*In C:\Desarrollo\VisualStudio\proyects\SharpMapCFv2.0\SharpMap\Indexing\RTree\RTree.cs*
+ Problem:
+
+   `return (uint)Interlocked.Increment(ref _nextNodeId);`
+
+    Needs an Int32 in CF, but gets a long (Int64)
+
+ Workaround:
+
+    Let's use an Int32 for _nextNodeId
+
+        `private long _nextNodeId = 0;`
+
+   MaxInt: 2,147,483,647
+
 
 
 
@@ -677,6 +692,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
