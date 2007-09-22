@@ -510,6 +510,19 @@ we can use instead:
 
 
 
+*In SharpMap\Data\Providers\Shapefile\DbaseWriter.cs*
+ Problem:
+
+    `_format.Insert(5, decimalPlaces).Insert(3, length);`
+
+     //No second argument of StringBuilder.Insert is neither Byte(decimalPlaces) or int (length)
+
+ Workaround:
+
+ StringBuilder.Insert nserts the string representation of first argument into this
+ instance at the specified character position.
+
+ `_format.Insert(5, decimalPlaces.ToString()).Insert(3, length.ToString());`
 
 
 
@@ -545,6 +558,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
