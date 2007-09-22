@@ -90,8 +90,11 @@ namespace SharpMap
                 PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof (ILayer));
                 PropertyDescriptor[] propsArray = new PropertyDescriptor[props.Count];
                 props.CopyTo(propsArray, 0);
-
+#if !CFBuild
                 _layerProperties = new PropertyDescriptorCollection(propsArray, true);
+#else
+                _layerProperties = new PropertyDescriptorCollection(propsArray);
+#endif
             }
 
 
@@ -652,11 +655,17 @@ namespace SharpMap
                 foreach (ILayer layer in Layers)
                 {
                     String layerName = layer.LayerName.ToLower(CultureInfo.CurrentCulture);
-
+#if !CFBuild //Contains true if the value parameter occurs within this string, or if value is the empty string (""); otherwise, false. 
                     if (layerName.Contains(layerNamePart))
                     {
                         yield return layer;
                     }
+#else
+                    if (layerNamePart.Equals("") || layerName.IndexOf(layerNamePart) != -1)
+                    {
+                        yield return layer;
+                    }
+#endif
                 }
             }
         }
@@ -1245,8 +1254,14 @@ namespace SharpMap
             {
                 if (index < 0 || index >= _layers.Count)
                 {
+#if !CFBuild
                     throw new ArgumentOutOfRangeException("layerIndexes", index,
                         String.Format("Layer index must be between 0 and {0}", _layers.Count));
+#else
+                    throw new ArgumentOutOfRangeException("layerIndexes",
+                        "layerIndexes("+index+") "+
+                        String.Format("Layer index must be between 0 and {0}", _layers.Count));
+#endif
                 }
 
                 yield return _layers[index];
