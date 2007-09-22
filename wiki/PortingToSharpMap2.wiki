@@ -416,3 +416,40 @@ we can use instead:
  Workaround:
 
 	Commented out  
+ 
+
+*In C:\Desarrollo\VisualStudio\proyects\SharpMapCFv2.0\SharpMap\Styles\StylePen.cs*
+ Problem:
+
+   `buffer.AppendFormat("N3", value);`
+   //Error The best overloaded method match for 'System.Text.StringBuilder.AppendFormat(System.IFormatProvider, string, params object[])' has some invalid arguments
+
+ Workaround:
+
+    `buffer.AppendFormat(null, "N3", value);`
+
+
+
+== NOT Resolved ==
+
+TO BE RESOLVED
+
+
+*In SharpMap\Presentation\Presenters\MapPresenter2D.cs*
+ Problem:
+ private void handleLayersChanged(object sender, ListChangedEventArgs e){..}
+ is called when a layer (in a list) is called. But ListChangedEventArgs has no ifPropertyDescriptor,
+ so how can be know which layer changed?
+{{{
+	case ListChangedType.ItemChanged:
+                    if(e.PropertyDescriptor.Name == Layer.EnabledProperty.Name)
+                    {
+                        renderAllLayers();   
+                    }
+                    break;
+}}}
+
+
+ Workaround: 
+
+   Let's always render all layers by now.
