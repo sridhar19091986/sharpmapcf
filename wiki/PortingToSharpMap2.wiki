@@ -444,6 +444,17 @@ we can use instead:
 
 
 
+*In SharpMap\Data\Providers\Shapefile\DbaseEncodingRegistry.cs*
+ Problem:
+
+	`return Encoding.GetEncoding(CultureInfo.TextInfo.MacCodePage);
+
+         In CF Stream, TextInfo only has ANSICodePage
+
+ Workaround:
+
+	let's make TextInfo.ANSICodePage default
+
 
 
 
@@ -482,6 +493,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
