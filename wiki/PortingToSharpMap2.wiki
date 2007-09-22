@@ -304,6 +304,15 @@ we can use instead:
 	 Use `sb.AppendFormat(null, "PROJECTION[\"{0}\"", Name);`
 
  
+*In SharpMap\CoordinateSystems\HorizontalDatum.cs*
+ Problem (3 of this kind): 
+
+	`sb.AppendFormat(", {0}", _wgs84ConversionInfo.WKT);`
+
+ Workaround:
+
+	`sb.AppendFormat(null,", {0}", _wgs84ConversionInfo.WKT);`
+
  
  
  
