@@ -343,7 +343,7 @@
     <Compile Include="Utilities\QuickSort.cs" />
     <Compile Include="Utilities\SharpMapVersion.cs" />
     <Compile Include="Utilities\Tolerance.cs" />
-    <Compile Include="CFUtils\CFBackgroundWorker.cs">
+    <Compile Include="CFUtils\BackgroundWorker.cs">
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>

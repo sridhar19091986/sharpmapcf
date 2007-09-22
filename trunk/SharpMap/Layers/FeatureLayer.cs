@@ -26,6 +26,8 @@ using SharpMap.Geometries;
 using SharpMap.Presentation;
 using SharpMap.Styles;
 
+//using SharpMapCF.ComponentModel;
+
 namespace SharpMap.Layers
 {
     /// <summary>
@@ -39,11 +41,8 @@ namespace SharpMap.Layers
         private readonly FeatureDataView _visibleFeatureView;
         private readonly FeatureDataView _selectedFeatures;
         private readonly FeatureDataView _highlightedFeatures;
-#if !CFBuild
         private readonly BackgroundWorker _dataQueryWorker = new BackgroundWorker();
-#else
-        private readonly CFBackgroundWorker _dataQueryWorker = new CFBackgroundWorker();
-#endif
+
 
 
         
@@ -195,12 +194,12 @@ namespace SharpMap.Layers
 
             DataSource.Close();
         }
-//#if !CFBuild
+
         private void _dataQueryWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             OnLayerDataAvailable();
         }
-
+        
         private void _dataQueryWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             if (e.Argument is BoundingBox)
@@ -214,7 +213,7 @@ namespace SharpMap.Layers
                 executeQuery(geometry);
             }
         }
-//#endif
+
         private void executeQuery(BoundingBox bounds)
         {
             DataSource.ExecuteIntersectionQuery(bounds, _cachedFeatures);
