@@ -112,7 +112,12 @@ namespace SharpMap.Rendering.Rendering3D
                 }
                 else
                 {
+#if !CFBuild
                     throw new ArgumentOutOfRangeException("element", element, "Index must be 0, 1 or 2 for a 3D size.");
+#else
+                    throw new ArgumentOutOfRangeException("element",
+                        "element ("+element+") Index must be 0, 1 or 2 for a 3D size.");
+#endif
                 }
             }
         }

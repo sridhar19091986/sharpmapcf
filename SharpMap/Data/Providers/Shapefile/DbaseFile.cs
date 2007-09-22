@@ -504,9 +504,13 @@ namespace SharpMap.Data.Providers.ShapeFile
             checkState();
 
             // TODO: implement asynchronous access
+#if !CFBuild
 			_dbaseFileStream = new FileStream(_filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, 
 				exclusive ? FileShare.None : FileShare.Read, 4096, FileOptions.None);
-
+#else
+            _dbaseFileStream = new FileStream(_filename, FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                exclusive ? FileShare.None : FileShare.Read, 4096);
+#endif
             _isOpen = true;
 
             if (!_headerIsParsed) //Don't read the header if it's already parsed
