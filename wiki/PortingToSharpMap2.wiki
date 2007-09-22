@@ -574,6 +574,7 @@ we can use instead:
    //The TryParse method is like the Parse method, except the TryParse method does not  throw an exception if the conversion fails.
 
  Workaround:
+
 {{{
   try{
          bl = double.Parse(temp, NumberStyles.Float, DbaseConstants.StorageNumberFormat);
@@ -592,8 +593,8 @@ we can use instead:
 
  Workaround:
 
-  `brBytes = _dbaseReader.ReadBytes(dbf.Length);
-   string temp = Encoding.UTF8.GetString(brBytes,0,brBytes.Length).Replace("\0", "").Trim();`
+  `brBytes = _dbaseReader.ReadBytes(dbf.Length);`
+   `string temp = Encoding.UTF8.GetString(brBytes,0,brBytes.Length).Replace("\0","").Trim();`
 
 
 
@@ -637,6 +638,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
