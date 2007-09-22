@@ -296,10 +296,14 @@ we can use instead:
  
 *In SharpMap\CoordinateSystems\Projection.cs*
  Problem: 
+
 	`sb.AppendFormat("PROJECTION[\"{0}\"", Name);`
+
  Workaround:
+
 	 Use `sb.AppendFormat(null, "PROJECTION[\"{0}\"", Name);`
 
+ 
  
  
  
