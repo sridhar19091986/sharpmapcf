@@ -246,16 +246,28 @@ namespace SharpMap.CoordinateSystems
             get
             {
                 StringBuilder sb = new StringBuilder();
+#if !CFBuild
                 sb.AppendFormat("DATUM[\"{0}\", {1}", Name, _ellipsoid.Wkt);
+#else
+                sb.AppendFormat(null, "DATUM[\"{0}\", {1}", Name, _ellipsoid.Wkt);
+#endif
                 
                 if (_wgs84ConversionInfo != null)
                 {
+#if !CFBuild
                     sb.AppendFormat(", {0}", _wgs84ConversionInfo.WKT);
+#else
+                    sb.AppendFormat(null,", {0}", _wgs84ConversionInfo.WKT);
+#endif
                 }
 
                 if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
                 {
+#if !CFBuild
                     sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+#else
+                    sb.AppendFormat(null, ", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+#endif
                 }
 
                 sb.Append("]");

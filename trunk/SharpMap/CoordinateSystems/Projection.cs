@@ -104,11 +104,19 @@ namespace SharpMap.CoordinateSystems
 			get
 			{
 				StringBuilder sb = new StringBuilder();
+#if !CFBuild
 				sb.AppendFormat("PROJECTION[\"{0}\"", Name);
+#else
+       			sb.AppendFormat(null, "PROJECTION[\"{0}\"", Name);
+#endif
 
 				if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
 				{
+#if !CFBuild
 					sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+#else
+                    sb.AppendFormat(null, ", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+#endif
 				}
 
 				sb.Append("]");
