@@ -827,6 +827,19 @@ we can use instead:
 
 
 
+*Problem*
+ `string wkt = File.ReadAllText(projfile);`
+
+  //Error no ReadAllText method for File class in CF
+
+ Workaround:
+{{{
+  StreamReader sr = new StreamReader(projfile);
+  string wkt = sr.ReadToEnd();
+  sr.Close();
+
+}}}
+
 
 
 
@@ -866,6 +879,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
