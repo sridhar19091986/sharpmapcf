@@ -348,6 +348,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Map Model.cd" />
     <None Include="Rendering\RenderingClasses.cd" />
   </ItemGroup>

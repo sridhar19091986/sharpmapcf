@@ -39,10 +39,14 @@ namespace SharpMap.Converters.WellKnownText
         public static string SridToWkt(int srid)
         {
             XmlDocument xmldoc = new XmlDocument();
-
+#if !CFBuild
             string file = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase)
                           + "\\SpatialRefSys.xml";
-
+#else
+            System.Reflection.AssemblyName asn = System.Reflection.Assembly.GetExecutingAssembly().GetName();
+            String codebase = asn.CodeBase.Substring(0, asn.CodeBase.LastIndexOf(asn.Name));
+            string file = System.IO.Path.GetDirectoryName(codebase + "\\SpatialRefSys.xml");
+#endif
             xmldoc.Load(file);
 
             XmlNode node = xmldoc.DocumentElement.SelectSingleNode(
