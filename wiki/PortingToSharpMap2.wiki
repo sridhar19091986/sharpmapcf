@@ -924,7 +924,7 @@ TO BE RESOLVED
  
 
 *In SharpMap\Indexing\RTree\SelfOptimizingSpatialIndex.cs*
- Problem:
+*Problem:*
 {{{
  private readonly EventWaitHandle _userIdleEvent;
  private readonly EventWaitHandle _machineIdleEvent;
@@ -940,7 +940,7 @@ TO BE RESOLVED
         private readonly OpenNETCF.Threading.EventWaitHandle _terminateEvent;
 }}}
 
- Problem:
+*Problem:*
  As result of previous problem, these lines wont compile
 {{{
   _userIdleEvent = new AutoResetEvent(false);
@@ -959,7 +959,7 @@ TO BE RESOLVED
  //An ManualResetEvent is functionally equivalent to an EventWaitHandle created with EventResetMode.ManalReset
 
 
- *Problem:*
+*Problem:*
  `WaitHandle.WaitAny(events, _periodMilliseconds, false);`
   //There's no WaitAny for WaitHandle in CF
 
@@ -970,7 +970,7 @@ TO BE RESOLVED
 }}}
 
 
- *Problem:*
+*Problem:*
 {{{
   if (_restructureThread.IsAlive && !_restructureThread.Join(5000)){
 	_restructureThread.Abort();
@@ -986,6 +986,7 @@ TO BE RESOLVED
   //return true if the thread has terminated; false if the thread has not terminated after the amount of time 
   //specified by the millisecondsTimeout parameter has elapsed.
   
+ 
  
  
  
