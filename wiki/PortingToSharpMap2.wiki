@@ -768,7 +768,7 @@ we can use instead:
 
 
 
-*In SharpMap\Data\Providers\Shapefile\ShapeFileProvider.cs* *(Medium)*
+*In SharpMap\Data\Providers\Shapefile\ShapeFileProvider.cs* 
  Problem:
    `CultureInfo culture = Thread.CurrentThread.CurrentCulture;`
 
@@ -784,7 +784,7 @@ we can use instead:
 }}}  
 
 
-*Problem:*
+*Problem:* *(Medium)*
 
   `Encoding encoding = Encoding.GetEncoding(culture.TextInfo.OEMCodePage);`
 
@@ -794,6 +794,38 @@ we can use instead:
 
   `Encoding encoding = Encoding.Unicode;`
  
+
+
+*Problem:*
+{{{
+ if (layerName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0){
+ 	throw new ArgumentException("Parameter cannot have invalid filename characters", "layerName");
+ }
+}}}
+ //Error, no GetInvalidFileNameChars() method for Path class
+
+ Workaround:
+{{{
+    char[] badset = new char[41];
+    for (int i = 0; i < 32; i++)
+        badset[i] = (char)i;
+    badset[32] = '"';
+    badset[33] = '<';
+    badset[34] = '>';
+    badset[35] = '|';
+    badset[36] = '?';
+    badset[37] = ':';
+    badset[38] = '/';
+    badset[39] = '\\';
+    badset[39] = '*';
+
+    if (layerName.IndexOfAny(badset) >= 0)
+        throw new ArgumentException("Parameter cannot have invalid filename characters", "layerName");
+}}}
+
+ //Invalid Filename Characters in CF http://www.z-space.com/kb/Article.aspx?ID=10145
+
+
 
 
 
@@ -835,6 +867,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
