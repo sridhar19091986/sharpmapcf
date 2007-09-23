@@ -653,6 +653,16 @@ we can use instead:
    MaxInt: 2,147,483,647
 
 
+*In SharpMap\CoordinateSystems\Ellipsoid.cs*
+ Problem:
+ 
+    `sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);`
+    //In CF no overload takes these args
+
+ Workaround:
+
+ `sb.AppendFormat(null, ", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);`
+
 
 
 
@@ -692,6 +702,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
