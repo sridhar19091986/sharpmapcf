@@ -845,7 +845,7 @@ we can use instead:
 
 *Problem:*
  `Trace.TraceWarning("Coordinate system file '" + projfile+ "' found, but could not be parsed. WKT parser returned:" + ex.Message);`
-
+ //Error, no TraceWarning for CF
  Workaround:
 
  `Trace.Assert(false, "Coordinate system file '" + projfile+ "' found, but could not be parsed. WKT parser returned:" + ex.Message);`
@@ -887,6 +887,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
