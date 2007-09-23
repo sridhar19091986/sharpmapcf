@@ -187,13 +187,6 @@ In public ShapeFileIsInvalidException(SerializationInfo info, StreamingContext c
 
 == Deleted fields ==
 
-*In SharpMap\Indexing\RTree\SelfOptimizingSpatialIndex.cs*
-	private readonly EventWaitHandle _userIdleEvent;
-	private readonly EventWaitHandle _machineIdleEvent;
-	private readonly EventWaitHandle _terminateEvent;
-Reason: No System.Threading.EventWaitHandle
-
-
 *In SharpMap\Indexing\RTree\DynamicRTree.cs*
 	private static readonly BinaryFormatter _keyFormatter = new BinaryFormatter();
 Reason: No System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
@@ -929,6 +922,70 @@ TO BE RESOLVED
  
  
  
+
+*In SharpMap\Indexing\RTree\SelfOptimizingSpatialIndex.cs*
+ Problem:
+{{{
+ private readonly EventWaitHandle _userIdleEvent;
+ private readonly EventWaitHandle _machineIdleEvent;
+ private readonly EventWaitHandle _terminateEvent;
+}}}
+ //No EventWaitHandle in CF
+
+ Workaround:
+ //We use that provided in OpenNETCF
+{{{
+        private readonly OpenNETCF.Threading.EventWaitHandle _userIdleEvent;
+        private readonly OpenNETCF.Threading.EventWaitHandle _machineIdleEvent;
+        private readonly OpenNETCF.Threading.EventWaitHandle _terminateEvent;
+}}}
+
+ Problem:
+ As result of previous problem, these lines wont compile
+{{{
+  _userIdleEvent = new AutoResetEvent(false);
+  _machineIdleEvent = new AutoResetEvent(false);
+  _terminateEvent = new ManualResetEvent(false);
+}}}
+
+ Workaround:
+{{{
+  _userIdleEvent = new OpenNETCF.Threading.EventWaitHandle(false,OpenNETCF.Threading.EventResetMode.AutoReset);
+  _machineIdleEvent = new OpenNETCF.Threading.EventWaitHandle(false,OpenNETCF.Threading.EventResetMode.AutoReset);
+  _terminateEvent = new OpenNETCF.Threading.EventWaitHandle(false, OpenNETCF.Threading.EventResetMode.ManualReset);
+}}}
+ //In the .NET Framework version 2.0, AutoResetEvent derives from the new EventWaitHandle class.
+ //An AutoResetEvent is functionally equivalent to an EventWaitHandle created with EventResetMode.AutoReset
+ //An ManualResetEvent is functionally equivalent to an EventWaitHandle created with EventResetMode.ManalReset
+
+
+ *Problem:*
+ `WaitHandle.WaitAny(events, _periodMilliseconds, false);`
+  //There's no WaitAny for WaitHandle in CF
+
+ Workaround: *Is this equivalent??*
+{{{
+   IntPtr[] lpHandles = { _userIdleEvent.Handle, _machineIdleEvent.Handle, _terminateEvent.Handle };
+   OpenNETCF.Threading.NativeMethods.WaitForMultipleObjects(3, lpHandles, false, (uint)_periodMilliseconds);                
+}}}
+
+
+ *Problem:*
+{{{
+  if (_restructureThread.IsAlive && !_restructureThread.Join(5000)){
+	_restructureThread.Abort();
+   }
+}}}
+
+ Workaround:  *Is this equivalent??*
+{{{
+   if (!_restructureThread.Join(5000)){
+      _restructureThread.Abort();
+   }
+}}}
+  //return true if the thread has terminated; false if the thread has not terminated after the amount of time 
+  //specified by the millisecondsTimeout parameter has elapsed.
+  
  
  
  
