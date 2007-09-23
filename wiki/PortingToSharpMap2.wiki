@@ -852,6 +852,14 @@ we can use instead:
 
 
 
+*Problem: *
+ `_shapeFileStream = new FileStream(Filename, FileMode.OpenOrCreate, FileAccess.ReadWrite,exclusive ? FileShare.None : FileShare.Read, 4096, FileOptions.None);`
+
+ //Error no FileStream? method takes 6 arguments 
+
+ Workaround: 
+
+ `_shapeFileStream = new FileStream(Filename, FileMode.OpenOrCreate, FileAccess.ReadWrite,exclusive ? FileShare.None : FileShare.Read, 4096);`
 
 
 
@@ -887,6 +895,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
