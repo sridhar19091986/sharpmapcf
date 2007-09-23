@@ -986,6 +986,24 @@ TO BE RESOLVED
   //Join(int) returns true if the thread has terminated; false if the thread has not terminated after the amount of time specified by the millisecondsTimeout parameter has elapsed.
   
  
+
+*In SharpMap\Utilities\IdleMonitor.cs*
+*Problem:*  *Not Sure of this*
+{{{
+            if (_pollIdleThread.IsAlive && !_pollIdleThread.Join(5000)){
+                _pollIdleThread.Abort();
+            }
+}}}
+ //No IsAlive in CF
+
+ Workaround:
+{{{
+            if (!_pollIdleThread.Join(5000))
+            {
+                _pollIdleThread.Abort();
+            }
+}}}
+ 
  
  
  
