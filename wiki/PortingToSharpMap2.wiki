@@ -737,6 +737,16 @@ we can use instead:
    //Not good but this does no harm
 
 
+*In SharpMap\Rendering\Rendering2D\Rectangle2D.cs*
+ Problem (2 of this kind):
+
+  `throw new ArgumentOutOfRangeException("row", row, "A Rectangle2D has only 2 rows.");`
+
+  //Error No overload for method 'ArgumentOutOfRangeException' takes '3' arguments
+
+ Workaround:
+
+ `throw new ArgumentOutOfRangeException("row", "row ("+row+") A Rectangle2D has only 2 rows.");`
 
 
 
@@ -766,6 +776,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
