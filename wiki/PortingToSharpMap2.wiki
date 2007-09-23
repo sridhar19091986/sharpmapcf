@@ -768,6 +768,23 @@ we can use instead:
 
 
 
+*In SharpMap\Data\Providers\Shapefile\ShapeFileProvider.cs* *(Medium)*
+ Problem:
+   `CultureInfo culture = Thread.CurrentThread.CurrentCulture;`
+
+   // culture info is not bound to a thread but to the device
+
+
+ Workaround:
+
+   ////How to: Get Culture Information http://msdn2.microsoft.com/en-us/library/ms172501.aspx
+{{{
+    System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
+    CultureInfo culture = asm.GetName().CultureInfo;
+}}}  
+
+
+
 
 
 
@@ -806,6 +823,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
