@@ -198,11 +198,6 @@ Reason: No System.Threading.EventWaitHandle
 	private static readonly BinaryFormatter _keyFormatter = new BinaryFormatter();
 Reason: No System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
 
-*In SharpMap\Utilities\IdleMonitor.cs*
-	  private EventWaitHandle _terminateEvent;
-Reason: //No System.Threading.EventWaitHandle
-
-
 *In SharpMap\Features\FeatureDataTable.cs*
       [Browsable(false)]
  
@@ -917,6 +912,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
