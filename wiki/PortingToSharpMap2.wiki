@@ -894,6 +894,7 @@ TO BE RESOLVED
  
  
 *In SharpMap\Presentation\Presenters\LayersPresenter.cs* *(Medium)*
+ Issue [http://code.google.com/p/sharpmapcf/issues/detail?id=1]
  Problem:
  `if(e.PropertyDescriptor.Name == Layer.EnabledProperty.Name)`, where e is ListChangedEventArgs
 
@@ -914,6 +915,7 @@ TO BE RESOLVED
 }}}
 
    //Not good but this does no harm
+ 
  
  
  
