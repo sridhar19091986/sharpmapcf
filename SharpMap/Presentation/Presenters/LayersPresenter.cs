@@ -82,6 +82,7 @@ namespace SharpMap.Presentation
             switch (e.ListChangedType)
             {
                 case ListChangedType.ItemChanged:
+#if !CFBuild
                     if(e.PropertyDescriptor.Name == Layer.EnabledProperty.Name)
                     {
                         ILayer layer = Map.Layers[e.NewIndex];
@@ -94,6 +95,17 @@ namespace SharpMap.Presentation
                             View.DisableLayer(layer.LayerName);
                         }
                     }
+#else //Not good but this does no harm
+                        ILayer layer = Map.Layers[e.NewIndex];
+                        if (layer.Enabled)
+                        {
+                            View.EnableLayer(layer.LayerName);
+                        }
+                        else
+                        {
+                            View.DisableLayer(layer.LayerName);
+                        }
+#endif
                     break;
                 // The following are taken care of by data binding:
                 case ListChangedType.ItemMoved:
