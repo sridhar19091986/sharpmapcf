@@ -363,13 +363,31 @@ namespace SharpMap.Data.Providers.ShapeFile
 			{
 				throw new ArgumentNullException("layerName");
 			}
-
+#if !CFBuild
 			if (layerName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
 			{
 				throw new ArgumentException("Parameter cannot have invalid filename characters", "layerName");
 			}
+#else //Invalid Filename Characters in CF http://www.z-space.com/kb/Article.aspx?ID=10145
+            char[] badset = new char[41];
+            for (int i = 0; i < 32; i++)
+                badset[i] = (char)i;
+            badset[32] = '"';
+            badset[33] = '<';
+            badset[34] = '>';
+            badset[35] = '|';
+            badset[36] = '?';
+            badset[37] = ':';
+            badset[38] = '/';
+            badset[39] = '\\';
+            badset[39] = '*';
 
-			if (!String.IsNullOrEmpty(Path.GetExtension(layerName)))
+            if (layerName.IndexOfAny(badset) >= 0)
+            {
+                throw new ArgumentException("Parameter cannot have invalid filename characters", "layerName");
+            }
+#endif
+            if (!String.IsNullOrEmpty(Path.GetExtension(layerName)))
 			{
 				layerName = Path.GetFileNameWithoutExtension(layerName);
 			}
@@ -814,9 +832,13 @@ namespace SharpMap.Data.Providers.ShapeFile
 				try
 				{
 					//enableReading();
+#if !CFBuild
 					_shapeFileStream = new FileStream(Filename, FileMode.OpenOrCreate, FileAccess.ReadWrite,
 						exclusive ? FileShare.None : FileShare.Read, 4096, FileOptions.None);
-
+#else
+                    _shapeFileStream = new FileStream(Filename, FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                        exclusive ? FileShare.None : FileShare.Read, 4096);
+#endif
 					_shapeFileReader = new BinaryReader(_shapeFileStream);
 					_shapeFileWriter = new BinaryWriter(_shapeFileStream);
 
@@ -2134,15 +2156,25 @@ namespace SharpMap.Data.Providers.ShapeFile
 			{
 				try
 				{
+#if !CFBuild
 					string wkt = File.ReadAllText(projfile);
+#else
+                    StreamReader sr = new StreamReader(projfile);
+                    string wkt = sr.ReadToEnd();
+                    sr.Close();
+#endif
 					_coordinateSystem = (ICoordinateSystem)CoordinateSystemWktReader.Parse(wkt);
 					_coordsysReadFromFile = true;
 				}
 				catch (ArgumentException ex)
 				{
+#if !CFBuild
 					Trace.TraceWarning("Coordinate system file '" + projfile
 									   + "' found, but could not be parsed. WKT parser returned:" + ex.Message);
-
+#else
+                    Trace.Assert(false,"Coordinate system file '" + projfile
+                                       + "' found, but could not be parsed. WKT parser returned:" + ex.Message);
+#endif
 					throw new ShapeFileIsInvalidException("Invalid .prj file", ex);
 				}
 			}
