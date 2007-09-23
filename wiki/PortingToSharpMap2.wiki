@@ -784,6 +784,18 @@ we can use instead:
 }}}  
 
 
+*Problem:*
+
+  `Encoding encoding = Encoding.GetEncoding(culture.TextInfo.OEMCodePage);`
+
+   //TextInfo has no OEMCodePage property
+
+ Workaround:  *(NOT SURE OF THIS)*
+
+  `Encoding encoding = Encoding.Unicode;`
+ 
+
+
 
 
 
@@ -823,6 +835,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
