@@ -877,7 +877,7 @@ TO BE RESOLVED
 *In SharpMap\Presentation\Presenters\MapPresenter2D.cs*
  Issue [http://code.google.com/p/sharpmapcf/issues/detail?id=1]
  
- Problem:
+*Problem:*
   private void handleLayersChanged(object sender, ListChangedEventArgs e){..}
  is called when a layer (in a list) is called. But ListChangedEventArgs has no PropertyDescriptor, so how can be know which layer changed?
 {{{
@@ -1004,6 +1004,7 @@ TO BE RESOLVED
                 _pollIdleThread.Abort();
             }
 }}}
+ 
  
  
  
