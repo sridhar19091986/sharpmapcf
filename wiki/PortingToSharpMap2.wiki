@@ -709,28 +709,6 @@ we can use instead:
 
 
 
-*In SharpMap\Presentation\Presenters\LayersPresenter.cs* *(Medium)*
- Problem:
- `if(e.PropertyDescriptor.Name == Layer.EnabledProperty.Name)`, where e is ListChangedEventArgs
-
-  //ListChangedEventArgs has no PropertyDescriptor
-
- Workaround:
-
-{{{
-   ILayer layer = Map.Layers[e.NewIndex];
-   if (layer.Enabled)
-   {
-      View.EnableLayer(layer.LayerName);
-   }
-   else
-   {
-       View.DisableLayer(layer.LayerName);
-   }
-}}}
-
-   //Not good but this does no harm
-
 
 *In SharpMap\Rendering\Rendering2D\Rectangle2D.cs*
  Problem (2 of this kind):
@@ -914,6 +892,28 @@ TO BE RESOLVED
    Let's always render all layers by now.
  
  
+ 
+*In SharpMap\Presentation\Presenters\LayersPresenter.cs* *(Medium)*
+ Problem:
+ `if(e.PropertyDescriptor.Name == Layer.EnabledProperty.Name)`, where e is ListChangedEventArgs
+
+  //ListChangedEventArgs has no PropertyDescriptor
+
+ Workaround:
+
+{{{
+   ILayer layer = Map.Layers[e.NewIndex];
+   if (layer.Enabled)
+   {
+      View.EnableLayer(layer.LayerName);
+   }
+   else
+   {
+       View.DisableLayer(layer.LayerName);
+   }
+}}}
+
+   //Not good but this does no harm
  
  
  
