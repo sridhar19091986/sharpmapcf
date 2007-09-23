@@ -31,7 +31,10 @@ namespace SharpMap.Utilities
         private Thread _pollIdleThread;
 #if !CFBuild //No System.Threading.EventWaitHandle
         private EventWaitHandle _terminateEvent;
+#else
+        private OpenNETCF.Threading.EventWaitHandle _terminateEvent;
 #endif
+
         private bool _isDisposed;
         private int _terminating = 0;
         private bool _wasUserIdle = false;
@@ -41,8 +44,17 @@ namespace SharpMap.Utilities
         {
             _userIdleThresholdSeconds = userIdleThresholdInSeconds;
             _machineIdleThresholdSeconds = machineIdleThresholdInSeconds;
-
+#if !CFBuild
             _terminateEvent = new ManualResetEvent(false);
+#else //In the .NET Framework version 2.0, ManualResetEvent derives from the new EventWaitHandle class.
+      //A ManualResetEvent is functionally equivalent to an EventWaitHandle created with 
+      //EventResetMode.ManualReset   from msdn
+
+            _terminateEvent = new OpenNETCF.Threading.EventWaitHandle(false,
+                OpenNETCF.Threading.EventResetMode.ManualReset);
+                        
+#endif
+
         }
 
         #region Dispose pattern

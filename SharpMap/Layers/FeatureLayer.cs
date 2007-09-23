@@ -26,8 +26,6 @@ using SharpMap.Geometries;
 using SharpMap.Presentation;
 using SharpMap.Styles;
 
-//using SharpMapCF.ComponentModel;
-
 namespace SharpMap.Layers
 {
     /// <summary>
@@ -43,9 +41,6 @@ namespace SharpMap.Layers
         private readonly FeatureDataView _highlightedFeatures;
         private readonly BackgroundWorker _dataQueryWorker = new BackgroundWorker();
 
-
-
-        
         #endregion
 
         /// <summary>
