@@ -275,7 +275,8 @@ namespace SharpMap.Data.Providers.ShapeFile
 		/// <exception cref="ArgumentException">
 		/// Thrown if <paramref name="layerName"/> has invalid path characters.
 		/// </exception>
-		public static ShapeFileProvider Create(string directory, string layerName, ShapeType type, FeatureDataTable schema)
+		public static ShapeFileProvider Create(string directory, string layerName, ShapeType type, 
+            FeatureDataTable schema)
 		{
 			if (type == ShapeType.Null)
 			{
@@ -311,8 +312,24 @@ namespace SharpMap.Data.Providers.ShapeFile
 		public static ShapeFileProvider Create(DirectoryInfo directory, string layerName,
 			ShapeType type, FeatureDataTable model)
 		{
+#if !CFBuild
 			CultureInfo culture = Thread.CurrentThread.CurrentCulture;
+#else //How to: Get Culture Information http://msdn2.microsoft.com/en-us/library/ms172501.aspx
+            System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
+            CultureInfo culture = asm.GetName().CultureInfo;
+#endif
+
+#if !CFBuild
 			Encoding encoding = Encoding.GetEncoding(culture.TextInfo.OEMCodePage);
+#else
+            //The .NET Compact Framework uses Unicode internally to represent character data. 
+            //Unicode is a useful way to store character data because it provides a way to identify the 
+            //characters used in any language in the world. You can use encoding to map Unicode characters
+            //to other character representations, which can be useful if your application must provide character
+            //data as an array of bytes specific to a code page such as ASCII or Windows-1252.
+            Encoding encoding = Encoding.Unicode;
+            //Encoding encoding = Encoding.Default;
+#endif
 			return Create(directory, layerName, type, model, culture, encoding);
 		}
 
