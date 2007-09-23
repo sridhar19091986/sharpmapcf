@@ -863,6 +863,28 @@ we can use instead:
 
 
 
+*In SharpMap\Utilities\IdleMonitor.cs*
+ Problem:
+   `private EventWaitHandle _terminateEvent;`
+   //Error, no Threading.EventWaitHandle in CF
+ Workaround:
+   OPENNETCF has this, and BackgroundWorker.
+   Added to /CFUtils folders /ComponentModel and /Threading
+
+  `private OpenNETCF.Threading.EventWaitHandle _terminateEvent;`
+
+
+
+*Problem:*
+ (now _terminateEvent is an OpenNETCF.Threading.EventWaitHandle)
+
+ `_terminateEvent = new ManualResetEvent(false);`
+
+ Workaround:
+
+ `_terminateEvent = new OpenNETCF.Threading.EventWaitHandle(false, OpenNETCF.Threading.EventResetMode.ManualReset);`
+
+ //In the .NET Framework version 2.0, ManualResetEvent derives from the new EventWaitHandle class. A ManualResetEvent is functionally equivalent to an EventWaitHandle created with EventResetMode.ManualReset (msdn)
 
 
 
@@ -895,6 +917,8 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
+ 
  
  
  
