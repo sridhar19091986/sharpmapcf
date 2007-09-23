@@ -665,6 +665,18 @@ we can use instead:
 
 
 
+*In SharpMap\CoordinateSystems\PrimeMeridian.cs*
+ Problem:
+ 
+    `sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);`
+
+    //In CF no overload takes these args
+
+ Workaround:
+
+ `sb.AppendFormat(null, ", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);`
+
+
 
 
 
@@ -702,6 +714,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
