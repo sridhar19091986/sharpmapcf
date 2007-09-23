@@ -983,9 +983,9 @@ TO BE RESOLVED
       _restructureThread.Abort();
    }
 }}}
-  //return true if the thread has terminated; false if the thread has not terminated after the amount of time 
-  //specified by the millisecondsTimeout parameter has elapsed.
+  //Join(int) returns true if the thread has terminated; false if the thread has not terminated after the amount of time specified by the millisecondsTimeout parameter has elapsed.
   
+ 
  
  
  
