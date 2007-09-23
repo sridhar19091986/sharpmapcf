@@ -679,6 +679,37 @@ we can use instead:
 
 
 
+*In SharpMap\Data\Providers\ProviderSchemaHelper.cs*
+ Problem:
+
+  `Array.Exists(keyColumns, delegate(DataColumn col) { return col == column; })`
+  //No Array.Exist in CF
+
+ Workaround:
+{{{
+                bool isKey = false;
+                foreach (DataColumn col in keyColumns){
+                    if (col == column){
+                        isKey = true;
+                        break;
+                    }
+                }
+
+                schema.Rows.Add(
+                    column.ColumnName,
+                    length,
+                    column.Ordinal,
+                    precision,
+                    scale,
+                    column.DataType,
+                    column.AllowDBNull,
+                    column.ReadOnly,
+                    column.Unique,
+                    isKey, //instead of Array.Exists(keyColumns,delegate(DataColumn col){return col==column;})
+                    column.AutoIncrement,
+                    false);
+
+}}}
 
 
 
@@ -714,6 +745,8 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
+ 
  
  
  
