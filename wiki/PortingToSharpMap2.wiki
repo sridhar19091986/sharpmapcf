@@ -751,6 +751,36 @@ we can use instead:
 
 
 
+*In SharpMap\Converters\WellKnownText\SpatialReference.cs* *(Medium)*
+ Problem:
+
+    `string file = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase)
+                          + "\\SpatialRefSys.xml";`
+
+ Workaround:
+{{{
+      System.Reflection.AssemblyName asn = System.Reflection.Assembly.GetExecutingAssembly().GetName();
+      String codebase = asn.CodeBase.Substring(0, asn.CodeBase.LastIndexOf(asn.Name));
+      string file = System.IO.Path.GetDirectoryName(codebase + "\\SpatialRefSys.xml");
+}}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 == NOT Resolved ==
 
@@ -776,6 +806,7 @@ TO BE RESOLVED
  Workaround: 
 
    Let's always render all layers by now.
+ 
  
  
  
