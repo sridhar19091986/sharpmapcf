@@ -845,12 +845,20 @@ namespace SharpMap.Rendering.Rendering2D
         {
             if (row < 0 || row > 1)
             {
+#if !CFBuild
                 throw new ArgumentOutOfRangeException("row", row, "A Rectangle2D has only 2 rows.");
+#else
+                throw new ArgumentOutOfRangeException("row", "row ("+row+") A Rectangle2D has only 2 rows.");
+#endif
             }
 
             if (column < 0 || column > 1)
             {
+#if !CFBuild
                 throw new ArgumentOutOfRangeException("column", row, "A Rectangle2D has only 2 columns.");
+#else
+                throw new ArgumentOutOfRangeException("column", "row ("+row+") A Rectangle2D has only 2 columns.");
+#endif
             }
         }
         #endregion
