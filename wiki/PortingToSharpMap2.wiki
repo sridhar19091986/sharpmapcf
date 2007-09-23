@@ -924,6 +924,7 @@ TO BE RESOLVED
  
 
 *In SharpMap\Indexing\RTree\SelfOptimizingSpatialIndex.cs*
+
 *Problem:*
 {{{
  private readonly EventWaitHandle _userIdleEvent;
@@ -954,9 +955,8 @@ TO BE RESOLVED
   _machineIdleEvent = new OpenNETCF.Threading.EventWaitHandle(false,OpenNETCF.Threading.EventResetMode.AutoReset);
   _terminateEvent = new OpenNETCF.Threading.EventWaitHandle(false, OpenNETCF.Threading.EventResetMode.ManualReset);
 }}}
- //In the .NET Framework version 2.0, AutoResetEvent derives from the new EventWaitHandle class.
- //An AutoResetEvent is functionally equivalent to an EventWaitHandle created with EventResetMode.AutoReset
- //An ManualResetEvent is functionally equivalent to an EventWaitHandle created with EventResetMode.ManalReset
+ //In the .NET Framework version 2.0, AutoResetEvent derives from the new EventWaitHandle class. An AutoResetEvent is functionally equivalent to an EventWaitHandle created with EventResetMode.AutoReset
+ //A ManualResetEvent is functionally equivalent to an EventWaitHandle created with EventResetMode.ManalReset
 
 
 *Problem:*
@@ -988,6 +988,7 @@ TO BE RESOLVED
  
 
 *In SharpMap\Utilities\IdleMonitor.cs*
+
 *Problem:*  *Not Sure of this*
 {{{
             if (_pollIdleThread.IsAlive && !_pollIdleThread.Join(5000)){
@@ -1003,6 +1004,7 @@ TO BE RESOLVED
                 _pollIdleThread.Abort();
             }
 }}}
+ 
  
  
  
