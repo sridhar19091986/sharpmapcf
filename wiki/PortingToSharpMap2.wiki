@@ -860,6 +860,16 @@ we can use instead:
  //In the .NET Framework version 2.0, ManualResetEvent derives from the new EventWaitHandle class. A ManualResetEvent is functionally equivalent to an EventWaitHandle created with EventResetMode.ManualReset (msdn)
 
 
+*Problem:*
+  `throw new ArgumentOutOfRangeException("value", value, "UserIdleThresholdInSeconds cannot be negative.");`
+
+ Workaround:
+
+  `throw new ArgumentOutOfRangeException("value","value ("+value+") UserIdleThresholdInSeconds cannot be negative.");`
+
+
+
+
 
 
 
@@ -915,6 +925,7 @@ TO BE RESOLVED
 }}}
 
    //Not good but this does no harm
+ 
  
  
  
