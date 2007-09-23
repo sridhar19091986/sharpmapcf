@@ -55,6 +55,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CFUtils\ComponentModel\BackgroundWorker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CFUtils\Threading\EventWaitHandle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CFUtils\Threading\NativeMethods.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Converters\ParseException.cs" />
     <Compile Include="Converters\WellKnownBinary\GeometryFromWKB.cs" />
     <Compile Include="Converters\WellKnownBinary\GeometryToWKB.cs" />
@@ -343,9 +352,6 @@
     <Compile Include="Utilities\QuickSort.cs" />
     <Compile Include="Utilities\SharpMapVersion.cs" />
     <Compile Include="Utilities\Tolerance.cs" />
-    <Compile Include="CFUtils\BackgroundWorker.cs">
-      <SubType>Component</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
