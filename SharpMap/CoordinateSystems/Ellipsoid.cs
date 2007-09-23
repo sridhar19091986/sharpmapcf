@@ -248,7 +248,11 @@ namespace SharpMap.CoordinateSystems
 
                 if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
                 {
+#if !CFBuild
                     sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+#else
+                    sb.AppendFormat(null, ", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+#endif
                 }
 
 				sb.Append("]");

@@ -245,8 +245,9 @@ namespace SharpMap.Indexing.RTree
                     
                     keyBuffer.Position = 0;
                     keyBuffer.Write(br.ReadBytes((int)keyLength), 0, (int)keyLength);
+#if !CFBuild
                     entry.Value = (TValue)_keyFormatter.Deserialize(keyBuffer);
-
+#endif
                     leaf.Add(entry);
                 }
             }
@@ -304,7 +305,9 @@ namespace SharpMap.Indexing.RTree
                     writer.Write(entry.BoundingBox.Top);
 
                     keyBuffer.Position = 0;
+#if !CFBuild //This field was commented above
                     _keyFormatter.Serialize(keyBuffer, entry.Value);
+#endif
                     writer.Write(keyBuffer.GetBuffer());
                 }
             }

@@ -122,7 +122,11 @@ namespace SharpMap.Converters.WellKnownText
 			ReadToken("[");
 			authority = this.ReadDoubleQuotedWord();
 			ReadToken(",");
+#if !CFBuild
 			Int64.TryParse(this.ReadDoubleQuotedWord(), out authorityCode);
+#else
+            authorityCode = Int64.Parse(this.ReadDoubleQuotedWord());
+#endif
 			ReadToken("]");
 		}
 		#endregion

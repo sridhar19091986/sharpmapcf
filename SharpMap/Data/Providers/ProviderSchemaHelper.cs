@@ -224,7 +224,7 @@ namespace SharpMap.Data.Providers
                 short scale = column.ExtendedProperties.ContainsKey(NumericScaleExtendedProperty)
                     ? Convert.ToInt16(column.ExtendedProperties[NumericScaleExtendedProperty])
                     : (scaleComputationDelegate == null) ? (short)0 : scaleComputationDelegate(column);
-
+#if !CFBuild
                 schema.Rows.Add(
                     column.ColumnName,
                     length,
@@ -238,6 +238,31 @@ namespace SharpMap.Data.Providers
                     Array.Exists(keyColumns, delegate(DataColumn col) { return col == column; }),
                     column.AutoIncrement,
                     false);
+#else //The Predicate is a delegate to a method that returns true if the object passed to it
+      //matches the conditions defined in the delegate. The elements of array are individually 
+      //passed to the Predicate, and processing is stopped when a match is found.
+                bool isKey = false;
+                foreach (DataColumn col in keyColumns){
+                    if (col == column){
+                        isKey = true;
+                        break;
+                    }
+                }
+
+                schema.Rows.Add(
+                    column.ColumnName,
+                    length,
+                    column.Ordinal,
+                    precision,
+                    scale,
+                    column.DataType,
+                    column.AllowDBNull,
+                    column.ReadOnly,
+                    column.Unique,
+                    isKey,
+                    column.AutoIncrement,
+                    false);
+#endif
             }
 
             return schema;

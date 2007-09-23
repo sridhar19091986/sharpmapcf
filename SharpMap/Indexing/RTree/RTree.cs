@@ -32,7 +32,11 @@ namespace SharpMap.Indexing.RTree
     {
         private ISpatialIndexNode _root;
         private bool _disposed;
+#if !CFBuild
         private long _nextNodeId = 0;
+#else  //Interlocked.Increment needs an int  maxint: 2,147,483,647
+        private int _nextNodeId = 0;
+#endif
 
         #region Object Construction/Destruction
         public RTree()
