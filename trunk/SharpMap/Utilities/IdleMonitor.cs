@@ -136,8 +136,13 @@ namespace SharpMap.Utilities
             {
                 if (value < 0)
                 {
+#if !CFBuild
                     throw new ArgumentOutOfRangeException("value", value,
                                                           "UserIdleThresholdInSeconds cannot be negative.");
+#else
+                    throw new ArgumentOutOfRangeException("value",
+                        "value ("+value+") UserIdleThresholdInSeconds cannot be negative.");
+#endif
                 }
 
                 _userIdleThresholdSeconds = value;
@@ -156,8 +161,13 @@ namespace SharpMap.Utilities
             {
                 if (value < 0)
                 {
+#if !CFBuild
                     throw new ArgumentOutOfRangeException("value", value,
                                                           "MachineIdleThresholdInSeconds cannot be negative.");
+#else
+                    throw new ArgumentOutOfRangeException("value", 
+                        "value ("+value+") MachineIdleThresholdInSeconds cannot be negative.");
+#endif
                 }
 
                 _machineIdleThresholdSeconds = value;
@@ -288,11 +298,16 @@ namespace SharpMap.Utilities
             Interlocked.Increment(ref _terminating);
             _terminateEvent.Set();
 #pragma warning restore 420
-
+#if !CFBuild
             if (_pollIdleThread.IsAlive && !_pollIdleThread.Join(5000))
             {
                 _pollIdleThread.Abort();
             }
+#else  //see SelfOptimizingSpatialIndex
+            if (!_pollIdleThread.Join(5000)){
+                _pollIdleThread.Abort();
+            }
+#endif
         }
 
         [DllImport("user32.dll")]
