@@ -1010,4 +1010,72 @@ TO BE RESOLVED
  
 
 
+*In SharpMap\Rendering\Rendering2D\BasicGeometryRenderer2D`1.cs* *(High, wrong)*
+   Changed get of public static Symbol2D DefaultSymbol property by something quick and ugly (method because no VolatileRead/Write on CF):
+{{{
+get
+{
+   if (Thread.VolatileRead(ref _defaultSymbol) == null)
+   {
+	lock (_defaultSymbolSync)
+	{
+		if (Thread.VolatileRead(ref _defaultSymbol) == null)
+		{
+			Stream data = Assembly.GetExecutingAssembly()
+				.GetManifestResourceStream("SharpMap.Styles.DefaultSymbol.png");
+                        Symbol2D symbol = new Symbol2D(data, new Size2D(16, 16));
+			Thread.VolatileWrite(ref _defaultSymbol, symbol);
+		}
+	}
+   }
+
+   return (_defaultSymbol as Symbol2D).Clone();
+}
+}}}
+
+
+
+*In SharpMap\Utilities\IdleMonitor.cs* *(High wrong)*
+ Changed 
+ `private void checkIdleness()` method because no VolatileRead/Write on CF
+
+for this ugly thing:
+{{{
+  private void checkIdleness(){
+       while (_terminating == 0){
+           int userIdleThreshold =  _userIdleThresholdSeconds;
+           if (IsUserIdle(userIdleThreshold))
+                    onUserIdle();
+           else
+                   onUserBusy();
+
+           int machineIdleThreshold = _machineIdleThresholdSeconds;
+
+           if (IsMachineIdle(machineIdleThreshold, MachineUtilizationConsideredIdle))
+                    onMachineIdle();
+           else
+                 onMachineBusy();
+
+           int sleepTime = _checkIdleFrequencyInSeconds;
+           Thread.Sleep(sleepTime * 1000);
+      }
+   }
+
+}}}
+
+*In SharpMap\Features\FeatureDataView.cs* *(High, probably wrong)*
+  Problem:
+
+ `object rowPredicateFilter = Activator.CreateInstance(rowPredicateFilterType,BindingFlags.Instance | BindingFlags.NonPublic, null, args, null);`
+ //In CF CreateInstance only takes 1 parameter
+ 
+ Workaround:
+    `object rowPredicateFilter = Activator.CreateInstance(rowPredicateFilterType);`
+
+
+*In SharpMap\Features\FeatureDataView.cs* *(Very High)*
+ Commented out method 
+ 
+  `private static SetIndex2Delegate GenerateSetIndex2Delegate()`
+ 
  
