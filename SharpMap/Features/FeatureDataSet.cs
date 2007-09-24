@@ -269,6 +269,7 @@ namespace SharpMap.Features
 
         private static SetDefaultViewManagerDelegate generateSetDefaultViewManagerDelegate()
         {
+#if !CFBuild
             DynamicMethod set_DefaultViewManagerMethod = new DynamicMethod("set_DefaultViewManager_DynamicMethod",
                                                                            null,
                                                                            new Type[]
@@ -277,7 +278,7 @@ namespace SharpMap.Features
                                                                                    typeof (FeatureDataViewManager)
                                                                                },
                                                                            typeof (DataSet));
-
+           
             ILGenerator il = set_DefaultViewManagerMethod.GetILGenerator();
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldarg_1);
@@ -286,10 +287,30 @@ namespace SharpMap.Features
 
             return set_DefaultViewManagerMethod.CreateDelegate(typeof (SetDefaultViewManagerDelegate))
                    as SetDefaultViewManagerDelegate;
+#else
+            SetDefaultViewManagerDelegate del = new SetDefaultViewManagerDelegate(SetDefaultViewManagerInvoker);
+            return del;
+#endif
         }
+
+#if CFBuild  //Is this what previous il.Emit(OpCodes.Stfld, FieldInfo) does??
+        //Stfld Replaces the value stored in the field of an object reference or pointer with a new value.
+        static void SetDefaultViewManagerInvoker(FeatureDataSet dataSet, FeatureDataViewManager viewManager) {
+            FieldInfo field = typeof(DataSet).GetField("defaultViewManager", 
+                                                BindingFlags.Instance | BindingFlags.NonPublic);
+
+            field.SetValue(dataSet, viewManager);
+        
+        }
+#endif
+
+
+
+
 
         private static GetDefaultViewManagerDelegate generateGetDefaultViewManagerDelegate()
         {
+#if !CFBuild
             DynamicMethod get_DefaultViewManagerMethod = new DynamicMethod("get_DefaultViewManager_DynamicMethod",
                                                                            typeof (FeatureDataViewManager),
                                                                            new Type[] {typeof (FeatureDataSet)},
@@ -303,7 +324,21 @@ namespace SharpMap.Features
 
             return get_DefaultViewManagerMethod.CreateDelegate(typeof (GetDefaultViewManagerDelegate))
                    as GetDefaultViewManagerDelegate;
+#else
+            GetDefaultViewManagerDelegate del = new GetDefaultViewManagerDelegate(GetDefaultViewManagerInvoker);
+            return del;
+#endif
         }
+#if CFBuild
+        //OpCodes.ldfld  Finds the value of a field in the object whose reference is currently on the evaluation stack.
+        static FeatureDataViewManager GetDefaultViewManagerInvoker(FeatureDataSet dataSet) {
+            FieldInfo field = typeof(DataSet).GetField("defaultViewManager", BindingFlags.Instance | BindingFlags.NonPublic);
+            FeatureDataViewManager fvManager = (FeatureDataViewManager)field.GetValue(dataSet);
+            return fvManager;
+        }
+
+#endif
+
 
         #endregion
 

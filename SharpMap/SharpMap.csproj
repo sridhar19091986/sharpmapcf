@@ -192,7 +192,9 @@
     <Compile Include="Features\FeatureDataTable`1.cs" />
     <Compile Include="Features\FeatureDataView.cs" />
     <Compile Include="Features\FeatureDataViewManager.cs" />
-    <Compile Include="Features\FeatureMerger.cs" />
+    <Compile Include="Features\FeatureMerger.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Features\FeatureTableCollection.cs" />
     <Compile Include="Features\LoadFeaturesAdapter.cs">
       <SubType>Component</SubType>
