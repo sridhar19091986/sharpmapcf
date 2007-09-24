@@ -50,6 +50,7 @@ namespace SharpMap.Features
 		#region Static constructor
 		static FeatureDataRow()
 		{
+#if !CFBuild
 			DynamicMethod getColumnsMethod = new DynamicMethod("FeatureDataRow_GetColumns",
 				MethodAttributes.Static | MethodAttributes.Public,
 				CallingConventions.Standard,
@@ -58,6 +59,7 @@ namespace SharpMap.Features
 				typeof(DataRow),					// owning type
 				false);								// don't skip JIT visibility checks
 
+          
 			ILGenerator il = getColumnsMethod.GetILGenerator();
 			FieldInfo columnsField = typeof(DataRow).GetField("_columns", BindingFlags.NonPublic | BindingFlags.Instance);
 			il.Emit(OpCodes.Ldarg_0);
@@ -65,8 +67,29 @@ namespace SharpMap.Features
 			il.Emit(OpCodes.Ret);
 
 			_getColumns = (GetColumnsDelegate)getColumnsMethod.CreateDelegate(typeof(GetColumnsDelegate));
+
+#else   //Converts the dynamic method into a static method of this class
+            _getColumns = GetColumnsInvoker;
+#endif
+      
 		} 
+
+
+#if CFBuild
+        static DataColumnCollection GetColumnsInvoker(DataRow row)
+        {
+            //OpCodes.ldfld  Finds the value of a field in the object whose reference is currently on the evaluation stack.
+            FieldInfo columnsField = typeof(DataRow).GetField("_columns",
+                                                                BindingFlags.NonPublic | BindingFlags.Instance);
+            // The return type is the same as the one associated with the field. The field may be either an instance 
+            //field (in which case the object must not be a null reference) or a static field.
+            //So _columns should be a DataColumnCollection 
+            DataColumnCollection colCollection = (DataColumnCollection)columnsField.GetValue(row);
+            return colCollection;
+        }
+#endif
 		#endregion
+
 
 		#region Instance fields
 		// TODO: implement original and proposed geometry to match 
