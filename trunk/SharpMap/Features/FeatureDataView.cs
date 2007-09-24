@@ -268,8 +268,16 @@ namespace SharpMap.Features
         {
             Type rowPredicateFilterType = Type.GetType("System.Data.DataView+RowPredicateFilter, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
             object[] args = new object[] { filter };
+#if !CFBuild
             object rowPredicateFilter = Activator.CreateInstance(rowPredicateFilterType,
                 BindingFlags.Instance | BindingFlags.NonPublic, null, args, null);
+#else //Probably Wrong
+      //args An array of arguments that match in number, order, and type the parameters of the constructor
+     //to invoke. If args is an empty array or a null reference, the constructor that takes no parameters
+      //(the default constructor) is invoked. 
+
+            object rowPredicateFilter = Activator.CreateInstance(rowPredicateFilterType);
+#endif
 
             return rowPredicateFilter;
         }
@@ -292,6 +300,7 @@ namespace SharpMap.Features
 
         private static SetIndex2Delegate GenerateSetIndex2Delegate()
         {
+#if !CFBuild
             // We need to generate a delegate based on the function pointer, 
             // since the SetIndex2 method requires a parameter of type DataExpression,
             // which is internal to System.Data, so we can't do LCG with DynamicMethod
@@ -301,10 +310,15 @@ namespace SharpMap.Features
                 .GetConstructor(new Type[] { typeof(object), typeof(IntPtr) });
             IntPtr setIndex2Pointer = setIndex2Info.MethodHandle.GetFunctionPointer();
             return (SetIndex2Delegate)setIndexDelegateCtor.Invoke(new Object[] { null, setIndex2Pointer });
+#else
+            return null;
+#endif
         }
+
 
         private static SetLockedDelegate GenerateSetLockedDelegate()
         {
+#if !CFBuild
             // Use LCG to create a set accessor to the DataView.locked field
             DynamicMethod setLockedMethod = new DynamicMethod("set_locked_DynamicMethod",
                                                               null, new Type[] { typeof(DataView), typeof(bool) },
@@ -318,10 +332,23 @@ namespace SharpMap.Features
             il.Emit(OpCodes.Ret);
 
             return setLockedMethod.CreateDelegate(typeof(SetLockedDelegate)) as SetLockedDelegate;
+#else
+            SetLockedDelegate d = new SetLockedDelegate(SetLockedInvoker);
+            return d;
+#endif
         }
+
+#if CFBuild
+        static void SetLockedInvoker(DataView view, bool locked) {
+            FieldInfo lockedField = typeof(DataView).GetField("locked", BindingFlags.Instance | BindingFlags.NonPublic);
+            lockedField.SetValue(view, locked);
+        }
+#endif
+
 
         private static SetDataViewManagerDelegate GenerateSetDataViewManagerDelegate()
         {
+#if !CFBuild
             // Use LCG to create a delegate to the internal DataView.SetDataViewManager method
             DynamicMethod setDataViewManagerMethod = new DynamicMethod("set_DataViewManager_DynamicMethod",
                                                                        null,
@@ -342,8 +369,23 @@ namespace SharpMap.Features
 
             return setDataViewManagerMethod.CreateDelegate(typeof(SetDataViewManagerDelegate))
                    as SetDataViewManagerDelegate;
+#else
+            SetDataViewManagerDelegate d = new SetDataViewManagerDelegate(SetDataViewManagerInvoker);
+            return d;
+#endif
         }
 
+#if CFBuild
+        static void SetDataViewManagerInvoker(FeatureDataView view, DataViewManager dataViewManager) {
+            MethodInfo setDataViewManagerInfo = typeof(DataView).GetMethod("SetDataViewManager",
+                                                                                BindingFlags.Instance |
+                                                                                BindingFlags.NonPublic, null,
+                                                                                new Type[] { typeof(DataViewManager) }, null);
+
+            setDataViewManagerInfo.Invoke(view, new object[] { dataViewManager });
+
+        }
+#endif
         #endregion
     }
 }

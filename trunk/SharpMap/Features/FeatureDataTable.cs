@@ -638,9 +638,11 @@ namespace SharpMap.Features
 
         private static GetDefaultViewDelegate generateGetDefaultViewDelegate()
         {
+#if !CFBuild
             DynamicMethod get_DefaultViewMethod = new DynamicMethod("get_DefaultView_DynamicMethod",
-                                                                    typeof(FeatureDataView),
-                                                                    new Type[] { typeof(FeatureDataTable) }, typeof(DataTable));
+                                          typeof(FeatureDataView),
+                                          new Type[] { typeof(FeatureDataTable) },
+                                          typeof(DataTable));
 
             ILGenerator il = get_DefaultViewMethod.GetILGenerator();
             il.Emit(OpCodes.Ldarg_0);
@@ -649,11 +651,34 @@ namespace SharpMap.Features
 
             return get_DefaultViewMethod.CreateDelegate(typeof(GetDefaultViewDelegate))
                    as GetDefaultViewDelegate;
+
+#else
+            //GetDefaultViewDelegate del = GetDefaultViewInvoker;
+            GetDefaultViewDelegate del = new GetDefaultViewDelegate(GetDefaultViewInvoker);
+            return del;
+#endif
+
         }
+
+#if CFBuild
+        static FeatureDataView GetDefaultViewInvoker(FeatureDataTable featureDataT)
+        {
+            //OpCodes.ldfld  Finds the value of a field in the object whose reference is currently on the evaluation stack.
+            FieldInfo defaultViewField = typeof(DataTable).GetField("defaultView", 
+                                                    BindingFlags.Instance | BindingFlags.NonPublic);
+            
+            // The return type is the same as the one associated with the field. The field may be either an instance 
+            //field (in which case the object must not be a null reference) or a static field.
+            //So _columns should be a DataColumnCollection 
+            FeatureDataView view = (FeatureDataView)defaultViewField.GetValue(featureDataT);
+            return view;
+        }
+#endif
 
 
         private static RestoreIndexEventsDelegate generateRestoreIndexEventsDelegate()
         {
+#if !CFBuild
             DynamicMethod restoreIndexEventsMethod = new DynamicMethod("FeatureDataTable_RestoreIndexEvents",
                 MethodAttributes.Public | MethodAttributes.Static,
                 CallingConventions.Standard,
@@ -671,10 +696,31 @@ namespace SharpMap.Features
             il.Emit(OpCodes.Ret);
 
             return (RestoreIndexEventsDelegate)restoreIndexEventsMethod.CreateDelegate(typeof(RestoreIndexEventsDelegate));
+#else
+            //return RestoreIndexEventsInvoker;
+            RestoreIndexEventsDelegate del = new RestoreIndexEventsDelegate(RestoreIndexEventsInvoker);
+            return del;
+#endif
         }
+
+#if CFBuild
+        static void RestoreIndexEventsInvoker(DataTable table, bool forcesReset)
+        {
+            MethodInfo restoreIndexEventsInfo = typeof(DataTable).GetMethod("RestoreIndexEvents",
+                           BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(bool) }, null);
+            object[] parameters = new object[]{forcesReset};
+            restoreIndexEventsInfo.Invoke(table, parameters);
+        }
+#endif
+
+
+
+
+
 
         private static SuspendIndexEventsDelegate generateSuspendIndexEventsDelegate()
         {
+#if !CFBuild
             DynamicMethod suspendIndexEventsMethod = new DynamicMethod("FeatureDataTable_SuspendIndexEvents",
                 MethodAttributes.Public | MethodAttributes.Static,
                 CallingConventions.Standard,
@@ -691,10 +737,28 @@ namespace SharpMap.Features
             il.Emit(OpCodes.Ret);
 
             return (SuspendIndexEventsDelegate)suspendIndexEventsMethod.CreateDelegate(typeof(SuspendIndexEventsDelegate));
+#else
+            SuspendIndexEventsDelegate del = new SuspendIndexEventsDelegate(SuspendIndexEventsInvoker);
+            return del;
+#endif
         }
 
+#if CFBuild
+        static void SuspendIndexEventsInvoker(DataTable table)
+        {
+            Type[] types = new Type[0];
+            MethodInfo suspendIndexEventsInfo = typeof(DataTable).GetMethod("SuspendIndexEvents",
+                            BindingFlags.NonPublic | BindingFlags.Instance, null, types, null);
+
+            suspendIndexEventsInfo.Invoke(table, null);
+        }
+#endif
+
+
+                       
         private static CloneToDelegate generateCloneToDelegate()
         {
+#if !CFBuild
             DynamicMethod cloneToMethod = new DynamicMethod("FeatureDataTable_CloneTo",
                 MethodAttributes.Public | MethodAttributes.Static,
                 CallingConventions.Standard,
@@ -713,7 +777,20 @@ namespace SharpMap.Features
             il.Emit(OpCodes.Ret);
 
             return (CloneToDelegate)cloneToMethod.CreateDelegate(typeof(CloneToDelegate));
+#else
+            CloneToDelegate del = new CloneToDelegate(CloneToDelegateInvoker);
+            return del;
+#endif
         }
+
+#if CFBuild
+        static DataTable CloneToDelegateInvoker(DataTable src, DataTable dst, DataSet dataSet, bool skipExpressions)
+        {
+            MethodInfo cloneToInfo = typeof(DataTable).GetMethod("CloneTo", BindingFlags.NonPublic | BindingFlags.Instance);
+            DataTable dt = (DataTable)cloneToInfo.Invoke(src, new object[] { dst, dataSet, skipExpressions });
+            return dt;
+        }
+#endif
         #endregion
 
         #region Private helper methods

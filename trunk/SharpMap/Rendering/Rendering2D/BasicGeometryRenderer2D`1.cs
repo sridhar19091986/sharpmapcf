@@ -44,6 +44,7 @@ namespace SharpMap.Rendering.Rendering2D
 		/// </summary>
 		public static Symbol2D DefaultSymbol
 		{
+#if !CFBuild
 			get
 			{
 				if (Thread.VolatileRead(ref _defaultSymbol) == null)
@@ -62,6 +63,22 @@ namespace SharpMap.Rendering.Rendering2D
 
 				return (_defaultSymbol as Symbol2D).Clone();
 			}
+#else  //Easy way
+            get {
+                lock (_defaultSymbolSync)
+                {
+                    if (_defaultSymbol == null)
+                    {
+                        Stream data = Assembly.GetExecutingAssembly()
+                                    .GetManifestResourceStream("SharpMap.Styles.DefaultSymbol.png");
+                        Symbol2D symbol = new Symbol2D(data, new Size2D(16, 16));
+                        _defaultSymbol = symbol;
+                    }
+                }
+                return (_defaultSymbol as Symbol2D).Clone();
+            
+            }
+#endif
 		}
 
 		// DON'T remove - this eliminates the .beforefieldinit IL metadata

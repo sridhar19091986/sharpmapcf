@@ -264,6 +264,7 @@ namespace SharpMap.Features
 
         private static CreateMergerDelegate generateCreateMergerDelegate()
         {
+#if !CFBuild
             Type[] ctorParams = new Type[] { typeof(DataTable), typeof(bool), typeof(MissingSchemaAction) };
 
             DynamicMethod createMergerMethod = new DynamicMethod("Merger_Create",
@@ -287,10 +288,23 @@ namespace SharpMap.Features
 
             CreateMergerDelegate d = (CreateMergerDelegate)createMergerMethod.CreateDelegate(typeof(CreateMergerDelegate));
             return d;
+#else
+            CreateMergerDelegate d = new CreateMergerDelegate(CreateMergerInvoker);
+            return d;
+#endif
         }
+
+#if CFBuild  //Wrong NOT IMPLEMENTED!!
+        static Object CreateMergerInvoker(DataTable target, bool preserveChanges, MissingSchemaAction action){
+            
+            return null;
+        }
+#endif
+
 
         private static MergeSchemaDelegate generateMergeSchemaDelegate()
         {
+#if !CFBuild
             DynamicMethod mergeSchemaMethod = new DynamicMethod("Merger_MergeSchema",
                 MethodAttributes.Public | MethodAttributes.Static,
                 CallingConventions.Standard,
@@ -311,7 +325,28 @@ namespace SharpMap.Features
 
             MergeSchemaDelegate d = (MergeSchemaDelegate)mergeSchemaMethod.CreateDelegate(typeof(MergeSchemaDelegate));
             return d;
+#else
+            MergeSchemaDelegate d = new MergeSchemaDelegate(MergeSchemaInvoker);
+            return d;
+#endif
         }
+
+#if CFBuild
+        static DataTable MergeSchemaInvoker(object merger, DataTable source) {
+            //WRONG no casting done
+            /*
+            Type merger_ = Type.GetTypeFromHandle(_adoMergerTypeHandle);
+            MethodInfo mergeSchemaInfo = merger_.GetMethod("MergeSchema",
+                                BindingFlags.Instance | BindingFlags.NonPublic);
+            
+            DataTable dt = (DataTable)mergeSchemaInfo.Invoke(merger_, new object[] { source });
+            return dt;
+            */
+            return null;
+            
+
+        }
+#endif
 
         private static GetKeyIndexDelegate generateGetKeyIndexDelegate()
         {

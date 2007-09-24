@@ -205,6 +205,7 @@ namespace SharpMap.Utilities
             throw new NotImplementedException();
         }
 
+#if !CFBuild
         private void checkIdleness()
         {
             while (Thread.VolatileRead(ref _terminating) == 0)
@@ -235,7 +236,40 @@ namespace SharpMap.Utilities
                 Thread.Sleep(sleepTime*1000);
             }
         }
+#else  //Quick, ugly, and wrong workaround
+        private void checkIdleness()
+        {
+            
+            while (_terminating == 0)
+            {
+                int userIdleThreshold =  _userIdleThresholdSeconds;
 
+                if (IsUserIdle(userIdleThreshold))
+                {
+                    onUserIdle();
+                }
+                else
+                {
+                    onUserBusy();
+                }
+
+                int machineIdleThreshold = _machineIdleThresholdSeconds;
+
+                if (IsMachineIdle(machineIdleThreshold, MachineUtilizationConsideredIdle))
+                {
+                    onMachineIdle();
+                }
+                else
+                {
+                    onMachineBusy();
+                }
+
+                int sleepTime = _checkIdleFrequencyInSeconds;
+                Thread.Sleep(sleepTime * 1000);
+            }
+        }
+
+#endif
         private void onMachineIdle()
         {
             if (!_wasMachineIdle)
