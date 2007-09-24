@@ -36,6 +36,10 @@ namespace SharpMap.Indexing.RTree
 		private readonly EventWaitHandle _userIdleEvent;
 		private readonly EventWaitHandle _machineIdleEvent;
 		private readonly EventWaitHandle _terminateEvent;
+#else
+        private readonly OpenNETCF.Threading.EventWaitHandle _userIdleEvent;
+        private readonly OpenNETCF.Threading.EventWaitHandle _machineIdleEvent;
+        private readonly OpenNETCF.Threading.EventWaitHandle _terminateEvent;
 #endif
 		private readonly Thread _restructureThread;
 		private readonly int _periodMilliseconds;
@@ -70,12 +74,18 @@ namespace SharpMap.Indexing.RTree
 			_restructureStrategy = restructureStrategy;
 			_restructuringHeuristic = restructureHeuristic;
 			_idleMonitor = idleMonitor;
-
+#if !CFBuild
 			_userIdleEvent = new AutoResetEvent(false);
 			_machineIdleEvent = new AutoResetEvent(false);
 			_terminateEvent = new ManualResetEvent(false);
-
-			if (restructureHeuristic.WhenToRestructure != RestructureOpportunity.None)
+#else  //In the .NET Framework version 2.0, AutoResetEvent derives from the new EventWaitHandle class.
+       //An AutoResetEvent is functionally equivalent to an EventWaitHandle created with EventResetMode.AutoReset
+       //An ManualResetEvent is functionally equivalent to an EventWaitHandle created with EventResetMode.ManalReset
+            _userIdleEvent = new OpenNETCF.Threading.EventWaitHandle(false,OpenNETCF.Threading.EventResetMode.AutoReset);
+            _machineIdleEvent = new OpenNETCF.Threading.EventWaitHandle(false,OpenNETCF.Threading.EventResetMode.AutoReset);
+            _terminateEvent = new OpenNETCF.Threading.EventWaitHandle(false, OpenNETCF.Threading.EventResetMode.ManualReset);
+#endif
+            if (restructureHeuristic.WhenToRestructure != RestructureOpportunity.None)
 			{
 				_restructureThread = new Thread(doRestructure);
 				_restructureThread.Start();
@@ -184,7 +194,12 @@ namespace SharpMap.Indexing.RTree
 			while (_terminating == 0)
 			{
 				// Wait on restructure or terminate events
+#if !CFBuild
 				WaitHandle.WaitAny(events, _periodMilliseconds, false);
+#else  //Is this equivalent? 
+                IntPtr[] lpHandles = { _userIdleEvent.Handle, _machineIdleEvent.Handle, _terminateEvent.Handle };
+                OpenNETCF.Threading.NativeMethods.WaitForMultipleObjects(3, lpHandles, false, (uint)_periodMilliseconds);                
+#endif
 
 				if (Interlocked.CompareExchange(ref _terminating, 0, 0) == 1)
 				{
@@ -219,12 +234,19 @@ namespace SharpMap.Indexing.RTree
 #pragma warning restore 420
 
 			_terminateEvent.Set();
-
+#if !CFBuild
 			if (_restructureThread.IsAlive && !_restructureThread.Join(5000))
 			{
 				_restructureThread.Abort();
 			}
-		}
+#else  //return true if the thread has terminated; false if the thread has not terminated after the amount of time 
+       //specified by the millisecondsTimeout parameter has elapsed.
+            if (!_restructureThread.Join(5000))
+            {
+                _restructureThread.Abort();
+            }
+#endif
+        }
 		#endregion
 	}
 }
