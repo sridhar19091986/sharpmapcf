@@ -1,4 +1,4 @@
-#summary Porting to V2
+#summary Porting V2 to CF
 
 == Localization Considerations for Devices ==
 
@@ -67,4 +67,5 @@ You should consider the following support and behaviors when localizing smart de
 
 See Also
 Other Resources
+ 
  
