@@ -1,3 +1,5 @@
+#summary Porting to V2
+
 == Localization Considerations for Devices ==
 
 http://msdn2.microsoft.com/en-us/library/x5b31f9d.aspx
@@ -65,3 +67,4 @@ You should consider the following support and behaviors when localizing smart de
 
 See Also
 Other Resources
+ 
