@@ -48,4 +48,83 @@ Things regarding DynamicMethod, and ILGenerator, that doesnt exist in CF
 }}}
  
 
+
+
+*In SharpMap\Features\FeatureDataTable.cs*
+ Changed 
+ `private static GetDefaultViewDelegate generateGetDefaultViewDelegate()´
+
+ And added
+
+ `static FeatureDataView GetDefaultViewInvoker(FeatureDataTable featureDataT)`
+
+ Changed
+ `private static RestoreIndexEventsDelegate generateRestoreIndexEventsDelegate()`
+
+ And added 
+  `static void RestoreIndexEventsInvoker(DataTable table, bool forcesReset)`
+
+ Changed
+
+   `private static SuspendIndexEventsDelegate generateSuspendIndexEventsDelegate()`
+
+ And added
+
+ `static void SuspendIndexEventsInvoker(DataTable table)`
+
+ Changed
+
+ `private static CloneToDelegate generateCloneToDelegate()`
+
+ And added
+
+  `static DataTable CloneToDelegateInvoker(DataTable src, DataTable dst, DataSet dataSet, bool skipExpressions)`
+
+
+
+*In SharpMap\Features\FeatureDataSet.cs*
+  Changed method
+
+   `private static SetDefaultViewManagerDelegate generateSetDefaultViewManagerDelegate()`
+
+ And added
+
+ `static void SetDefaultViewManagerInvoker(FeatureDataSet dataSet, FeatureDataViewManager viewManager) {`	
+
+ Changed method
+
+  `private static GetDefaultViewManagerDelegate generateGetDefaultViewManagerDelegate()`
+
+ And added
+
+ `static FeatureDataViewManager GetDefaultViewManagerInvoker(FeatureDataSet dataSet) {`
+
+
+*In SharpMap\Features\FeatureDataView.cs* *(High, probably wrong)*
+ Changed method
+
+ `private static SetLockedDelegate GenerateSetLockedDelegate()`
+ 
+ And added
+
+  `static void SetLockedInvoker(DataView view, bool locked) {`
+
+ Changed method:
+
+ `private static SetDataViewManagerDelegate GenerateSetDataViewManagerDelegate()`
+
+ And Added
+
+ `static void SetDataViewManagerInvoker(FeatureDataView view, DataViewManager dataViewManager) {`
+
+
+
+
+
+
+
+
+
+
+ 
  
