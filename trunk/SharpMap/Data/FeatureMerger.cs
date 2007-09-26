@@ -26,7 +26,7 @@ using System.Reflection;
 using SharpMap.Data;
 using System.Collections;
 
-namespace SharpMap.Features
+namespace SharpMap.Data
 {
     internal sealed class FeatureMerger
     {
@@ -65,20 +65,20 @@ namespace SharpMap.Features
         #region Object constructor
         internal FeatureMerger(FeatureDataTable target, bool preserveChanges, SchemaMergeAction mergeAction)
         {
-			if ((SchemaMergeAction.ConvertTypes & mergeAction) != SchemaMergeAction.None)
-			{
-				throw new NotImplementedException("SchemaMergeAction.ConvertTypes is currently not supported.");
-			}
+            if ((SchemaMergeAction.ConvertTypes & mergeAction) != SchemaMergeAction.None)
+            {
+                throw new NotImplementedException("SchemaMergeAction.ConvertTypes is currently not supported.");
+            }
 
-			if ((SchemaMergeAction.KeyByType & mergeAction) != SchemaMergeAction.None)
-			{
-				throw new NotImplementedException("SchemaMergeAction.KeyByType is currently not supported.");
-			}
+            if ((SchemaMergeAction.KeyByType & mergeAction) != SchemaMergeAction.None)
+            {
+                throw new NotImplementedException("SchemaMergeAction.KeyByType is currently not supported.");
+            }
 
-			if ((SchemaMergeAction.CaseInsensitive & mergeAction) != SchemaMergeAction.None)
-			{
-				throw new NotImplementedException("SchemaMergeAction.CaseInsensitive is currently not supported.");
-			}
+            if ((SchemaMergeAction.CaseInsensitive & mergeAction) != SchemaMergeAction.None)
+            {
+                throw new NotImplementedException("SchemaMergeAction.CaseInsensitive is currently not supported.");
+            }
 
             _target = target;
             _preserveChanges = preserveChanges;
@@ -184,7 +184,7 @@ namespace SharpMap.Features
             for (int fieldIndex = 0; fieldIndex < srcFeature.FieldCount; fieldIndex++)
             {
                 schemaModel.Columns.Add(srcFeature.GetName(fieldIndex),
-                    srcFeature.GetFieldType(fieldIndex));
+                                        srcFeature.GetFieldType(fieldIndex));
             }
 
             return schemaModel;
@@ -220,10 +220,12 @@ namespace SharpMap.Features
             }
 
             targetFeature.Geometry = srcFeature.Geometry;
+
+            targetFeature.IsFullyLoaded = targetFeature.IsFullyLoaded || srcFeature.IsFullyLoaded;
         }
 
         #region Private helper methods
-        private object createInnerMerger(DataTable target, bool preserveChanges, SchemaMergeAction schemaMergeAction)
+        private static object createInnerMerger(DataTable target, bool preserveChanges, SchemaMergeAction schemaMergeAction)
         {
             MissingSchemaAction missingSchemaAction = MissingSchemaAction.Error;
 
@@ -262,18 +264,19 @@ namespace SharpMap.Features
             return _getKeyIndex(table);
         }
 
+
         private static CreateMergerDelegate generateCreateMergerDelegate()
         {
 #if !CFBuild
             Type[] ctorParams = new Type[] { typeof(DataTable), typeof(bool), typeof(MissingSchemaAction) };
 
             DynamicMethod createMergerMethod = new DynamicMethod("Merger_Create",
-                MethodAttributes.Public | MethodAttributes.Static,
-                CallingConventions.Standard,
-                typeof(Object),
-                ctorParams,
-                Type.GetTypeFromHandle(_adoMergerTypeHandle),
-                false);
+                                                                 MethodAttributes.Public | MethodAttributes.Static,
+                                                                 CallingConventions.Standard,
+                                                                 typeof(Object),
+                                                                 ctorParams,
+                                                                 Type.GetTypeFromHandle(_adoMergerTypeHandle),
+                                                                 false);
 
             Type adoMergerType = Type.GetTypeFromHandle(_adoMergerTypeHandle);
             ILGenerator il = createMergerMethod.GetILGenerator();
@@ -295,8 +298,9 @@ namespace SharpMap.Features
         }
 
 #if CFBuild  //Wrong NOT IMPLEMENTED!!
-        static Object CreateMergerInvoker(DataTable target, bool preserveChanges, MissingSchemaAction action){
-            
+        static Object CreateMergerInvoker(DataTable target, bool preserveChanges, MissingSchemaAction action)
+        {
+
             return null;
         }
 #endif
@@ -306,12 +310,12 @@ namespace SharpMap.Features
         {
 #if !CFBuild
             DynamicMethod mergeSchemaMethod = new DynamicMethod("Merger_MergeSchema",
-                MethodAttributes.Public | MethodAttributes.Static,
-                CallingConventions.Standard,
-                typeof(DataTable),
-                new Type[] { typeof(object), typeof(DataTable) },
-                Type.GetTypeFromHandle(_adoMergerTypeHandle),
-                false);
+                                                                MethodAttributes.Public | MethodAttributes.Static,
+                                                                CallingConventions.Standard,
+                                                                typeof(DataTable),
+                                                                new Type[] { typeof(object), typeof(DataTable) },
+                                                                Type.GetTypeFromHandle(_adoMergerTypeHandle),
+                                                                false);
 
             Type merger = Type.GetTypeFromHandle(_adoMergerTypeHandle);
             ILGenerator il = mergeSchemaMethod.GetILGenerator();
@@ -319,7 +323,7 @@ namespace SharpMap.Features
             il.Emit(OpCodes.Castclass, merger);
             il.Emit(OpCodes.Ldarg_1);
             MethodInfo mergeSchemaInfo = merger.GetMethod("MergeSchema",
-                BindingFlags.Instance | BindingFlags.NonPublic);
+                                                          BindingFlags.Instance | BindingFlags.NonPublic);
             il.Emit(OpCodes.Call, mergeSchemaInfo);
             il.Emit(OpCodes.Ret);
 
@@ -332,7 +336,8 @@ namespace SharpMap.Features
         }
 
 #if CFBuild
-        static DataTable MergeSchemaInvoker(object merger, DataTable source) {
+        static DataTable MergeSchemaInvoker(object merger, DataTable source)
+        {
             //WRONG no casting done
             /*
             Type merger_ = Type.GetTypeFromHandle(_adoMergerTypeHandle);
@@ -343,7 +348,7 @@ namespace SharpMap.Features
             return dt;
             */
             return null;
-            
+
 
         }
 #endif

@@ -20,7 +20,6 @@ using System;
 using System.Runtime.Serialization;
 #endif
 
-
 namespace SharpMap.Data
 {
     /// <summary>
@@ -31,19 +30,34 @@ namespace SharpMap.Data
 #endif
     public class SharpMapDataException : Exception
     {
+        /// <summary>
+        /// Creates a new instance of a SharpMapDataException.
+        /// </summary>
         public SharpMapDataException()
         {
         }
 
+        /// <summary>
+        /// Creates a new instance of a SharpMapDataException with the given 
+        /// <paramref name="message"/>.
+        /// </summary>
+        /// <param name="message">Text message to include in the exception.</param>
         public SharpMapDataException(string message)
             : base(message)
         {
         }
 
+        /// <summary>
+        /// Creates a new instance of a SharpMapDataException with the given 
+        /// <paramref name="message"/> and causing exception, <paramref name="inner"/>.
+        /// </summary>
+        /// <param name="message">Text message to include in the exception.</param>
+        /// <param name="inner">Exception which caused this exception.</param>
         public SharpMapDataException(string message, Exception inner)
             : base(message, inner)
         {
         }
+
 #if !CFBuild
         public SharpMapDataException(SerializationInfo info, StreamingContext context)
             : base(info, context)

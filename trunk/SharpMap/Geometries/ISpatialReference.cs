@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 - Rory Plaire (codekaizen@gmail.com)
+// Copyright 2005, 2006 - Morten Nielsen (www.iter.dk)
 //
 // This file is part of SharpMap.
 // SharpMap is free software; you can redistribute it and/or modify
@@ -15,18 +15,18 @@
 // along with SharpMap; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-namespace SharpMap.Styles
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace SharpMap.Geometries
 {
-    /// <summary>
-    /// Interface which applies to a feature style and allows the feature
-    /// to be selectable or not, depending on the style.
-    /// </summary>
-    public interface IFeatureLayerStyle
-    {
-        /// <summary>
-        /// Gets or sets a value to determine if features can 
-        /// be selected on this layer.
-        /// </summary>
-        bool AreFeaturesSelectable { get; set; }
-    }
+	/// <summary>
+	/// The ISpatialRelation interface defines a set of named spatial relationship operators for geometric shape
+	/// objects. The behavior of these operators is described in detail in the geometry object model sub-section of
+	/// the Architecture section of the OpenGIS Simple Features specification. [NOT IMPLEMENTED]
+	/// </summary>
+	public interface ISpatialReference
+	{
+	}
 }

@@ -18,9 +18,9 @@
 
 using System;
 using SharpMap.Data;
-using SharpMap.Features;
 using SharpMap.Rendering;
 using SharpMap.Rendering.Rendering2D;
+using SharpMap.Styles;
 
 namespace SharpMap.Layers
 {
@@ -84,9 +84,9 @@ namespace SharpMap.Layers
                 return;
             }
 
-            if (DataSource is IDisposable && DataSource != null)
+            if (DataSource != null)
             {
-                (DataSource as IDisposable).Dispose();
+                DataSource.Dispose();
             }
 
             base.Dispose(disposing);
@@ -215,14 +215,10 @@ namespace SharpMap.Layers
             throw new NotImplementedException();
         }
 
-        #region IFeatureLayer Members
-
-
-        public System.Globalization.CultureInfo Locale
+        protected override IStyle CreateStyle()
         {
-            get { throw new NotImplementedException(); }
+            return new LabelStyle();
         }
 
-        #endregion
     }
 }

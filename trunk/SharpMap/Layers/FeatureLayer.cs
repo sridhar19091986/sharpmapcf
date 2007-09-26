@@ -17,13 +17,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System;
-using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using SharpMap.Data;
-using SharpMap.Features;
 using SharpMap.Geometries;
-using SharpMap.Presentation;
+using SharpMap.Presentation.Views;
 using SharpMap.Styles;
 
 namespace SharpMap.Layers
@@ -34,20 +32,30 @@ namespace SharpMap.Layers
     public abstract class FeatureLayer : Layer, IFeatureLayer
     {
         #region Instance fields
-
-        private readonly FeatureDataTable _cachedFeatures;
-        private readonly FeatureDataView _visibleFeatureView;
+        private readonly FeatureDataTable _features;
         private readonly FeatureDataView _selectedFeatures;
         private readonly FeatureDataView _highlightedFeatures;
-        private readonly BackgroundWorker _dataQueryWorker = new BackgroundWorker();
-
         #endregion
 
         /// <summary>
-        /// Initializes a new, empty features layer.
+        /// Initializes a new, empty features layer
+        /// which handles <see cref="FeatureDataTable.FeaturesRequested"/> 
+        /// events from <see cref="Features"/>.
         /// </summary>
         protected FeatureLayer(IFeatureLayerProvider dataSource)
             : this(String.Empty, dataSource)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new features layer with the given name and datasource
+        /// and which handles <see cref="FeatureDataTable.FeaturesRequested"/> 
+        /// events from <see cref="Features"/>.
+        /// </summary>
+        /// <param name="layername">Name of the layer.</param>
+        /// <param name="dataSource">Data source.</param>
+        protected FeatureLayer(string layername, IFeatureLayerProvider dataSource)
+            : this(layername, new VectorStyle(), dataSource, true)
         {
         }
 
@@ -56,10 +64,26 @@ namespace SharpMap.Layers
         /// </summary>
         /// <param name="layername">Name of the layer.</param>
         /// <param name="dataSource">Data source.</param>
-        protected FeatureLayer(string layername, IFeatureLayerProvider dataSource)
-            : this(layername, new VectorStyle(), dataSource)
+        /// <param name="handleFeatureDataRequest">
+        /// Value to indicate the layer should handle 
+        /// <see cref="FeatureDataTable.FeaturesRequested"/> events from the <see cref="Features"/>
+        /// table.
+        /// </param>
+        protected FeatureLayer(string layername, IFeatureLayerProvider dataSource, bool handleFeatureDataRequest)
+            : this(layername, new VectorStyle(), dataSource, handleFeatureDataRequest)
         {
         }
+        
+        /// <summary>
+        /// Initializes a new features layer with the given name, style and datasource
+        /// and which handles <see cref="FeatureDataTable.FeaturesRequested"/> 
+        /// events from <see cref="Features"/>.
+        /// </summary>
+        /// <param name="layername">Name of the layer.</param>
+        /// <param name="style">Style to apply to the layer.</param>
+        /// <param name="dataSource">Data source.</param>
+        protected FeatureLayer(string layername, VectorStyle style, IFeatureLayerProvider dataSource)
+            : this(layername, style, dataSource, true) {}
 
         /// <summary>
         /// Initializes a new features layer with the given name, style and datasource.
@@ -67,16 +91,24 @@ namespace SharpMap.Layers
         /// <param name="layername">Name of the layer.</param>
         /// <param name="style">Style to apply to the layer.</param>
         /// <param name="dataSource">Data source.</param>
-        protected FeatureLayer(string layername, VectorStyle style, IFeatureLayerProvider dataSource)
+        /// <param name="handleFeatureDataRequest">
+        /// Value to indicate the layer should handle 
+        /// <see cref="FeatureDataTable.FeaturesRequested"/> events from the <see cref="Features"/>
+        /// table.
+        /// </param>
+        protected FeatureLayer(string layername, VectorStyle style, IFeatureLayerProvider dataSource, bool handleFeatureDataRequest)
             : base(layername, style, dataSource)
         {
-            _dataQueryWorker.RunWorkerCompleted += _dataQueryWorker_RunWorkerCompleted;
-            _dataQueryWorker.DoWork += _dataQueryWorker_DoWork;
+            ShouldHandleDataCacheMissEvent = handleFeatureDataRequest;
 
-            _cachedFeatures = new FeatureDataTable();
-            _visibleFeatureView = new FeatureDataView(_cachedFeatures, Point.Empty, "", DataViewRowState.CurrentRows);
-            _selectedFeatures = new FeatureDataView(_cachedFeatures, Point.Empty, "", DataViewRowState.CurrentRows);
-            _highlightedFeatures = new FeatureDataView(_cachedFeatures, Point.Empty, "", DataViewRowState.CurrentRows);
+            _features = new FeatureDataTable();
+            _selectedFeatures = new FeatureDataView(_features, Point.Empty, "", DataViewRowState.CurrentRows);
+            _highlightedFeatures = new FeatureDataView(_features, Point.Empty, "", DataViewRowState.CurrentRows);
+
+            if (ShouldHandleDataCacheMissEvent)
+            {
+                _features.FeaturesRequested += handleFeaturesRequested;
+            }
 
             init();
         }
@@ -91,7 +123,6 @@ namespace SharpMap.Layers
         {
             get { return base.DataSource as IFeatureLayerProvider; }
         }
-
 
         /// <summary>
         /// Gets or sets a view of highlighted features, which
@@ -121,58 +152,50 @@ namespace SharpMap.Layers
         }
 
         /// <summary>
-        /// Gets a view of the features which are currently at least
-        /// partially visible within the <see cref="Envelope"/>.
-        /// </summary>
-        public FeatureDataView VisibleFeatures
-        {
-            get { return _visibleFeatureView; }
-        }
-
-        /// <summary>
         /// Gets the loaded feautres for this layer.
         /// </summary>
         public FeatureDataTable Features
         {
-            get { return _cachedFeatures; }
+            get { return _features; }
         }
 
         #endregion
 
         #region Layer overrides
 
-        protected override void OnVisibleRegionChanging(BoundingBox value, ref bool cancel)
+        protected override void LoadLayerDataForRegion(BoundingBox region)
         {
-            // Ignore an empty visible region
-            if (value == BoundingBox.Empty)
+            if (!AsyncQuery)
             {
-                return;
+                DataSource.ExecuteIntersectionQuery(region, _features);
+            }
+            else
+            {
+                FeatureDataTable featureCache = new FeatureDataTable();
+                DataSource.SetTableSchema(featureCache);
+                DataSource.BeginExecuteIntersectionQuery(region, featureCache, 
+                    queryCallback, featureCache);
             }
 
-            if (!_cachedFeatures.Envelope.Contains(value))
-            {
-                // Since the visible region changed, and we don't have the data
-                // which covers this new region, we have to query for it.
-                //
-                // We can do it asynchronously, with a BackgroundWorker instance,
-                // or synchronously
-                if (AsyncQuery)
-                {
-                    _dataQueryWorker.RunWorkerAsync();
-                }
-                else
-                {
-                    executeQuery(value);
-                    OnLayerDataAvailable();
-                }
-            }
+            base.LoadLayerDataForRegion(region);
         }
 
-        protected override void OnVisibleRegionChanged()
+        protected override void LoadLayerDataForRegion(Geometry region)
         {
-            _visibleFeatureView.GeometryIntersectionFilter = VisibleRegion.ToGeometry();
-        }
+            if (!AsyncQuery)
+            {
+                DataSource.ExecuteFeatureQuery(region, _features, SpatialQueryType.Intersects);
+            }
+            else
+            {
+                FeatureDataTable featureCache = new FeatureDataTable();
+                DataSource.SetTableSchema(featureCache);
+                DataSource.BeginExecuteFeatureQuery(region, featureCache,
+                    SpatialQueryType.Intersects, queryCallback, featureCache);
+            }
 
+            base.LoadLayerDataForRegion(region);
+        }
         #endregion
 
         #region Private helper methods
@@ -180,45 +203,33 @@ namespace SharpMap.Layers
         private void init()
         {
             // We generally want spatial indexing on the feature table...
-            _cachedFeatures.IsSpatiallyIndexed = true;
+            _features.IsSpatiallyIndexed = true;
 
             // We need to get the schema of the feature table.
             DataSource.Open();
-
-            DataSource.SetTableSchema(_cachedFeatures);
-
+            DataSource.SetTableSchema(_features);
             DataSource.Close();
         }
 
-        private void _dataQueryWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void handleFeaturesRequested(object sender, FeaturesRequestedEventArgs e)
         {
-            OnLayerDataAvailable();
-        }
-        
-        private void _dataQueryWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            if (e.Argument is BoundingBox)
+            if (e.RequestedRegion != null)
             {
-                BoundingBox bounds = (BoundingBox) e.Argument;
-                executeQuery(bounds);
-            }
-            else if (e.Argument is Geometry)
-            {
-                Geometry geometry = e.Argument as Geometry;
-                executeQuery(geometry);
+                LoadLayerDataForRegion(e.RequestedRegion);
             }
         }
 
-        private void executeQuery(BoundingBox bounds)
+        private void queryCallback(IAsyncResult result)
         {
-            DataSource.ExecuteIntersectionQuery(bounds, _cachedFeatures);
-        }
+            FeatureDataTable features = result.AsyncState as FeatureDataTable;
 
-        private void executeQuery(Geometry geometry)
-        {
-            DataSource.ExecuteIntersectionQuery(geometry, _cachedFeatures);
-        }
+            if (features != null)
+            {
+                Features.MergeFeatures(features);
+            }
 
+            DataSource.EndExecuteFeatureQuery(result);
+        }
         #endregion
     }
 }

@@ -15,37 +15,45 @@
 // along with SharpMap; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-namespace SharpMap.Presentation.Views
+using System;
+
+namespace SharpMap.Data
 {
     /// <summary>
-    /// Interface for a view of a map.
+    /// Specifies which data is retrieved from the <see cref="IFeatureLayerProvider"/>.
     /// </summary>
-    public interface IView
+    [Flags]
+    public enum QueryExecutionOptions
     {
         /// <summary>
-        /// Gets or sets whether the view is visible.
+        /// Specifies that the keys should be retrieved.
         /// </summary>
-        bool Visible { get; set; }
+        Keys = 1,
 
         /// <summary>
-        /// Gets or sets whether the view is shown as enabled and available,
-        /// or disabled and unavailable.
+        /// Specifies that the bounding boxes of feature geometries should be retrieved.
         /// </summary>
-        bool Enabled { get; set; }
+        BoundingBoxes = 2,
 
         /// <summary>
-        /// Hides the view, causing <see cref="Visible"/> to become false.
+        /// Specifies that both the keys and the bounding boxes of 
+        /// feature geometries should be retrieved.
         /// </summary>
-        void Hide();
+        KeysAndBoundingBoxes = Keys | BoundingBoxes,
+        
+        /// <summary>
+        /// Specifies that the feature geometries should be retrieved.
+        /// </summary>
+        Geometries = 4,
 
         /// <summary>
-        /// Shows the view, causeing <see cref="Visible"/> to become true.
+        /// Specifies that the feature attributes should be retrieved.
         /// </summary>
-        void Show();
+        Attributes = 8,
 
         /// <summary>
-        /// Gets or sets the title to display on the view.
+        /// Specifies that all feature data should be retrieved.
         /// </summary>
-        string Title { get; set; }
+        All = Keys | BoundingBoxes | Geometries | Attributes,
     }
 }

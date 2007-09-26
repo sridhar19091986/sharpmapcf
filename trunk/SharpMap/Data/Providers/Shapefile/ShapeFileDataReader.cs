@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using SharpMap.Features;
 using SharpMap.Geometries;
 
 namespace SharpMap.Data.Providers.ShapeFile
@@ -31,17 +30,24 @@ namespace SharpMap.Data.Providers.ShapeFile
 	{
         #region Instance fields
         private readonly ShapeFileProvider _shapeFile;
+        private readonly QueryExecutionOptions _options;
         private readonly DataTable _schemaTable;
         private FeatureDataRow<uint> _currentFeature;
         private bool _isDisposed;
-        private readonly IEnumerator<uint> _objectEnumerator; 
+        private readonly IEnumerator<uint> _objectEnumerator;
         #endregion
 
 		#region Object Construction / Disposal
 
-		internal ShapeFileDataReader(ShapeFileProvider source, BoundingBox queryRegion)
+		internal ShapeFileDataReader(ShapeFileProvider source, BoundingBox queryRegion, QueryExecutionOptions options)
 		{
+            if(options != QueryExecutionOptions.All)
+            {
+                throw new ArgumentException("Only QueryExecutionOptions.All is supported.", "options");
+            }
+
 			_shapeFile = source;
+		    _options = options;
 			_schemaTable = source.GetSchemaTable();
 
 			// Use the spatial index to get a list of features whose BoundingBox intersects query bounds.
@@ -86,6 +92,9 @@ namespace SharpMap.Data.Providers.ShapeFile
 			OnDisposed();
 		}
 
+        /// <summary>
+        /// Gets a value indicating whether the ShapeFileDataReader has been disposed or not.
+        /// </summary>
 		public bool IsDisposed
 		{
 			get { return _isDisposed; }
@@ -125,9 +134,6 @@ namespace SharpMap.Data.Providers.ShapeFile
 				}
 			}
 		}
-		#endregion
-
-		#region IFeatureDataReader Members
 
 		public object GetOid()
 		{
@@ -143,6 +149,16 @@ namespace SharpMap.Data.Providers.ShapeFile
 				return true;
 			}
 		}
+
+        public bool IsFullyLoaded
+        {
+            get { return _options == QueryExecutionOptions.All; }
+        }
+
+        public Type OidType
+        {
+            get { return typeof(UInt32); }
+        }
 
 		#endregion
 
@@ -430,14 +446,6 @@ namespace SharpMap.Data.Providers.ShapeFile
 			{
 				throw new InvalidOperationException("The Read method must be called before accessing values.");
 			}
-		}
-
-		#endregion
-
-		#region IFeatureDataRecord Members
-		public Type OidType
-		{
-			get { return typeof(UInt32); }
 		}
 
 		#endregion

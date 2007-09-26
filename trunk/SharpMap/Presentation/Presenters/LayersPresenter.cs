@@ -20,8 +20,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using SharpMap;
 using SharpMap.Layers;
+using SharpMap.Presentation.Presenters;
+using SharpMap.Presentation.Views;
 
-namespace SharpMap.Presentation
+namespace SharpMap.Presentation.Presenters
 {
     /// <summary>
     /// Provides a presenter for the layers of a <see cref="Map"/>.
@@ -51,19 +53,17 @@ namespace SharpMap.Presentation
 
         protected override void OnMapPropertyChanged(string propertyName)
         {
-            switch (propertyName)
+            if (propertyName == Map.SelectedLayersProperty.Name)
             {
-                case Map.SelectedLayersPropertyName:
-                    View.SelectedLayers = new List<string>(generateLayerNames(Map.SelectedLayers));
-                    break;
-                case Map.VisibleRegionPropertyName:
-                    // TODO: Make layers appear unavailable if the visible region is outside
-                    // the MinVisible or MaxVisible for the layer
-                    break;
-                case Map.ActiveToolPropertyName:
-                case Map.SpatialReferencePropertyName:
-                default:
-                    throw new NotImplementedException();
+                View.SelectedLayers = new List<string>(generateLayerNames(Map.SelectedLayers));
+            }
+
+            if (propertyName == Map.ActiveToolProperty.Name)
+            {
+            }
+
+            if (propertyName == Map.SpatialReferenceProperty.Name)
+            {
             }
         }
 
@@ -83,19 +83,8 @@ namespace SharpMap.Presentation
             {
                 case ListChangedType.ItemChanged:
 #if !CFBuild
-                    if(e.PropertyDescriptor.Name == Layer.EnabledProperty.Name)
+                    if (e.PropertyDescriptor.Name == Layer.EnabledProperty.Name)
                     {
-                        ILayer layer = Map.Layers[e.NewIndex];
-                        if(layer.Enabled)
-                        {
-                            View.EnableLayer(layer.LayerName);
-                        }
-                        else 
-                        {
-                            View.DisableLayer(layer.LayerName);
-                        }
-                    }
-#else //Not good but this does no harm
                         ILayer layer = Map.Layers[e.NewIndex];
                         if (layer.Enabled)
                         {
@@ -105,9 +94,21 @@ namespace SharpMap.Presentation
                         {
                             View.DisableLayer(layer.LayerName);
                         }
+                    }
+#else //Not good but this does no harm
+                    ILayer layer = Map.Layers[e.NewIndex];
+                    if (layer.Enabled)
+                    {
+                        View.EnableLayer(layer.LayerName);
+                    }
+                    else
+                    {
+                        View.DisableLayer(layer.LayerName);
+                    }
+
 #endif
                     break;
-                // The following are taken care of by data binding:
+                    // The following are taken care of by data binding:
                 case ListChangedType.ItemMoved:
                 case ListChangedType.ItemAdded:
                 case ListChangedType.ItemDeleted:

@@ -19,9 +19,6 @@ using System;
 #if !CFBuild
 using System.Runtime.Serialization;
 #endif
-
-using SharpMap.Features;
-
 namespace SharpMap.Data.Providers.ShapeFile
 {    
     /// <summary>

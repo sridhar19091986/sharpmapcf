@@ -17,15 +17,28 @@
 
 using System.Collections.Generic;
 
-namespace SharpMap.Data
+namespace SharpMap.Geometries
 {
-    public interface IWritableFeatureLayerProvider<TOid> : IFeatureLayerProvider<TOid>
+    internal static class BoundingBoxOperations
     {
-        void Insert(FeatureDataRow<TOid> feature);
-        void Insert(IEnumerable<FeatureDataRow<TOid>> features);
-        void Update(FeatureDataRow<TOid> feature);
-        void Update(IEnumerable<FeatureDataRow<TOid>> features);
-        void Delete(FeatureDataRow<TOid> feature);
-        void Delete(IEnumerable<FeatureDataRow<TOid>> features);
+        internal static Geometry Difference(BoundingBox lhs, BoundingBox rhs)
+        {
+            List<BoundingBox> components = new List<BoundingBox>();
+            components.AddRange(lhs.Split(rhs.LowerLeft));
+            components.AddRange(lhs.Split(rhs.LowerRight));
+            components.AddRange(lhs.Split(rhs.UpperLeft));
+            components.AddRange(lhs.Split(rhs.UpperRight));
+
+            for (int i = components.Count - 1; i >= 0; i--)
+            {
+                if (components[i].IsEmpty || components[i].Within(rhs))
+                {
+                    components.RemoveAt(i);
+                }
+            }
+
+            BoundingBox diff = BoundingBox.Join(components.ToArray());
+            return diff.ToGeometry();
+        }
     }
 }

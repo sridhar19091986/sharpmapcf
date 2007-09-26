@@ -16,79 +16,211 @@
 // along with SharpMap; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
+using System;
 using System.Collections.Generic;
 using System.Data;
-using SharpMap.Features;
 using SharpMap.Geometries;
 using System.Globalization;
 
 namespace SharpMap.Data
 {
     /// <summary>
-    /// Interface for vector data providers.
+    /// Interface for feature data providers.
     /// </summary>
     public interface IFeatureLayerProvider : ILayerProvider
     {
         /// <summary>
-        /// Retrieves the features intersected by <paramref name="geom"/>.
+        /// Begins to retrieve the features related to <paramref name="geometry"/> by 
+        /// <paramref name="queryType"/>.
         /// </summary>
-        /// <param name="geom">Geometry to intersect with.</param>
+        /// <param name="geometry">Geometry to query with.</param>
         /// <param name="dataSet">FeatureDataSet to fill data into.</param>
-        void ExecuteIntersectionQuery(Geometry geom, FeatureDataSet dataSet);
+        /// <param name="queryType">Type of spatial query to execute.</param>
+        /// <param name="callback">
+        /// <see cref="AsyncCallback"/> delegate to invoke when the operation completes.
+        /// </param>
+        /// <param name="asyncState">
+        /// Custom state to pass to the <paramref name="callback"/>.
+        /// </param>
+        IAsyncResult BeginExecuteFeatureQuery(Geometry geometry, FeatureDataSet dataSet, 
+            SpatialQueryType queryType, AsyncCallback callback, object asyncState);
 
         /// <summary>
-        /// Retrieves the features intersected by <paramref name="geom"/>.
+        /// Begins to retrieve the features related to <paramref name="geometry"/> by 
+        /// <paramref name="queryType"/>.
         /// </summary>
-        /// <param name="geom">Geometry to intersect with.</param>
+        /// <param name="geometry">Geometry to query with.</param>
         /// <param name="table">FeatureDataTable to fill data into.</param>
-        void ExecuteIntersectionQuery(Geometry geom, FeatureDataTable table);
+        /// <param name="queryType">Type of spatial query to execute.</param>
+        /// <param name="callback">
+        /// <see cref="AsyncCallback"/> delegate to invoke when the operation completes.
+        /// </param>
+        /// <param name="asyncState">
+        /// Custom state to pass to the <paramref name="callback"/>.
+        /// </param>
+        IAsyncResult BeginExecuteFeatureQuery(Geometry geometry, FeatureDataTable table,
+            SpatialQueryType queryType, AsyncCallback callback, object asyncState);
+
+        /// <summary>
+        /// Begins to retrieve the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="dataSet">FeatureDataSet to fill data into.</param>
+        /// <param name="callback">
+        /// <see cref="AsyncCallback"/> delegate to invoke when the operation completes.
+        /// </param>
+        /// <param name="asyncState">
+        /// Custom state to pass to the <paramref name="callback"/>.
+        /// </param>
+        IAsyncResult BeginExecuteIntersectionQuery(BoundingBox bounds, FeatureDataSet dataSet, 
+            AsyncCallback callback, object asyncState);
+
+        /// <summary>
+        /// Begins to retrieve the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="dataSet">FeatureDataSet to fill data into.</param>
+        /// <param name="options">Options indicating which data to retrieve.</param>
+        /// <param name="callback">
+        /// <see cref="AsyncCallback"/> delegate to invoke when the operation completes.
+        /// </param>
+        /// <param name="asyncState">
+        /// Custom state to pass to the <paramref name="callback"/>.
+        /// </param>
+        IAsyncResult BeginExecuteIntersectionQuery(BoundingBox bounds, FeatureDataSet dataSet,
+            QueryExecutionOptions options, AsyncCallback callback, object asyncState);
+
+        /// <summary>
+        /// Begins to retrieve the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="table">FeatureDataTable to fill data into.</param>
+        /// <param name="callback">
+        /// <see cref="AsyncCallback"/> delegate to invoke when the operation completes.
+        /// </param>
+        /// <param name="asyncState">
+        /// Custom state to pass to the <paramref name="callback"/>.
+        /// </param>
+        IAsyncResult BeginExecuteIntersectionQuery(BoundingBox bounds, FeatureDataTable table, 
+            AsyncCallback callback, object asyncState);
+
+        /// <summary>
+        /// Begins to retrieve the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="table">FeatureDataTable to fill data into.</param>
+        /// <param name="options">Options indicating which data to retrieve.</param>
+        /// <param name="callback">
+        /// <see cref="AsyncCallback"/> delegate to invoke when the operation completes.
+        /// </param>
+        /// <param name="asyncState">
+        /// Custom state to pass to the <paramref name="callback"/>.
+        /// </param>
+        IAsyncResult BeginExecuteIntersectionQuery(BoundingBox bounds, FeatureDataTable table,
+            QueryExecutionOptions options, AsyncCallback callback, object asyncState);
+
+        /// <summary>
+        /// Ends a retrieval of the features, waiting on the 
+        /// <see cref="IAsyncResult.AsyncWaitHandle"/> if the operation is not complete.
+        /// </summary>
+        void EndExecuteFeatureQuery(IAsyncResult asyncResult);
 
         /// <summary>
         /// Retrieves a <see cref="IFeatureDataReader"/> for the features that 
-        /// are intersected by <paramref name="geom"/>.
+        /// are related to <paramref name="geometry"/> by <paramref name="queryType"/>.
         /// </summary>
-        /// <param name="geom">Geometry to intersect with.</param>
+        /// <param name="geometry">Geometry to query with.</param>
+        /// <param name="queryType">Type of spatial query to execute.</param>
         /// <returns>An IFeatureDataReader to iterate over the results.</returns>
-        IFeatureDataReader ExecuteIntersectionQuery(Geometry geom);
+        IFeatureDataReader ExecuteFeatureQuery(Geometry geometry, SpatialQueryType queryType);
 
         /// <summary>
-        /// Retrieves the data associated with all the features that 
-        /// are intersected by <paramref name="box"/>.
+        /// Retrieves the features related to <paramref name="geometry"/> by 
+        /// <paramref name="queryType"/>.
         /// </summary>
-        /// <param name="box">BoundingBox to intersect with.</param>
+        /// <param name="geometry">Geometry to query with.</param>
         /// <param name="dataSet">FeatureDataSet to fill data into.</param>
-        void ExecuteIntersectionQuery(BoundingBox box, FeatureDataSet dataSet);
+        /// <param name="queryType">Type of spatial query to execute.</param>
+        void ExecuteFeatureQuery(Geometry geometry, FeatureDataSet dataSet, SpatialQueryType queryType);
 
         /// <summary>
-        /// Retrieves the data associated with all the features that 
-        /// are intersected by <paramref name="box"/>.
+        /// Retrieves the features related to <paramref name="geometry"/> by 
+        /// <paramref name="queryType"/>.
         /// </summary>
-        /// <param name="box">BoundingBox to intersect with.</param>
+        /// <param name="geometry">Geometry to query with.</param>
         /// <param name="table">FeatureDataTable to fill data into.</param>
-        void ExecuteIntersectionQuery(BoundingBox box, FeatureDataTable table);
+        /// <param name="queryType">Type of spatial query to execute.</param>
+        void ExecuteFeatureQuery(Geometry geometry, FeatureDataTable table, SpatialQueryType queryType);
+
+        /// <summary>
+        /// Gets the geometries within the specified <see cref="SharpMap.Geometries.BoundingBox"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <returns>
+        /// An enumeration of features within the specified <see cref="SharpMap.Geometries.BoundingBox"/>.
+        /// </returns>
+        IEnumerable<Geometry> ExecuteGeometryIntersectionQuery(BoundingBox bounds);
 
         /// <summary>
         /// Retrieves a <see cref="IFeatureDataReader"/> for the features that 
-        /// are intersected by <paramref name="box"/>.
+        /// are intersected by <paramref name="bounds"/>.
         /// </summary>
-        /// <param name="box">BoundingBox to intersect with.</param>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
         /// <returns>An IFeatureDataReader to iterate over the results.</returns>
-        IFeatureDataReader ExecuteIntersectionQuery(BoundingBox box);
+        IFeatureDataReader ExecuteIntersectionQuery(BoundingBox bounds);
 
         /// <summary>
-        /// Returns the number of features in the entire dataset.
+        /// Retrieves a <see cref="IFeatureDataReader"/> for the features that 
+        /// are intersected by <paramref name="bounds"/>.
         /// </summary>
-        /// <returns>Count of the features in the entire dataset.</returns>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="options">Options indicating which data to retrieve.</param>
+        /// <returns>An IFeatureDataReader to iterate over the results.</returns>
+        IFeatureDataReader ExecuteIntersectionQuery(BoundingBox bounds, QueryExecutionOptions options);
+
+        /// <summary>
+        /// Retrieves the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="dataSet">FeatureDataSet to fill data into.</param>
+        void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataSet dataSet);
+
+        /// <summary>
+        /// Retrieves the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="dataSet">FeatureDataSet to fill data into.</param>
+        /// <param name="options">Options indicating which data to retrieve.</param>
+        void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataSet dataSet, QueryExecutionOptions options);
+
+        /// <summary>
+        /// Retrieves the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="table">FeatureDataTable to fill data into.</param>
+        void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataTable table);
+
+        /// <summary>
+        /// Retrieves the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="table">FeatureDataTable to fill data into.</param>
+        /// <param name="options">Options indicating which data to retrieve.</param>
+        void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataTable table, QueryExecutionOptions options);
+
+        /// <summary>
+        /// Returns the number of features in the entire data source.
+        /// </summary>
+        /// <returns>Count of the features in the entire data source.</returns>
         int GetFeatureCount();
-
-        /// <summary>
-        /// Gets the features within the specified 
-        /// <see cref="SharpMap.Geometries.BoundingBox"/>.
-        /// </summary>
-        /// <param name="boundingBox">BoundingBox which defines the view.</param>
-        /// <returns>An enumeration of features within the specified 
-        /// <see cref="SharpMap.Geometries.BoundingBox"/>.</returns>
-        IEnumerable<Geometry> GetGeometriesInView(BoundingBox boundingBox);
 
         /// <summary>
         /// Returns a <see cref="DataTable"/> with rows describing the columns in the schema

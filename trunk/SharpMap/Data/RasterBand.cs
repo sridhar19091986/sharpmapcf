@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 - Rory Plaire (codekaizen@gmail.com)
+﻿// Copyright 2006, 2007 - Rory Plaire (codekaizen@gmail.com)
 //
 // This file is part of SharpMap.
 // SharpMap is free software; you can redistribute it and/or modify
@@ -15,18 +15,19 @@
 // along with SharpMap; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-namespace SharpMap.Styles
+using System;
+using SharpMap.Geometries;
+
+namespace SharpMap.Data
 {
-    /// <summary>
-    /// Interface which applies to a feature style and allows the feature
-    /// to be selectable or not, depending on the style.
-    /// </summary>
-    public interface IFeatureLayerStyle
+    public class RasterBand
     {
-        /// <summary>
-        /// Gets or sets a value to determine if features can 
-        /// be selected on this layer.
-        /// </summary>
-        bool AreFeaturesSelectable { get; set; }
+        public BoundingBox Extents
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

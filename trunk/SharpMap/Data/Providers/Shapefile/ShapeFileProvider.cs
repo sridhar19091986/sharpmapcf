@@ -26,7 +26,7 @@ using System.Threading;
 using SharpMap.Converters.WellKnownText;
 using SharpMap.CoordinateSystems;
 using SharpMap.CoordinateSystems.Transformations;
-using SharpMap.Features;
+using SharpMap.Data;
 using SharpMap.Geometries;
 using SharpMap.Indexing;
 using SharpMap.Indexing.RTree;
@@ -82,7 +82,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 		#region Instance fields
 		private FilterMethod _filterDelegate;
 		private int? _srid;
-		private string _filename;
+		private readonly string _filename;
 		private DbaseFile _dbaseFile;
 		private FileStream _shapeFileStream;
 		private BinaryReader _shapeFileReader;
@@ -92,7 +92,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 		private bool _coordsysReadFromFile = false;
 		private ICoordinateSystem _coordinateSystem;
 		private bool _disposed = false;
-		private DynamicRTree<uint> _tree;
+		private DynamicRTree<uint> _spatialIndex;
 		private readonly ShapeFileHeader _header;
 		private readonly ShapeFileIndex _shapeFileIndex;
 		private ShapeFileDataReader _currentReader;
@@ -203,10 +203,10 @@ namespace SharpMap.Data.Providers.ShapeFile
 					_shapeFileStream = null;
 				}
 
-				if (_tree != null)
+				if (_spatialIndex != null)
 				{
-					_tree.Dispose();
-					_tree = null;
+					_spatialIndex.Dispose();
+					_spatialIndex = null;
 				}
 			}
 
@@ -275,8 +275,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 		/// <exception cref="ArgumentException">
 		/// Thrown if <paramref name="layerName"/> has invalid path characters.
 		/// </exception>
-		public static ShapeFileProvider Create(string directory, string layerName, ShapeType type, 
-            FeatureDataTable schema)
+		public static ShapeFileProvider Create(string directory, string layerName, ShapeType type, FeatureDataTable schema)
 		{
 			if (type == ShapeType.Null)
 			{
@@ -330,7 +329,7 @@ namespace SharpMap.Data.Providers.ShapeFile
             Encoding encoding = Encoding.Unicode;
             //Encoding encoding = Encoding.Default;
 #endif
-			return Create(directory, layerName, type, model, culture, encoding);
+            return Create(directory, layerName, type, model, culture, encoding);
 		}
 
 
@@ -363,6 +362,8 @@ namespace SharpMap.Data.Providers.ShapeFile
 			{
 				throw new ArgumentNullException("layerName");
 			}
+
+
 #if !CFBuild
 			if (layerName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
 			{
@@ -387,7 +388,7 @@ namespace SharpMap.Data.Providers.ShapeFile
                 throw new ArgumentException("Parameter cannot have invalid filename characters", "layerName");
             }
 #endif
-            if (!String.IsNullOrEmpty(Path.GetExtension(layerName)))
+			if (!String.IsNullOrEmpty(Path.GetExtension(layerName)))
 			{
 				layerName = Path.GetFileNameWithoutExtension(layerName);
 			}
@@ -476,7 +477,6 @@ namespace SharpMap.Data.Providers.ShapeFile
 					return Encoding.ASCII;
 				}
 
-				//enableReading();
 				return _dbaseFile.Encoding;
 			}
 		}
@@ -498,93 +498,95 @@ namespace SharpMap.Data.Providers.ShapeFile
 		public string Filename
 		{
 			get { return _filename; }
-			set
-			{
-				if (value != _filename)
-				{
-					if (IsOpen)
-					{
-						throw new ShapeFileInvalidOperationException(
-							"Cannot change filename while datasource is open.");
-					}
 
-					if (File.Exists(value))
-					{
-						throw new ShapeFileInvalidOperationException(
-							String.Format("Can't rename shapefile because a " +
-							"file of with the name {0} already exists.", value));
-					}
+            // Seriously - more trouble than it's worth...
+            //set
+            //{
+            //    if (value != _filename)
+            //    {
+            //        if (IsOpen)
+            //        {
+            //            throw new ShapeFileInvalidOperationException(
+            //                "Cannot change filename while datasource is open.");
+            //        }
 
-					if (String.Compare(Path.GetExtension(value), ".shp", true) != 0)
-					{
-						throw new ShapeFileIsInvalidException(
-							String.Format("Invalid shapefile filename: {0}.", value));
-					}
+            //        if (File.Exists(value))
+            //        {
+            //            throw new ShapeFileInvalidOperationException(
+            //                String.Format("Can't rename shapefile because a " +
+            //                "file of with the name {0} already exists.", value));
+            //        }
 
-					string oldName = Path.Combine(Path.GetDirectoryName(_filename), Path.GetFileNameWithoutExtension(_filename));
-					string newName = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value));
+            //        if (String.Compare(Path.GetExtension(value), ".shp", true) != 0)
+            //        {
+            //            throw new ShapeFileIsInvalidException(
+            //                String.Format("Invalid shapefile filename: {0}.", value));
+            //        }
 
-					// Below is not a complete list, but should suffice a great number
-					// of scenarios
-					string[] possibleShapefileFiles = new string[] {
-                        ".shp",     // Geometry file
-                        ".shx",     // Shape index file
-                        ".dbf",     // Attributes file
-                        ".sbn",     // ESRI spatial index
-                        ".sbx",     // ESRI spatial index
-                        ".idx",     // Geocoding index for read-only shapefiles
-                        ".ids",     // Geocoding index for read-write shapefiles
-                        ".prj",     // WKT projection file
-                        ".fbx",     // ArcView spatial index
-                        ".fbn",     // ArcView spatial index
-                        ".ain",     // ESRI optional attribute index
-                        ".aih",     // ESRI optional attribute index
-                        ".atx",     // ArcCatalog attribute index
-                        ".cpg",     // Code page file
-                        ".sidx" };  // SharpMap spatial index 
+            //        string oldName = Path.Combine(Path.GetDirectoryName(_filename), Path.GetFileNameWithoutExtension(_filename));
+            //        string newName = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value));
 
-					try
-					{
-						foreach (string ext in possibleShapefileFiles)
-						{
-							string oldFile = oldName + ext;
-							string newFile = newName + ext;
-							if (File.Exists(oldFile)) File.Copy(oldFile, newFile);
-						}
-					}
-					catch (IOException)
-					{
-						// Rollback by deleting copied files
-						foreach (string ext in possibleShapefileFiles)
-						{
-							try
-							{
-								string newFile = newName + ext;
-								if (File.Exists(newFile)) File.Delete(newFile);
-							}
-							catch (IOException)
-							{
-								// Ignore and continue...
-							}
-						}
-					}
+            //        // Below is not a complete list, but should suffice a great number
+            //        // of scenarios
+            //        string[] possibleShapefileFiles = new string[] {
+            //            ".shp",     // Geometry file
+            //            ".shx",     // Shape index file
+            //            ".dbf",     // Attributes file
+            //            ".sbn",     // ESRI spatial index
+            //            ".sbx",     // ESRI spatial index
+            //            ".idx",     // Geocoding index for read-only shapefiles
+            //            ".ids",     // Geocoding index for read-write shapefiles
+            //            ".prj",     // WKT projection file
+            //            ".fbx",     // ArcView spatial index
+            //            ".fbn",     // ArcView spatial index
+            //            ".ain",     // ESRI optional attribute index
+            //            ".aih",     // ESRI optional attribute index
+            //            ".atx",     // ArcCatalog attribute index
+            //            ".cpg",     // Code page file
+            //            ".sidx" };  // SharpMap spatial index 
 
-					// Delete only after all are copied
-					foreach (string ext in possibleShapefileFiles)
-					{
-						string oldFile = oldName + ext;
-						if (File.Exists(oldFile)) File.Delete(oldFile);
-					}
+            //        try
+            //        {
+            //            foreach (string ext in possibleShapefileFiles)
+            //            {
+            //                string oldFile = oldName + ext;
+            //                string newFile = newName + ext;
+            //                if (File.Exists(oldFile)) File.Copy(oldFile, newFile);
+            //            }
+            //        }
+            //        catch (IOException)
+            //        {
+            //            // Rollback by deleting copied files
+            //            foreach (string ext in possibleShapefileFiles)
+            //            {
+            //                try
+            //                {
+            //                    string newFile = newName + ext;
+            //                    if (File.Exists(newFile)) File.Delete(newFile);
+            //                }
+            //                catch (IOException)
+            //                {
+            //                    // Ignore and continue...
+            //                }
+            //            }
+            //        }
 
-					_filename = value;
+            //        // Delete only after all are copied
+            //        foreach (string ext in possibleShapefileFiles)
+            //        {
+            //            string oldFile = oldName + ext;
+            //            if (File.Exists(oldFile)) File.Delete(oldFile);
+            //        }
 
-					if (_dbaseFile != null)
-					{
-						_dbaseFile.Close();
-						_dbaseFile = null;
-					}
-				}
-			}
+            //        _filename = value;
+
+            //        if (_dbaseFile != null)
+            //        {
+            //            _dbaseFile.Close();
+            //            _dbaseFile = null;
+            //        }
+            //    }
+            //}
 		}
 
 		/// <summary>
@@ -658,11 +660,6 @@ namespace SharpMap.Data.Providers.ShapeFile
 			}
 		}
 
-		public CultureInfo Locale
-		{
-			get { return _dbaseFile.CultureInfo; }
-		}
-
 		/// <summary>
 		/// Forces a rebuild of the spatial index. 
 		/// If the instance of the ShapeFile provider
@@ -685,11 +682,11 @@ namespace SharpMap.Data.Providers.ShapeFile
 					File.Delete(_filename + ".sidx");
 				}
 
-				_tree = createSpatialIndexFromFile(_filename);
+				_spatialIndex = createSpatialIndexFromFile(_filename);
 			}
 			else
 			{
-				_tree = createSpatialIndex();
+				_spatialIndex = createSpatialIndex();
 			}
 		}
 
@@ -747,9 +744,9 @@ namespace SharpMap.Data.Providers.ShapeFile
 		/// </returns>
 		public BoundingBox GetExtents()
 		{
-			if (_tree != null)
+			if (_spatialIndex != null)
 			{
-				return _tree.Root.BoundingBox;
+				return _spatialIndex.Root.BoundingBox;
 			}
 
 			return _header.Envelope;
@@ -839,6 +836,7 @@ namespace SharpMap.Data.Providers.ShapeFile
                     _shapeFileStream = new FileStream(Filename, FileMode.OpenOrCreate, FileAccess.ReadWrite,
                         exclusive ? FileShare.None : FileShare.Read, 4096);
 #endif
+
 					_shapeFileReader = new BinaryReader(_shapeFileStream);
 					_shapeFileWriter = new BinaryWriter(_shapeFileStream);
 
@@ -866,97 +864,293 @@ namespace SharpMap.Data.Providers.ShapeFile
 
 		#endregion
 
-		#region IFeatureLayerProvider Members
+        #region IFeatureLayerProvider Members
 
-		/// <summary>
-		/// Returns the data associated with all the geometries that are intersected by 'geom'.
-		/// Please note that the ShapeFile provider currently doesn't fully support geometryintersection
-		/// and thus only BoundingBox/BoundingBox querying are performed. The results are NOT
-		/// guaranteed to lie withing 'geom'.
-		/// </summary>
-		/// <param name="geom"></param>
-		/// <param name="ds">FeatureDataSet to fill with data.</param>
-		/// <exception cref="ShapeFileInvalidOperationException">
-		/// Thrown if method is called and the shapefile is closed. Check <see cref="IsOpen"/> before calling.
-		/// </exception>
-		public void ExecuteIntersectionQuery(Geometry geom, FeatureDataSet ds)
-		{
-			checkOpen();
-			//enableReading();
+        public IAsyncResult BeginExecuteFeatureQuery(Geometry geometry, FeatureDataSet dataSet, SpatialQueryType queryType, AsyncCallback callback, object asyncState)
+        {
+            throw new NotImplementedException();
+        }
 
-			FeatureDataTable<uint> dt = HasDbf
-											? _dbaseFile.NewTable
-											: FeatureDataTable<uint>.CreateEmpty(ShapeFileConstants.IdColumnName);
-			BoundingBox boundingBox = geom.GetBoundingBox();
+        public IAsyncResult BeginExecuteFeatureQuery(Geometry geometry, FeatureDataTable table, SpatialQueryType queryType, AsyncCallback callback, object asyncState)
+        {
+            throw new NotImplementedException();
+        }
 
-			//Get candidates by intersecting the spatial index tree
-			IEnumerable<uint> oidList = getKeysFromIndexEntries(_tree.Search(boundingBox));
+        public IAsyncResult BeginExecuteIntersectionQuery(BoundingBox bounds, FeatureDataSet dataSet, AsyncCallback callback, object asyncState)
+        {
+            throw new NotImplementedException();
+        }
 
-			foreach (uint oid in oidList)
-			{
-				for (uint i = (uint)dt.Rows.Count - 1; i >= 0; i--)
-				{
-					FeatureDataRow<uint> fdr = getFeature(oid, dt);
+        public IAsyncResult BeginExecuteIntersectionQuery(BoundingBox bounds, FeatureDataSet dataSet, QueryExecutionOptions options, AsyncCallback callback, object asyncState)
+        {
+            throw new NotImplementedException();
+        }
 
-					if (fdr.Geometry != null)
-					{
-						if (fdr.Geometry.GetBoundingBox().Intersects(boundingBox))
-						{
-							// TODO: replace above line with this:  if(fdr.Geometry.Intersects(bbox))  when relation model is complete
-							if (FilterDelegate == null || FilterDelegate(fdr))
-							{
-								dt.AddRow(fdr);
-							}
-						}
-					}
-				}
-			}
+        public IAsyncResult BeginExecuteIntersectionQuery(BoundingBox bounds, FeatureDataTable table, AsyncCallback callback, object asyncState)
+        {
+            throw new NotImplementedException();
+        }
 
-			ds.Tables.Add(dt);
-		}
+        public IAsyncResult BeginExecuteIntersectionQuery(BoundingBox bounds, FeatureDataTable table, QueryExecutionOptions options, AsyncCallback callback, object asyncState)
+        {
+            throw new NotImplementedException();
+        }
 
-		public void ExecuteIntersectionQuery(Geometry geom, FeatureDataTable table)
+        public void EndExecuteFeatureQuery(IAsyncResult asyncResult)
+        {
+            throw new NotImplementedException();
+        }
+
+	    /// <summary>
+        /// Retrieves a <see cref="IFeatureDataReader"/> for the features that 
+        /// are related to <paramref name="geometry"/> by <paramref name="queryType" />.
+        /// </summary>
+        /// <param name="geometry">Geometry to query with.</param>
+        /// <param name="queryType">Type of spatial query to execute.</param>
+        /// <returns>An IFeatureDataReader to iterate over the results.</returns>
+        public IFeatureDataReader ExecuteFeatureQuery(Geometry geometry, SpatialQueryType queryType)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+        /// <summary>
+        /// Retrieves the features related to <paramref name="geometry"/> by <paramref name="queryType"/>.
+        /// </summary>
+        /// <param name="geometry">Geometry to query with.</param>
+        /// <param name="dataSet">FeatureDataSet to fill data into.</param>
+        /// <param name="queryType">Type of spatial query to execute.</param>
+	    /// <exception cref="ShapeFileInvalidOperationException">
+	    /// Thrown if method is called and the shapefile is closed. Check <see cref="IsOpen"/> before calling.
+	    /// </exception>
+	    /// <remarks>
+        /// NOTE: in SharpMap v2.0 Beta 1 the ShapeFile provider currently doesn't fully support geometry intersection
+        /// and thus only <see cref="BoundingBox"/> querying is performed. The results are NOT
+        /// guaranteed to lie within <paramref name="geometry"/>.
+        /// </remarks>
+	    public void ExecuteFeatureQuery(Geometry geometry, FeatureDataSet dataSet, SpatialQueryType queryType)
+	    {
+	        checkOpen();
+
+	        FeatureDataTable<uint> dt = HasDbf
+	                                        ? _dbaseFile.NewTable
+	                                        : FeatureDataTable<uint>.CreateEmpty(ShapeFileConstants.IdColumnName);
+
+	        BoundingBox boundingBox = geometry.GetBoundingBox();
+
+	        //Get candidates by intersecting the spatial index tree
+	        IEnumerable<uint> oidList = getKeysFromIndexEntries(_spatialIndex.Search(boundingBox));
+
+	        foreach (uint oid in oidList)
+	        {
+	            for (uint i = (uint)dt.Rows.Count - 1; i >= 0; i--)
+	            {
+	                FeatureDataRow<uint> fdr = getFeature(oid, dt);
+
+	                if (fdr.Geometry != null)
+	                {
+	                    if (fdr.Geometry.GetBoundingBox().Intersects(boundingBox))
+	                    {
+	                        // TODO: replace above line with this:  if(fdr.Geometry.Intersects(bbox))  when relation model is complete
+	                        if (FilterDelegate == null || FilterDelegate(fdr))
+	                        {
+	                            dt.AddRow(fdr);
+	                        }
+	                    }
+	                }
+	            }
+	        }
+
+	        dataSet.Tables.Add(dt);
+	    }
+
+	    /// <summary>
+        /// Throws an NotSupportedException.
+        /// </summary>
+        /// <param name="geometry">Geometry to query with.</param>
+        /// <param name="table">FeatureDataTable to fill data into.</param>
+        /// <param name="queryType">Type of spatial query to execute.</param>
+        public void ExecuteFeatureQuery(Geometry geometry, FeatureDataTable table, SpatialQueryType queryType)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IFeatureDataReader ExecuteIntersectionQuery(Geometry geom)
-		{
-			throw new NotImplementedException();
-		}
+	    /// <summary>
+	    /// Returns geometries whose bounding box intersects <paramref name="bounds"/>.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>
+	    /// Please note that this method doesn't guarantee that the geometries returned actually 
+	    /// intersect <paramref name="bounds"/>, but only that their bounding box intersects <paramref name="bounds"/>.
+	    /// </para>
+	    /// <para>
+	    /// This method is much faster than the QueryFeatures method, because intersection tests
+	    /// are performed on objects simplifed by their BoundingBox, and using the spatial index.
+	    /// </para>
+	    /// </remarks>
+	    /// <param name="bounds">
+	    /// <see cref="BoundingBox"/> which determines the view.
+	    /// </param>
+	    /// <returns>
+	    /// A <see cref="IEnumerable{T}"/> containing the <see cref="Geometry"/> objects
+	    /// which are at least partially contained within the given <paramref name="bounds"/>.
+	    /// </returns>
+	    /// <exception cref="ShapeFileInvalidOperationException">
+	    /// Thrown if method is called and the 
+	    /// shapefile is closed. Check <see cref="IsOpen"/> before calling.
+	    /// </exception>
+	    public IEnumerable<Geometry> ExecuteGeometryIntersectionQuery(BoundingBox bounds)
+	    {
+	        checkOpen();
+	        //enableReading();
 
-		/// <summary>
-		/// Returns all objects whose BoundingBox intersects <paramref name="bounds"/>.
+	        foreach (uint oid in GetObjectIdsInView(bounds))
+	        {
+	            Geometry g = GetGeometryById(oid);
+
+	            if (!ReferenceEquals(g, null))
+	            {
+	                yield return g;
+	            }
+	        }
+	    }
+
+        /// <summary>
+        /// Retrieves a <see cref="IFeatureDataReader"/> for the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <returns>An IFeatureDataReader to iterate over the results.</returns>
+        /// <exception cref="ShapeFileInvalidOperationException">
+        /// Thrown if method is called and the shapefile is closed. Check <see cref="IsOpen"/> before calling.
+        /// </exception>
+	    public IFeatureDataReader ExecuteIntersectionQuery(BoundingBox bounds)
+	    {
+            return ExecuteIntersectionQuery(bounds, QueryExecutionOptions.All);
+	    }
+        
+        /// <summary>
+        /// Retrieves a <see cref="IFeatureDataReader"/> for the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="options">Options indicating which data to retrieve.</param>
+        /// <returns>An IFeatureDataReader to iterate over the results.</returns>
+        /// <exception cref="ShapeFileInvalidOperationException">
+        /// Thrown if method is called and the shapefile is closed. Check <see cref="IsOpen"/> before calling.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when a value other than <see cref="QueryExecutionOptions.All"/> 
+        /// is supplied for <paramref name="options"/>.
+        /// </exception>
+        /// <remarks>
+        /// Only <see cref="QueryExecutionOptions.All"/> is a supported value for <paramref name="options"/>.
+        /// </remarks>
+        public IFeatureDataReader ExecuteIntersectionQuery(BoundingBox bounds, QueryExecutionOptions options)
+        {
+            checkOpen();
+
+            lock (_readerSync)
+            {
+                if (_currentReader != null)
+                {
+                    throw new ShapeFileInvalidOperationException(
+                        "Can't open another ShapeFileDataReader on this ShapeFile, since another reader is already active.");
+                }
+
+                //enableReading();
+                _currentReader = new ShapeFileDataReader(this, bounds, options);
+                _currentReader.Disposed += readerDisposed;
+                return _currentReader;
+            }
+        }
+
+	    /// <summary>
+        /// Retrieves the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
 		/// </summary>
-		/// <remarks>
-		/// <para>
-		/// Please note that this method doesn't guarantee that the geometries returned actually 
-		/// intersect <paramref name="bounds"/>, but only that their <see cref="BoundingBox"/> intersects bounds.
-		/// </para>
-		/// <para>This method is much faster than the QueryFeatures method, because intersection tests
-		/// are performed on objects simplifed by their BoundingBox, and using the spatial index.</para>
-		/// </remarks>
 		/// <param name="bounds"><see cref="BoundingBox"/> which determines the view.</param>
-		/// <param name="ds">The <see cref="FeatureDataSet"/> to fill 
+        /// <param name="dataSet">The <see cref="FeatureDataSet"/> to fill 
 		/// with features within the <paramref name="bounds">view</paramref>.</param>
 		/// <exception cref="ShapeFileInvalidOperationException">
 		/// Thrown if method is called and the shapefile is closed. Check <see cref="IsOpen"/> before calling.
-		/// </exception>
-		public void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataSet ds)
+        /// </exception>
+        /// <remarks>
+        /// <para>
+        /// Please note that this method doesn't guarantee that the geometries returned actually 
+        /// intersect <paramref name="bounds"/>, but only that their <see cref="BoundingBox"/> intersects bounds.
+        /// </para>
+        /// </remarks>
+		public void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataSet dataSet)
 		{
-			checkOpen();
-
-			FeatureDataTable<uint> dt = getNewTable();
-
-			// TODO: search the dataset for the table and merge results.
-			ExecuteIntersectionQuery(bounds, dt);
-
-			ds.Tables.Add(dt);
+	        ExecuteIntersectionQuery(bounds, dataSet, QueryExecutionOptions.All);
 		}
 
-		public void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataTable table)
+        /// <summary>
+        /// Retrieves the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds"><see cref="BoundingBox"/> which determines the view.</param>
+        /// <param name="dataSet">
+        /// The <see cref="FeatureDataSet"/> to fill 
+        /// with features within the <paramref name="bounds"/>.
+        /// </param>
+        /// <param name="options">Options indicating which data to retrieve.</param>
+        /// <exception cref="ShapeFileInvalidOperationException">
+        /// Thrown if method is called and the shapefile is closed. Check <see cref="IsOpen"/> before calling.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when a value other than <see cref="QueryExecutionOptions.All"/> 
+        /// is supplied for <paramref name="options"/>.
+        /// </exception>
+        /// <remarks>
+        /// <para>
+        /// Please note that this method doesn't guarantee that the geometries returned actually 
+        /// intersect <paramref name="bounds"/>, but only that their <see cref="BoundingBox"/> intersects bounds.
+        /// </para>
+        /// </remarks>
+        public void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataSet dataSet, QueryExecutionOptions options)
+        {
+            checkOpen();
+
+            // TODO: search the dataset for the table and merge results.
+            FeatureDataTable<uint> dt = getNewTable();
+
+            ExecuteIntersectionQuery(bounds, dt, options);
+
+            dataSet.Tables.Add(dt);
+        }
+
+	    /// <summary>
+        /// Retrieves the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="table">FeatureDataTable to fill data into.</param>
+	    public void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataTable table)
 		{
+	        ExecuteIntersectionQuery(bounds, table, QueryExecutionOptions.All);
+        }
+        
+
+	    /// <summary>
+        /// Retrieves the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="table">FeatureDataTable to fill data into.</param>
+        /// <param name="options">Options indicating which data to retrieve.</param>
+        /// <exception cref="ArgumentException">
+        /// Thrown when a value other than <see cref="QueryExecutionOptions.All"/> 
+        /// is supplied for <paramref name="options"/>.
+        /// </exception>
+        public void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataTable table, QueryExecutionOptions options)
+	    {
 			checkOpen();
+
+            if(options != QueryExecutionOptions.All)
+            {
+                throw new ArgumentException("Only QueryExecutionOptions.All is supported.", "options");
+            }
 
 			if(!(table is FeatureDataTable<uint>))
 			{
@@ -970,81 +1164,37 @@ namespace SharpMap.Data.Providers.ShapeFile
 			IEnumerable<uint> objectsInQuery = GetObjectIdsInView(bounds);
 
 			keyedTable.MergeFeatures(getFeatureRecordsFromIds(objectsInQuery, keyedTable));
-        }
+	    }
 
-		public IFeatureDataReader ExecuteIntersectionQuery(BoundingBox box)
-		{
-			lock (_readerSync)
-			{
-				if (_currentReader != null)
-				{
-					throw new ShapeFileInvalidOperationException(
-						"Can't open another ShapeFileDataReader on this ShapeFile, since another reader is already active.");
-				}
-
-				//enableReading();
-				_currentReader = new ShapeFileDataReader(this, box);
-				_currentReader.Disposed += readerDisposed;
-				return _currentReader;
-			}
-		}
-
-		/// <summary>
-		/// Returns geometries whose bounding box intersects <paramref name="bounds"/>.
-		/// </summary>
-		/// <remarks>
-		/// <para>
-		/// Please note that this method doesn't guarantee that the geometries returned actually 
-		/// intersect <paramref name="bounds"/>, but only that their bounding box intersects <paramref name="bounds"/>.
-		/// </para>
-		/// <para>
-		/// This method is much faster than the QueryFeatures method, because intersection tests
-		/// are performed on objects simplifed by their BoundingBox, and using the spatial index.
-		/// </para>
-		/// </remarks>
-		/// <param name="bounds">
-		/// <see cref="BoundingBox"/> which determines the view.
-		/// </param>
-		/// <returns>
-		/// A <see cref="IEnumerable{T}"/> containing the <see cref="Geometry"/> objects
-		/// which are at least partially contained within the given <paramref name="bounds"/>.
-		/// </returns>
-		/// <exception cref="ShapeFileInvalidOperationException">
-		/// Thrown if method is called and the 
-		/// shapefile is closed. Check <see cref="IsOpen"/> before calling.
-		/// </exception>
-		public IEnumerable<Geometry> GetGeometriesInView(BoundingBox bounds)
-		{
-			checkOpen();
-			//enableReading();
-
-			foreach (uint oid in GetObjectIdsInView(bounds))
-			{
-				Geometry g = GetGeometryById(oid);
-
-				if (!ReferenceEquals(g, null))
-				{
-					yield return g;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Returns the total number of features in the datasource (without any filter applied).
-		/// </summary>
-		/// <returns>
-		/// The number of features contained in the shapefile.
-		/// </returns>
+	    /// <summary>
+        /// Returns the number of features in the entire data source.
+        /// </summary>
+        /// <returns>Count of the features in the entire data source.</returns>
 		public int GetFeatureCount()
 		{
 			return _shapeFileIndex.Count;
 		}
 
+        /// <summary>
+        /// Returns a <see cref="DataTable"/> with rows describing the columns in the schema
+        /// for the configured provider. Provides the same result as 
+        /// <see cref="IDataReader.GetSchemaTable"/>.
+        /// </summary>
+        /// <seealso cref="IDataReader.GetSchemaTable"/>
+        /// <returns>A DataTable that describes the column metadata.</returns>
 		public DataTable GetSchemaTable()
 		{
 			//enableReading();
 			return _dbaseFile.GetSchemaTable();
-		}
+        }
+
+        /// <summary>
+        /// Gets the locale of the data as a CultureInfo.
+        /// </summary>
+        public CultureInfo Locale
+        {
+            get { return _dbaseFile.CultureInfo; }
+        }
 
 		/// <summary>
 		/// Sets the schema of the given table to match the schema of the shapefile's attributes.
@@ -1076,7 +1226,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 			checkOpen();
 			//enableReading();
 
-			foreach (uint id in getKeysFromIndexEntries(_tree.Search(bounds)))
+			foreach (uint id in getKeysFromIndexEntries(_spatialIndex.Search(bounds)))
 			{
 				yield return id;
 			}
@@ -1196,9 +1346,9 @@ namespace SharpMap.Data.Providers.ShapeFile
 
 			BoundingBox featureEnvelope = feature.Geometry.GetBoundingBox();
 
-			if (_tree != null)
+			if (_spatialIndex != null)
 			{
-				_tree.Insert(new RTreeIndexEntry<uint>(id, featureEnvelope));
+				_spatialIndex.Insert(new RTreeIndexEntry<uint>(id, featureEnvelope));
 			}
 
 			int offset = _shapeFileIndex[id].Offset;
@@ -1251,9 +1401,9 @@ namespace SharpMap.Data.Providers.ShapeFile
 
 				_shapeFileIndex.AddFeatureToIndex(feature);
 
-				if (_tree != null)
+				if (_spatialIndex != null)
 				{
-					_tree.Insert(new RTreeIndexEntry<uint>(id, featureEnvelope));
+					_spatialIndex.Insert(new RTreeIndexEntry<uint>(id, featureEnvelope));
 				}
 
 				feature[ShapeFileConstants.IdColumnName] = id;
@@ -1595,7 +1745,6 @@ namespace SharpMap.Data.Providers.ShapeFile
 		private FeatureDataRow<uint> getFeature(uint oid, FeatureDataTable<uint> table)
 		{
 			checkOpen();
-			//enableReading();
 
 			if (table == null)
 			{
@@ -1795,15 +1944,15 @@ namespace SharpMap.Data.Providers.ShapeFile
 		private void loadSpatialIndex(bool forceRebuild, bool loadFromFile)
 		{
 			//Only load the tree if we haven't already loaded it, or if we want to force a rebuild
-			if (_tree == null || forceRebuild)
+			if (_spatialIndex == null || forceRebuild)
 			{
 				if (!loadFromFile)
 				{
-					_tree = createSpatialIndex();
+					_spatialIndex = createSpatialIndex();
 				}
 				else
 				{
-					_tree = createSpatialIndexFromFile(_filename);
+					_spatialIndex = createSpatialIndexFromFile(_filename);
 				}
 			}
 		}
@@ -2163,20 +2312,21 @@ namespace SharpMap.Data.Providers.ShapeFile
                     string wkt = sr.ReadToEnd();
                     sr.Close();
 #endif
+
 					_coordinateSystem = (ICoordinateSystem)CoordinateSystemWktReader.Parse(wkt);
 					_coordsysReadFromFile = true;
 				}
-				catch (ArgumentException ex)
-				{
+                catch (ArgumentException ex)
+                {
 #if !CFBuild
 					Trace.TraceWarning("Coordinate system file '" + projfile
 									   + "' found, but could not be parsed. WKT parser returned:" + ex.Message);
 #else
-                    Trace.Assert(false,"Coordinate system file '" + projfile
+                    Trace.Assert(false, "Coordinate system file '" + projfile
                                        + "' found, but could not be parsed. WKT parser returned:" + ex.Message);
 #endif
-					throw new ShapeFileIsInvalidException("Invalid .prj file", ex);
-				}
+                    throw new ShapeFileIsInvalidException("Invalid .prj file", ex);
+                }
 			}
 		}
 

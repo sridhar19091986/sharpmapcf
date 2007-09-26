@@ -16,13 +16,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System.Collections.Generic;
-using System.Diagnostics;
-using SharpMap.Features;
-using SharpMap.Layers;
 using System.ComponentModel;
-using System.Data;
+using System.Diagnostics;
+using SharpMap.Data;
+using SharpMap.Geometries;
+using SharpMap.Layers;
+using SharpMap.Presentation.Views;
 
-namespace SharpMap.Presentation
+namespace SharpMap.Presentation.Presenters
 {
     public class AttributePresenter : BasePresenter<IAttributeView>
     {
@@ -36,15 +37,15 @@ namespace SharpMap.Presentation
 
         private void handleLayersChanged(object sender, ListChangedEventArgs e)
         {
-            if(e.ListChangedType == ListChangedType.ItemAdded)
+            if (e.ListChangedType == ListChangedType.ItemAdded)
             {
-                if(Map.Layers[e.NewIndex] is IFeatureLayer)
+                if (Map.Layers[e.NewIndex] is IFeatureLayer)
                 {
                     wireupFeatureLayer(Map.Layers[e.NewIndex] as IFeatureLayer);
                 }
             }
 
-            if(e.ListChangedType == ListChangedType.ItemDeleted)
+            if (e.ListChangedType == ListChangedType.ItemDeleted)
             {
                 if (e.NewIndex < 0 && Map.Layers[e.OldIndex] is IFeatureLayer)
                 {
@@ -52,14 +53,21 @@ namespace SharpMap.Presentation
                 }
             }
         }
-        
+
         private void handleFeaturesHighlightedChangeRequested(object sender, FeaturesHighlightedChangeRequestEventArgs e)
         {
             IFeatureLayer layer = Map.Layers[e.LayerName] as IFeatureLayer;
 
             Debug.Assert(layer != null);
 
-            layer.HighlightedFeatures.SelectedFeatures = getFeaturesFromIndexes(layer, e.HighlightedFeatures);
+            Geometry filterGeometry = layer.HighlightedFeatures.GeometryFilter;
+
+            foreach (FeatureDataRow feature in getFeaturesFromIndexes(layer, e.HighlightedFeatures))
+            {
+                filterGeometry = filterGeometry.Intersection(feature.Geometry);
+            }
+
+            layer.HighlightedFeatures.GeometryFilter = filterGeometry;
         }
 
         private void handleHighlightedFeaturesChanged(object sender, ListChangedEventArgs e)
@@ -99,8 +107,8 @@ namespace SharpMap.Presentation
         {
             foreach (FeatureDataRow feature in highlightedFeatures)
             {
-                yield return selectedFeatures.IndexOfFeature(feature);
+                yield return selectedFeatures.Find(feature);
             }
         }
-	}
+    }
 }

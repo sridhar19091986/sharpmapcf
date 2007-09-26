@@ -17,7 +17,6 @@
 
 using System;
 using System.Data;
-using SharpMap.Features;
 
 namespace SharpMap.Data.Providers
 {
@@ -224,6 +223,7 @@ namespace SharpMap.Data.Providers
                 short scale = column.ExtendedProperties.ContainsKey(NumericScaleExtendedProperty)
                     ? Convert.ToInt16(column.ExtendedProperties[NumericScaleExtendedProperty])
                     : (scaleComputationDelegate == null) ? (short)0 : scaleComputationDelegate(column);
+
 #if !CFBuild
                 schema.Rows.Add(
                     column.ColumnName,
@@ -239,11 +239,13 @@ namespace SharpMap.Data.Providers
                     column.AutoIncrement,
                     false);
 #else //The Predicate is a delegate to a method that returns true if the object passed to it
-      //matches the conditions defined in the delegate. The elements of array are individually 
-      //passed to the Predicate, and processing is stopped when a match is found.
+                //matches the conditions defined in the delegate. The elements of array are individually 
+                //passed to the Predicate, and processing is stopped when a match is found.
                 bool isKey = false;
-                foreach (DataColumn col in keyColumns){
-                    if (col == column){
+                foreach (DataColumn col in keyColumns)
+                {
+                    if (col == column)
+                    {
                         isKey = true;
                         break;
                     }
