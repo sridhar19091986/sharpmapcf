@@ -22,7 +22,6 @@ using SharpMap.Converters.WellKnownBinary;
 using SharpMap.Converters.WellKnownText;
 using SharpMap.CoordinateSystems;
 using SharpMap.CoordinateSystems.Transformations;
-using SharpMap.Features;
 using SharpMap.Geometries;
 using System.Globalization;
 
@@ -289,124 +288,201 @@ namespace SharpMap.Data.Providers.GeometryProvider
 
         #region IFeatureLayerProvider Members
 
-
-        public CultureInfo Locale
+        public IAsyncResult BeginExecuteFeatureQuery(Geometry geometry, FeatureDataSet dataSet, SpatialQueryType queryType, AsyncCallback callback, object asyncState)
         {
-            get { return CultureInfo.InvariantCulture; }
+            throw new NotImplementedException();
         }
 
-		/// <summary>
-		/// Returns features within the specified bounding box.
+        public IAsyncResult BeginExecuteFeatureQuery(Geometry geometry, FeatureDataTable table, SpatialQueryType queryType, AsyncCallback callback, object asyncState)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IAsyncResult BeginExecuteIntersectionQuery(BoundingBox bounds, FeatureDataSet dataSet, AsyncCallback callback, object asyncState)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IAsyncResult BeginExecuteIntersectionQuery(BoundingBox bounds, FeatureDataSet dataSet, QueryExecutionOptions options, AsyncCallback callback, object asyncState)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IAsyncResult BeginExecuteIntersectionQuery(BoundingBox bounds, FeatureDataTable table, AsyncCallback callback, object asyncState)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IAsyncResult BeginExecuteIntersectionQuery(BoundingBox bounds, FeatureDataTable table, QueryExecutionOptions options, AsyncCallback callback, object asyncState)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EndExecuteFeatureQuery(IAsyncResult asyncResult)
+        {
+            throw new NotImplementedException();
+        }
+
+	    /// <summary>
+		/// Throws an NotSupportedException. 
 		/// </summary>
-		/// <param name="box">The bounding box to intersect with.</param>
-		/// <returns>An enumeration of all geometries which intersect <paramref name="box"/>.</returns>
-		public IEnumerable<Geometry> GetGeometriesInView(BoundingBox box)
-		{
-			List<Geometry> list = new List<Geometry>();
-
-			foreach (Geometry g in _geometries)
-			{
-				if (!g.IsEmpty())
-				{
-					if (g.GetBoundingBox().Intersects(box))
-					{
-						list.Add(g);
-					}
-				}
-			}
-
-			return list.AsReadOnly();
-		}
-
-		public DataTable GetSchemaTable()
-		{
-			throw new NotSupportedException("Attribute data is not supported by the GeometryProvider.");
-		}
-
-		/// <summary>
-		/// Throws an NotSupportedException. Geometry intersection is not yet supported.
-		/// </summary>
-		/// <param name="geometry">The geometry used to intersect with.</param>
-		public IFeatureDataReader ExecuteIntersectionQuery(Geometry geometry)
+        /// <param name="geometry">The geometry used to query with.</param>
+        /// <param name="queryType">Type of spatial query to execute.</param>
+        public IFeatureDataReader ExecuteFeatureQuery(Geometry geometry, SpatialQueryType queryType)
 		{
 			throw new NotSupportedException();
 		}
 
-		/// <summary>
-		/// Throws an NotSupportedException. Geometry intersection is not yet supported.
+	    /// <summary>
+		/// Throws an NotSupportedException.
 		/// </summary>
-		/// <param name="geometry">The geometry used to intersect with.</param>
+        /// <param name="geometry">The geometry used to query with.</param>
 		/// <param name="table">FeatureDataTable to fill data into.</param>
-		public void ExecuteIntersectionQuery(Geometry geometry, FeatureDataTable table)
+        /// <param name="queryType">Type of spatial query to execute.</param>
+		public void ExecuteFeatureQuery(Geometry geometry, FeatureDataTable table, SpatialQueryType queryType)
 		{
 			throw new NotSupportedException();
 		}
 
-		/// <summary>
-		/// Throws an NotSupportedException. Geometry intersection is not yet supported.
+	    /// <summary>
+		/// Throws an NotSupportedException. 
 		/// </summary>
-		/// <param name="geometry">The geometry used to intersect with.</param>
-		/// <param name="ds">FeatureDataSet to fill data into.</param>
-		public void ExecuteIntersectionQuery(Geometry geometry, FeatureDataSet ds)
+		/// <param name="geometry">The geometry used to query with.</param>
+        /// <param name="dataSet">FeatureDataSet to fill data into.</param>
+        /// <param name="queryType">Type of spatial query to execute.</param>
+		public void ExecuteFeatureQuery(Geometry geometry, FeatureDataSet dataSet, SpatialQueryType queryType)
 		{
 			throw new NotSupportedException();
 		}
 
-		public IFeatureDataReader ExecuteIntersectionQuery(BoundingBox box)
+        /// <summary>
+        /// Retrieves a <see cref="IFeatureDataReader"/> for the features that 
+        /// are intersected by <paramref name="box"/>.
+        /// </summary>
+        /// <param name="box">BoundingBox to intersect with.</param>
+        /// <returns>An IFeatureDataReader to iterate over the results.</returns>
+	    public IFeatureDataReader ExecuteIntersectionQuery(BoundingBox box)
 		{
-			return new GeometryDataReader(this, box);
-		}
+	        return ExecuteIntersectionQuery(box, QueryExecutionOptions.Geometries);
+        }
 
-		public void ExecuteIntersectionQuery(BoundingBox box, FeatureDataTable table)
+        /// <summary>
+        /// Retrieves a <see cref="IFeatureDataReader"/> for the features that 
+        /// are intersected by <paramref name="box"/>.
+        /// </summary>
+        /// <param name="box">BoundingBox to intersect with.</param>
+        /// <returns>An IFeatureDataReader to iterate over the results.</returns>
+        /// <param name="options">Options indicating which data to retrieve.</param>
+        public IFeatureDataReader ExecuteIntersectionQuery(BoundingBox box, QueryExecutionOptions options)
+        {
+            return new GeometryDataReader(this, box);
+        }
+
+	    /// <summary>
+        /// Retrieves the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="dataSet">FeatureDataSet to fill data into.</param>
+        public void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataSet dataSet)
+	    {
+            ExecuteIntersectionQuery(bounds, dataSet, QueryExecutionOptions.Geometries);
+        }
+
+	    /// <summary>
+        /// Retrieves the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="dataSet">FeatureDataSet to fill data into.</param>
+        /// <param name="options">Options indicating which data to retrieve.</param>
+        public void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataSet dataSet, QueryExecutionOptions options)
 		{
-			if (table == null) throw new ArgumentNullException("table");
+            if (dataSet == null) throw new ArgumentNullException("dataSet");
 
-			List<Geometry> intersection = new List<Geometry>();
-
-			foreach (Geometry geometry in Geometries)
-			{
-				if (box.Intersects(geometry.GetBoundingBox()))
-				{
-					intersection.Add(geometry);
-				}
-			}
-
-			foreach (FeatureDataRow row in table)
-			{
-				if (intersection.Exists(delegate(Geometry match) { return match.Equals(row.Geometry); }))
-				{
-					intersection.Remove(row.Geometry);
-				}
-			}
-
-			foreach (Geometry geometry in intersection)
-			{
-				FeatureDataRow row = table.NewRow();
-				row.Geometry = geometry;
-				table.AddRow(row);
-			}
-		}
-
-		/// <summary>
-		/// </summary>
-		/// <param name="box"></param>
-		/// <param name="ds">FeatureDataSet to fill data into</param>
-		public void ExecuteIntersectionQuery(BoundingBox box, FeatureDataSet ds)
-		{
-			if (ds == null) throw new ArgumentNullException("ds");
-
-			FeatureDataTable table = ds.Tables[ConnectionId];
+			FeatureDataTable table = dataSet.Tables[ConnectionId];
 
 			if(table == null)
 			{
 				table = new FeatureDataTable(ConnectionId);
-				ds.Tables.Add(table);
+				dataSet.Tables.Add(table);
 			}
 
-			ExecuteIntersectionQuery(box, table);
+			ExecuteIntersectionQuery(bounds, table);
 		}
 
-		/// <summary>
+        /// <summary>
+        /// Retrieves the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="table">FeatureDataTable to fill data into.</param>
+        public void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataTable table)
+	    {
+            ExecuteIntersectionQuery(bounds, table, QueryExecutionOptions.Geometries);
+	    }
+
+        /// <summary>
+        /// Retrieves the data associated with all the features that 
+        /// are intersected by <paramref name="bounds"/>.
+        /// </summary>
+        /// <param name="bounds">BoundingBox to intersect with.</param>
+        /// <param name="table">FeatureDataTable to fill data into.</param>
+        /// <param name="options">Options indicating which data to retrieve.</param>
+        public void ExecuteIntersectionQuery(BoundingBox bounds, FeatureDataTable table, QueryExecutionOptions options)
+	    {
+	        if (table == null) throw new ArgumentNullException("table");
+
+	        List<Geometry> intersection = new List<Geometry>();
+
+	        foreach (Geometry geometry in Geometries)
+	        {
+                if (bounds.Intersects(geometry.GetBoundingBox()))
+	            {
+	                intersection.Add(geometry);
+	            }
+	        }
+
+	        foreach (FeatureDataRow row in table)
+	        {
+	            if (intersection.Exists(delegate(Geometry match) { return match.Equals(row.Geometry); }))
+	            {
+	                intersection.Remove(row.Geometry);
+	            }
+	        }
+
+	        foreach (Geometry geometry in intersection)
+	        {
+	            FeatureDataRow row = table.NewRow();
+	            row.Geometry = geometry;
+	            table.AddRow(row);
+	        }
+	    }
+
+	    /// <summary>
+	    /// Returns features within the specified bounding box.
+	    /// </summary>
+	    /// <param name="box">The bounding box to intersect with.</param>
+	    /// <returns>An enumeration of all geometries which intersect <paramref name="box"/>.</returns>
+	    public IEnumerable<Geometry> ExecuteGeometryIntersectionQuery(BoundingBox box)
+	    {
+	        List<Geometry> list = new List<Geometry>();
+
+	        foreach (Geometry g in _geometries)
+	        {
+	            if (!g.IsEmpty())
+	            {
+	                if (g.GetBoundingBox().Intersects(box))
+	                {
+	                    list.Add(g);
+	                }
+	            }
+	        }
+
+	        return list.AsReadOnly();
+	    }
+
+	    /// <summary>
 		/// Retrieves the number of features accessible with this provider.
 		/// </summary>
 		/// <returns>The number of features this provider can access.</returns>
@@ -415,7 +491,17 @@ namespace SharpMap.Data.Providers.GeometryProvider
 			return _geometries.Count;
         }
 
-		#endregion
+	    public DataTable GetSchemaTable()
+	    {
+	        throw new NotSupportedException("Attribute data is not supported by the GeometryProvider.");
+	    }
+
+	    public CultureInfo Locale
+	    {
+	        get { return CultureInfo.InvariantCulture; }
+	    }
+
+	    #endregion
 
 		#region IFeatureLayerProvider<uint> Members
 

@@ -2,6 +2,8 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpMap", "SharpMap\SharpMap.csproj", "{27E2CC98-66E7-4911-A03A-D326B4F45FE6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpMap.Test", "SharpMap.Test\SharpMap.Test.csproj", "{6BAE7FE5-0135-4973-9FF2-4E614F061CA6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,6 +14,10 @@ Global
 		{27E2CC98-66E7-4911-A03A-D326B4F45FE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27E2CC98-66E7-4911-A03A-D326B4F45FE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27E2CC98-66E7-4911-A03A-D326B4F45FE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BAE7FE5-0135-4973-9FF2-4E614F061CA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BAE7FE5-0135-4973-9FF2-4E614F061CA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BAE7FE5-0135-4973-9FF2-4E614F061CA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BAE7FE5-0135-4973-9FF2-4E614F061CA6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

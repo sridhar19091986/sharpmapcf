@@ -189,7 +189,7 @@ namespace SharpMap.Data.Providers.ShapeFile
                 {
                     throw new ArgumentNullException("dbf");
                 }
-#if CFBuild 
+#if CFBuild
                 byte[] brBytes;
 #endif
                 switch (Type.GetTypeCode(dbf.DataType))
@@ -201,7 +201,7 @@ namespace SharpMap.Data.Providers.ShapeFile
                     case TypeCode.DateTime:
                         DateTime date;
                         // Mono has not yet implemented DateTime.TryParseExact
-#if !MONO 
+#if !MONO
 #if !CFBuild
                         if (DateTime.TryParseExact(Encoding.UTF8.GetString((_dbaseReader.ReadBytes(8))),
                                                    "yyyyMMdd", DbaseConstants.StorageNumberFormat, 
@@ -218,7 +218,7 @@ namespace SharpMap.Data.Providers.ShapeFile
                         {
                             brBytes = _dbaseReader.ReadBytes(8);
 
-                            return date = DateTime.ParseExact(Encoding.UTF7.GetString(brBytes,0,brBytes.Length),
+                            return date = DateTime.ParseExact(Encoding.UTF7.GetString(brBytes, 0, brBytes.Length),
                             "yyyyMMdd", DbaseConstants.StorageNumberFormat, DateTimeStyles.None);
                         }
                         catch (Exception e)
@@ -226,27 +226,27 @@ namespace SharpMap.Data.Providers.ShapeFile
                             return DBNull.Value;
                         }
 #endif
-
-                        
 #else
-					try 
-					{
-                        //No  Map.numberFormat_EnUS
-                        //IFormatProvider culture = new CultureInfo("en-US", true);
-						return date = DateTime.ParseExact ( Encoding.UTF7.GetString((br.ReadBytes(8))), 	
-						"yyyyMMdd", Map.numberFormat_EnUS, DateTimeStyles.None );
-					}
-					catch ( Exception e )
-					{
-						return DBNull.Value;
-					}
+					    try 
+					    {
+						    date = DateTime.ParseExact(Encoding.UTF8.GetString((_dbaseReader.ReadBytes(8))), 	
+						        "yyyyMMdd", DbaseConstants.StorageNumberFormat, DateTimeStyles.None);
+
+					        return date;
+					    }
+					    catch (FormatException)
+					    {
+						    return DBNull.Value;
+					    }
 #endif
+
+
                     case TypeCode.Double:
 #if !CFBuild
                         string temp = Encoding.UTF8.GetString(_dbaseReader.ReadBytes(dbf.Length)).Replace("\0", "").Trim();
 #else
                         brBytes = _dbaseReader.ReadBytes(dbf.Length);
-                        string temp = Encoding.UTF8.GetString(brBytes,0,brBytes.Length).Replace("\0", "").Trim();
+                        string temp = Encoding.UTF8.GetString(brBytes, 0, brBytes.Length).Replace("\0", "").Trim();
 #endif
                         double dbl;
 
@@ -261,11 +261,13 @@ namespace SharpMap.Data.Providers.ShapeFile
                             return DBNull.Value;
                         }
 #else
-                        try{
+                        try
+                        {
                             dbl = double.Parse(temp, NumberStyles.Float, DbaseConstants.StorageNumberFormat);
                             return dbl;
                         }
-                        catch (Exception e){
+                        catch (Exception e)
+                        {
                             return DBNull.Value;
                         }
 #endif
@@ -277,7 +279,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 #else
                         brBytes = _dbaseReader.ReadBytes(dbf.Length);
                         string temp16 =
-                                Encoding.UTF8.GetString(brBytes,0,brBytes.Length).Replace("\0", "").Trim();
+                                Encoding.UTF8.GetString(brBytes, 0, brBytes.Length).Replace("\0", "").Trim();
 #endif
                         Int16 i16;
 #if !CFBuild
@@ -290,11 +292,13 @@ namespace SharpMap.Data.Providers.ShapeFile
                             return DBNull.Value;
                         }
 #else
-                        try{
+                        try
+                        {
                             i16 = Int16.Parse(temp16, NumberStyles.Float, DbaseConstants.StorageNumberFormat);
                             return i16;
                         }
-                        catch (Exception e){
+                        catch (Exception e)
+                        {
                             return DBNull.Value;
                         }
 #endif
@@ -305,7 +309,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 #else
                         brBytes = _dbaseReader.ReadBytes(dbf.Length);
                         string temp32 =
-                            Encoding.UTF8.GetString(brBytes,0,brBytes.Length).Replace("\0", "").Trim();
+                            Encoding.UTF8.GetString(brBytes, 0, brBytes.Length).Replace("\0", "").Trim();
 #endif
 
                         Int32 i32;
@@ -319,7 +323,8 @@ namespace SharpMap.Data.Providers.ShapeFile
                             return DBNull.Value;
                         }
 #else
-                        try{
+                        try
+                        {
                             i32 = Int32.Parse(temp32, NumberStyles.Float, DbaseConstants.StorageNumberFormat);
                             return i32;
                         }
@@ -336,7 +341,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 #else
                         brBytes = _dbaseReader.ReadBytes(dbf.Length);
                         string temp64 =
-                            Encoding.UTF8.GetString(brBytes,0,brBytes.Length).Replace("\0", "").Trim();
+                            Encoding.UTF8.GetString(brBytes, 0, brBytes.Length).Replace("\0", "").Trim();
 #endif
 
                         Int64 i64 = 0;
@@ -351,11 +356,13 @@ namespace SharpMap.Data.Providers.ShapeFile
                             return DBNull.Value;
                         }
 #else
-                        try{
+                        try
+                        {
                             i64 = Int64.Parse(temp64, NumberStyles.Float, DbaseConstants.StorageNumberFormat);
                             return i64;
                         }
-                        catch (Exception e){
+                        catch (Exception e)
+                        {
                             return DBNull.Value;
                         }
 #endif
@@ -364,7 +371,7 @@ namespace SharpMap.Data.Providers.ShapeFile
                         string temp4 = Encoding.UTF8.GetString((_dbaseReader.ReadBytes(dbf.Length)));
 #else
                         brBytes = _dbaseReader.ReadBytes(dbf.Length);
-                        string temp4 = Encoding.UTF8.GetString(brBytes,0,brBytes.Length);
+                        string temp4 = Encoding.UTF8.GetString(brBytes, 0, brBytes.Length);
 #endif
                         float f = 0;
 
@@ -395,7 +402,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 #if !CFBuild
                             string value = _dbaseFile.Encoding.GetString(chars);
 #else
-                            string value = _dbaseFile.Encoding.GetString(chars,0,chars.Length);
+                            string value = _dbaseFile.Encoding.GetString(chars, 0, chars.Length);
 #endif
                             return value.Replace("\0", "").Trim();
                         }

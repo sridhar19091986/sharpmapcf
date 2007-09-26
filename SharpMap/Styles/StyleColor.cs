@@ -39,6 +39,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -51,6 +52,7 @@ namespace SharpMap.Styles
     [Serializable]
 #endif
     [StructLayout(LayoutKind.Explicit)]
+    [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public struct StyleColor : IEquatable<StyleColor>
     {
         #region Private fields
@@ -71,12 +73,32 @@ namespace SharpMap.Styles
 
         #region Constructors
 
+        /// <summary>
+        /// Creates a new <see cref="StyleColor"/> from a <see cref="UInt32"/>
+        /// value where the highest order byte is the blue, the next highest is green,
+        /// the next is red and the lowest order byte is the alpha value.
+        /// </summary>
+        /// <param name="bgra">
+        /// The blue, green, red, alpha encoded <see cref="UInt32"/> value to create
+        /// the <see cref="StyleColor"/> from.
+        /// </param>
         public StyleColor(uint bgra)
         {
             _b = _g = _r = _a = 0;
             _bgra = bgra;
         }
 
+        /// <summary>
+        /// Creates a new <see cref="StyleColor"/> from individual color components.
+        /// </summary>
+        /// <param name="b">The blue value.</param>
+        /// <param name="g">The green value.</param>
+        /// <param name="r">The red value.</param>
+        /// <param name="a">The alpha value.</param>
+        /// <remarks>
+        /// If any of the parameters are outside the range [0 - 255] the value
+        /// is clamped on the nearest value within that range.
+        /// </remarks>
         public StyleColor(int b, int g, int r, int a)
         {
             _bgra = 0;
@@ -94,11 +116,38 @@ namespace SharpMap.Styles
                 ?? String.Format("B = {0}; G = {1}; R = {2}; A = {3}", B, G, R, A));
         }
 
+        /// <summary>
+        /// Generates a new <see cref="StyleColor"/> from a <see cref="UInt32"/>
+        /// value where the highest order byte is the blue, the next highest is green,
+        /// the next is red and the lowest order byte is the alpha value.
+        /// </summary>
+        /// <param name="bgra">
+        /// The blue, green, red, alpha encoded <see cref="UInt32"/> value to create
+        /// a <see cref="StyleColor"/> from.
+        /// </param>
+        /// <returns>
+        /// A <see cref="StyleColor"/> with the same value as <paramref name="bgra"/>.
+        /// </returns>
         public static StyleColor FromBgra(uint bgra)
         {
             return new StyleColor(bgra);
         }
 
+        /// <summary>
+        /// Generates a new <see cref="StyleColor"/> from individual color components.
+        /// </summary>
+        /// <param name="b">The blue value.</param>
+        /// <param name="g">The green value.</param>
+        /// <param name="r">The red value.</param>
+        /// <param name="a">The alpha value.</param>
+        /// <returns>
+        /// A <see cref="StyleColor"/> instance with the specified color
+        /// component values.
+        /// </returns>
+        /// <remarks>
+        /// If any of the parameters are outside the range [0 - 255] the value
+        /// is clamped on the nearest value within that range.
+        /// </remarks>
         public static StyleColor FromBgra(int b, int g, int r, int a)
         {
             return new StyleColor(b, g, r, a);
@@ -2178,7 +2227,7 @@ namespace SharpMap.Styles
         /// </remarks>
         public static StyleColor YellowGreen
         {
-          get { return FromBgra(50, 205, 154, 255); }
+            get { return FromBgra(50, 205, 154, 255); }
         }
 
         #endregion
@@ -2198,7 +2247,8 @@ namespace SharpMap.Styles
         #region Color name lookup by value
 
         private static readonly object _colorNameLookupSync = new object();
-        private static readonly Dictionary<StyleColor, string> _colorNameLookup = new Dictionary<StyleColor, string>();
+        private static readonly Dictionary<StyleColor, string> _colorNameLookup 
+            = new Dictionary<StyleColor, string>();
 
         /// <summary>
         /// Gets the name of a color, if one exists.
@@ -2240,8 +2290,8 @@ namespace SharpMap.Styles
         private static readonly Dictionary<string, StyleColor> _predefinedColors = new Dictionary<string, StyleColor>();
 
         /// <summary>
-        /// Gets a <see cref="System.Collections.Generic.Dictionary{String, StyleColor}"/> which indexes
-        /// a StyleColor value by its name.
+        /// Gets a <see cref="System.Collections.Generic.Dictionary{String, StyleColor}"/> 
+        /// which indexes a StyleColor value by its name.
         /// </summary>
         public static Dictionary<string, StyleColor> PredefinedColors
         {

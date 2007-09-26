@@ -19,18 +19,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Reflection;
 #if !CFBuild
 using System.Reflection.Emit;
 #endif
+using SharpMap.Data;
 using SharpMap.Geometries;
 using System.ComponentModel;
 
-namespace SharpMap.Features
+namespace SharpMap.Data
 {
+    /// <summary>
+    /// Provides a data-bindable view of feature data stored in a 
+    /// <see cref="FeatureDataTable"/>
+    /// and can provide sorted, filtered, searchable and editable access to that data.
+    /// </summary>
     public class FeatureDataView : DataView, IEnumerable<FeatureDataRow>
     {
-        #region Nested Types
+        #region Nested types
 
         private delegate void SetDataViewManagerDelegate(FeatureDataView view, DataViewManager dataViewManager);
 
@@ -41,7 +48,7 @@ namespace SharpMap.Features
 
         #endregion
 
-        #region Type Fields
+        #region Type fields
 
         private static readonly SetDataViewManagerDelegate _setDataViewManager;
         private static readonly SetLockedDelegate _setLocked;
@@ -49,7 +56,7 @@ namespace SharpMap.Features
 
         #endregion
 
-        #region Static Constructor
+        #region Static constructor
 
         static FeatureDataView()
         {
@@ -66,29 +73,37 @@ namespace SharpMap.Features
         #endregion
 
         #region Instance fields
-
-        private Geometry _intersectionFilter;
-
+        private Geometry _queryGeometry;
+        private readonly SpatialQueryType _queryType;
+        private readonly ArrayList _oidFilter = new ArrayList();
         #endregion
 
-        #region Object Constructors
+        #region Object constructors
 
         public FeatureDataView(FeatureDataTable table)
-            : base(table)
+            : this(table, null, null, DataViewRowState.CurrentRows)
         {
-            // This call rebuilds the index which was just built with 
-            // the call into the base constructor, which may be a performance
-            // hit. A more robust solution would be to just recreate the 
-            // behavior of the base constructor here, so we can create the 
-            // underlying index once.
-            setFilterPredicate();
         }
 
         public FeatureDataView(FeatureDataTable table, Geometry intersectionFilter,
-            string sort, DataViewRowState rowState)
-            : base(table, "", sort, rowState)
+                               string sort, DataViewRowState rowState)
+            : this(table, intersectionFilter, SpatialQueryType.Intersects, sort, rowState)
         {
-            GeometryIntersectionFilter = intersectionFilter;
+        }
+
+        public FeatureDataView(FeatureDataTable table, Geometry query, SpatialQueryType queryType,
+                               string sort, DataViewRowState rowState)
+            : base(table, "", String.IsNullOrEmpty(sort) ? table.PrimaryKey.Length == 1 ? table.PrimaryKey[0].ColumnName : "" : sort, rowState)
+        {
+            // TODO: Support all query types in FeatureDataView
+            if (queryType != SpatialQueryType.Intersects)
+            {
+                throw new NotSupportedException(
+                    "Only query type of SpatialQueryType.Intersects currently supported.");
+            }
+
+            _queryGeometry = query;
+            _queryType = queryType;
 
             // This call rebuilds the index which was just built with 
             // the call into the base constructor, which may be a performance
@@ -115,9 +130,108 @@ namespace SharpMap.Features
 
         #endregion
 
+        /// <summary>
+        /// Gets or sets the <see cref="Geometry"/> instance used
+        /// to filter the table data based on intersection.
+        /// </summary>
+        public Geometry GeometryFilter
+        {
+            get { return _queryGeometry == null ? null : _queryGeometry.Clone(); }
+            set
+            {
+                if (_queryGeometry == value)
+                {
+                    return;
+                }
+
+                _queryGeometry = value;
+
+                if (!Table.CachedRegion.Contains(_queryGeometry))
+                {
+                    onMissingRegion(_queryGeometry.Difference(Table.CachedRegion));
+                }
+
+                // TODO: Perhaps resetting the entire index is a bit drastic... 
+                // Reconsider how to enlist and retire rows incrementally, 
+                // perhaps doing RTree diffs.
+                Reset();
+            }
+        }
+
+        public SpatialQueryType GeometryFilterType
+        {
+            get { return _queryType; }
+        }
+
+        public IEnumerable OidFilter
+        {
+            get { return _oidFilter; }
+            set
+            {
+                _oidFilter.Clear();
+
+                ArrayList missingOids = new ArrayList();
+
+                if (value != null)
+                {
+                    foreach (object oid in value)
+                    {
+                        _oidFilter.Add(oid);
+                        FeatureDataRow feature = Table.Find(oid);
+
+                        if (feature == null || !feature.IsFullyLoaded)
+                        {
+                            missingOids.Add(oid);
+                        }
+                    }
+
+                    if (missingOids.Count > 0)
+                    {
+                        onMissingOids(missingOids);
+                    }
+                }
+
+                Reset();
+            }
+        }
+
+        /// <summary>
+        /// Gets the bounds which this view covers as a <see cref="BoundingBox"/>.
+        /// </summary>
+        public BoundingBox Extents
+        {
+            get
+            {
+                if (_queryGeometry == null)
+                {
+                    return BoundingBox.Empty;
+                }
+
+                return _queryGeometry.GetBoundingBox();
+            }
+            //set
+            //{
+            //    if (value == BoundingBox.Empty)
+            //    {
+            //        GeometryFilter = null;
+            //    }
+
+            //    GeometryFilter = value.ToGeometry();
+            //}
+        }
+
+        #region DataView overrides and shadows
         public override DataRowView AddNew()
         {
             throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Gets the DataViewManager which is managing this view's settings.
+        /// </summary>
+        public new FeatureDataViewManager DataViewManager
+        {
+            get { return base.DataViewManager as FeatureDataViewManager; }
         }
 
         public override string RowFilter
@@ -133,8 +247,20 @@ namespace SharpMap.Features
             }
         }
 
-        // UNDONE: Please don't optimize the following apparently useless overrides out, 
+        public new FeatureDataTable Table
+        {
+            get { return base.Table as FeatureDataTable; }
+            set { base.Table = value; }
+        }
+
+        // TODO: Please don't optimize the following apparently useless overrides out, 
         // I need to figure out what to do with them [ck]
+
+        protected override void ColumnCollectionChanged(object sender, CollectionChangeEventArgs e)
+        {
+            base.ColumnCollectionChanged(sender, e);
+        }
+
         protected override void IndexListChanged(object sender, ListChangedEventArgs e)
         {
             base.IndexListChanged(sender, e);
@@ -145,84 +271,12 @@ namespace SharpMap.Features
             base.OnListChanged(e);
         }
 
-        protected override void ColumnCollectionChanged(object sender, CollectionChangeEventArgs e)
-        {
-            base.ColumnCollectionChanged(sender, e);
-        }
-
         protected override void UpdateIndex(bool force)
         {
             base.UpdateIndex(force);
         }
 
-        /// <summary>
-        /// Gets the DataViewManager which is managing this view's settings.
-        /// </summary>
-        public new FeatureDataViewManager DataViewManager
-        {
-            get { return base.DataViewManager as FeatureDataViewManager; }
-        }
-
-        /// <summary>
-        /// Gets or sets the <see cref="Geometry"/> instance used
-        /// to filter the table data based on intersection.
-        /// </summary>
-        public Geometry GeometryIntersectionFilter
-        {
-            get { return _intersectionFilter == null ? null : _intersectionFilter.Clone(); }
-            set
-            {
-                if (_intersectionFilter == value)
-                {
-                    return;
-                }
-
-                _intersectionFilter = value;
-
-                // TODO: Perhaps resetting the entire index is a bit drastic... 
-                // Reconsider how to enlist and retire rows incrementally.
-                Reset();
-            }
-        }
-
-        public IEnumerable<FeatureDataRow> SelectedFeatures
-        {
-            // Check for primary key, and use it to select features from base table
-            // If no key, check for unique index, and use it to select
-            // Otherwise, do a field-by-field comparison...
-            // Remember to suspend events and clear the view before adding features...
-            set { throw new NotImplementedException(); }
-        }
-
-        public int IndexOfFeature(FeatureDataRow feature)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Gets or sets the bounds which this view covers as a <see cref="BoundingBox"/>.
-        /// </summary>
-        public BoundingBox ViewBounds
-        {
-            get
-            {
-                if (_intersectionFilter == null)
-                {
-                    return BoundingBox.Empty;
-                }
-
-                return _intersectionFilter.GetBoundingBox();
-            }
-            set
-            {
-                if (value == BoundingBox.Empty)
-                {
-                    GeometryIntersectionFilter = null;
-                }
-
-                GeometryIntersectionFilter = value.ToGeometry();
-            }
-        }
+        #endregion
 
         #region IEnumerable<FeatureDataRow> Members
 
@@ -248,7 +302,7 @@ namespace SharpMap.Features
         }
 
         internal void SetIndex2(string newSort, DataViewRowState dataViewRowState,
-            object dataExpression, bool fireEvent)
+                                object dataExpression, bool fireEvent)
         {
             // Call the delegate we wired up to bypass the normally inaccessible 
             // base class method
@@ -260,39 +314,52 @@ namespace SharpMap.Features
 
         private void setFilterPredicate()
         {
+            // TODO: rethink how the view is filtered... perhaps we could bypass SetIndex2 and create
+            // the System.Data.Index directly with rows returned from the SharpMap.Indexing.RTree
             object iFilter = createRowPredicateFilter(isRowInView);
             SetIndex2(Sort, RowStateFilter, iFilter, true);
-        }
-
-        private object createRowPredicateFilter(Predicate<DataRow> filter)
-        {
-            Type rowPredicateFilterType = Type.GetType("System.Data.DataView+RowPredicateFilter, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-            object[] args = new object[] { filter };
-#if !CFBuild
-            object rowPredicateFilter = Activator.CreateInstance(rowPredicateFilterType,
-                BindingFlags.Instance | BindingFlags.NonPublic, null, args, null);
-#else //Probably Wrong
-      //args An array of arguments that match in number, order, and type the parameters of the constructor
-     //to invoke. If args is an empty array or a null reference, the constructor that takes no parameters
-      //(the default constructor) is invoked. 
-
-            object rowPredicateFilter = Activator.CreateInstance(rowPredicateFilterType);
-#endif
-
-            return rowPredicateFilter;
         }
 
         private bool isRowInView(DataRow row)
         {
             FeatureDataRow feature = row as FeatureDataRow;
 
-            if (row == null)
+            if (feature == null)
             {
                 return false;
             }
 
-            return GeometryIntersectionFilter == null ||
-                GeometryIntersectionFilter.Intersects(feature.Geometry);
+            return inGeometryFilter(feature) 
+                && inOidFilter(feature)
+                && inAttributeFilter();
+        }
+
+        private bool inGeometryFilter(FeatureDataRow feature)
+        {
+            return GeometryFilter == null ||
+            GeometryFilter.Intersects(feature.Geometry);
+        }
+
+        private bool inOidFilter(FeatureDataRow feature)
+        {
+            return _oidFilter.Count == 0 ||
+                (feature.HasOid && _oidFilter.Contains(feature.GetOid()));
+        }
+
+        private bool inAttributeFilter()
+        {
+            // TODO: perhaps this is where we can execute the DataExpression filter
+            return true;
+        }
+
+        private void onMissingRegion(Geometry missingRegion)
+        {
+            Table.RequestFeatures(missingRegion);
+        }
+
+        private void onMissingOids(IEnumerable missingOids)
+        {
+            Table.RequestFeatures(missingOids);
         }
         #endregion
 
@@ -301,9 +368,9 @@ namespace SharpMap.Features
         private static SetIndex2Delegate GenerateSetIndex2Delegate()
         {
 #if !CFBuild
-            // We need to generate a delegate based on the function pointer, 
-            // since the SetIndex2 method requires a parameter of type DataExpression,
-            // which is internal to System.Data, so we can't do LCG with DynamicMethod
+            // TODO: check if this could be redone with a DynamicMethod,
+            // using System.Object in place of the inaccessible System.Data.DataExpression,
+            // relying on delegate covariance.
             MethodInfo setIndex2Info = typeof(DataView).GetMethod(
                 "SetIndex2", BindingFlags.NonPublic | BindingFlags.Instance);
             ConstructorInfo setIndexDelegateCtor = typeof(SetIndex2Delegate)
@@ -314,7 +381,6 @@ namespace SharpMap.Features
             return null;
 #endif
         }
-
 
         private static SetLockedDelegate GenerateSetLockedDelegate()
         {
@@ -339,7 +405,8 @@ namespace SharpMap.Features
         }
 
 #if CFBuild
-        static void SetLockedInvoker(DataView view, bool locked) {
+        static void SetLockedInvoker(DataView view, bool locked)
+        {
             FieldInfo lockedField = typeof(DataView).GetField("locked", BindingFlags.Instance | BindingFlags.NonPublic);
             lockedField.SetValue(view, locked);
         }
@@ -362,13 +429,14 @@ namespace SharpMap.Features
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldarg_1);
             MethodInfo setDataViewManagerInfo = typeof(DataView).GetMethod("SetDataViewManager",
-                                                                            BindingFlags.Instance |
-                                                                            BindingFlags.NonPublic, null,
-                                                                            new Type[] { typeof(DataViewManager) }, null);
+                                                                           BindingFlags.Instance |
+                                                                           BindingFlags.NonPublic, null,
+                                                                           new Type[] { typeof(DataViewManager) }, null);
             il.Emit(OpCodes.Call, setDataViewManagerInfo);
 
             return setDataViewManagerMethod.CreateDelegate(typeof(SetDataViewManagerDelegate))
                    as SetDataViewManagerDelegate;
+
 #else
             SetDataViewManagerDelegate d = new SetDataViewManagerDelegate(SetDataViewManagerInvoker);
             return d;
@@ -376,7 +444,8 @@ namespace SharpMap.Features
         }
 
 #if CFBuild
-        static void SetDataViewManagerInvoker(FeatureDataView view, DataViewManager dataViewManager) {
+        static void SetDataViewManagerInvoker(FeatureDataView view, DataViewManager dataViewManager)
+        {
             MethodInfo setDataViewManagerInfo = typeof(DataView).GetMethod("SetDataViewManager",
                                                                                 BindingFlags.Instance |
                                                                                 BindingFlags.NonPublic, null,
@@ -386,6 +455,35 @@ namespace SharpMap.Features
 
         }
 #endif
+
+
+        private static object createRowPredicateFilter(Predicate<DataRow> filter)
+        {
+            // HACK: This is the only way we have to take control of what predicate is used to filter the DataView.
+            // Unfortunately, this type is only available in the v2.0 CLR which ships with .Net v3.5 Beta 2 (v2.0.50727.1378)
+            // Currently, the only two choices to provided spatially filtered views are to implement 
+            // System.ComponentModel.IBindingListView or to rely on v3.5.
+            string rowPredicateFilterTypeName =
+                "System.Data.DataView+RowPredicateFilter, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+            Type rowPredicateFilterType = Type.GetType(rowPredicateFilterTypeName);
+            Debug.Assert(rowPredicateFilterType != null,
+                "Can't find the type System.Data.DataView+RowPredicateFilter. " +
+                "This is probably because you are not running the v2.0 CLR which ships with .Net v3.5 Beta 2.");
+            object[] args = new object[] { filter };
+
+#if !CFBuild
+            object rowPredicateFilter = Activator.CreateInstance(rowPredicateFilterType,
+                                                                 BindingFlags.Instance | BindingFlags.NonPublic,
+                                                                 null, args, null);
+#else //Probably Wrong
+            //args An array of arguments that match in number, order, and type the parameters of the constructor
+            //to invoke. If args is an empty array or a null reference, the constructor that takes no parameters
+            //(the default constructor) is invoked. 
+
+            object rowPredicateFilter = Activator.CreateInstance(rowPredicateFilterType);
+#endif
+            return rowPredicateFilter;
+        }
         #endregion
     }
 }

@@ -1084,6 +1084,12 @@ Things regarding DynamicMethod, and ILGenerator, that doesnt exist in CF
 
 
 
+
+
+================= Updating to revision 212 of SharpMapV2 ================
+
+
+
 *In C:\Desarrollo\VisualStudio\proyects\SharpMapCFv2.0\SharpMap\Rendering\Symbol`2.cs*
  Commented `public void GetObjectData(SerializationInfo info, StreamingContext context)`
  Commented interface ,ISerializable
@@ -1102,10 +1108,9 @@ Things regarding DynamicMethod, and ILGenerator, that doesnt exist in CF
 
 
 
-*In C:\Desarrollo\VisualStudio\proyects\SharpMapCFv2.0\SharpMap\Map.cs*
+*In C:\Desarrollo\VisualStudio\proyects\SharpMapCFv2.0\SharpMap\Map.cs* *(Not solved)*
  Problem:
    No args.PropertyDescriptor in CF
- Workaround: 
 
 #if !CFBuild
                     if (args.PropertyDescriptor.Name == Layer.ExtentsProperty.Name)
@@ -1116,3 +1121,31 @@ Things regarding DynamicMethod, and ILGenerator, that doesnt exist in CF
 #else
                     throw new InvalidOperationException("NOT IMPLEMENTED IN CF");
 #endif
+
+
+
+
+
+*In C:\Desarrollo\VS\projects\SharpMapCFv2.0\SharpMap\Presentation\Presenters\MapPresenter2D.cs*
+  Problem: Activator.CreateInstance does only take 1 parameter   *(Not solved)*
+#if !CFBuild
+            // TODO: load renderers from configuration...
+            Type basicGeometryRendererType = typeof(BasicGeometryRenderer2D<>);
+            Type constructedGeom = basicGeometryRendererType.MakeGenericType(renderObjectType);
+            IRenderer renderer = Activator.CreateInstance(constructedGeom, VectorRenderer) as IRenderer;
+            LayerRendererRegistry.Instance.Register(typeof(GeometryLayer), renderer);
+#else
+            throw new NotImplementedException("Not implemented");
+#endif
+
+
+ Problem: No Thread.VolatileRead/Write on CF  *(Not solved)*
+ Workaround:
+   Commented out property `protected IRenderer RasterRenderer`
+
+
+ Problem: No Thread.VolatileRead/Write on CF  *(Not solved)*
+ Workaround:
+   Commented out property `protected IRenderer VectorRenderer`
+
+

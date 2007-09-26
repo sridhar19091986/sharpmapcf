@@ -44,6 +44,7 @@ namespace SharpMap.Rendering.Rendering2D
 		/// </summary>
 		public static Symbol2D DefaultSymbol
 		{
+
 #if !CFBuild
 			get
 			{
@@ -61,7 +62,7 @@ namespace SharpMap.Rendering.Rendering2D
 					}
 				}
 
-				return (_defaultSymbol as Symbol2D).Clone();
+                return (Symbol2D)(_defaultSymbol as Symbol2D).Clone();
 			}
 #else  //Easy way
             get {
@@ -75,7 +76,7 @@ namespace SharpMap.Rendering.Rendering2D
                         _defaultSymbol = symbol;
                     }
                 }
-                return (_defaultSymbol as Symbol2D).Clone();
+                return (Symbol2D)(_defaultSymbol as Symbol2D).Clone();
             
             }
 #endif
@@ -86,11 +87,27 @@ namespace SharpMap.Rendering.Rendering2D
 		#endregion
 
 		#region Object construction and disposal
+        /// <summary>
+        /// Creates a new BasicGeometryRenderer2D with the given VectorRenderer2D instance.
+        /// </summary>
+        /// <param name="vectorRenderer">
+        /// A vector renderer.
+        /// </param>
+        public BasicGeometryRenderer2D(VectorRenderer2D<TRenderObject> vectorRenderer)
+            : this(vectorRenderer, new Matrix2D())
+        {
+            DefaultStyle = new VectorStyle();
+        }
+
 		/// <summary>
 		/// Creates a new BasicGeometryRenderer2D with the given VectorRenderer2D instance.
 		/// </summary>
-		/// <param name="vectorRenderer">A vector renderer.</param>
-		/// <param name="toViewTransform">A transform which maps world coordinates to view coordinates.</param>
+		/// <param name="vectorRenderer">
+		/// A vector renderer.
+		/// </param>
+		/// <param name="toViewTransform">
+		/// A transform which maps world coordinates to view coordinates.
+		/// </param>
 		public BasicGeometryRenderer2D(VectorRenderer2D<TRenderObject> vectorRenderer, Matrix2D toViewTransform)
 			: base(vectorRenderer)
 		{

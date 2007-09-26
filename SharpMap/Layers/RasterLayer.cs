@@ -18,6 +18,7 @@
 using System;
 using SharpMap.Data;
 using SharpMap.Geometries;
+using SharpMap.Styles;
 
 namespace SharpMap.Layers
 {
@@ -37,25 +38,30 @@ namespace SharpMap.Layers
 		public override object Clone()
 		{
 			throw new NotImplementedException();
-		}
+        }
 
-		protected override void OnVisibleRegionChanged()
-		{
-			throw new NotImplementedException();
-		}
+        protected override IStyle CreateStyle()
+        {
+            return new RasterStyle();
+        }
 
-		protected override void OnVisibleRegionChanging(BoundingBox value, ref bool cancel)
-		{
-			throw new NotImplementedException();
-		}
+	    protected override void LoadLayerDataForRegion(BoundingBox region)
+        {
+            throw new NotImplementedException();
+        }
 
-        #region IRasterLayer Members
+	    protected override void LoadLayerDataForRegion(Geometry region)
+        {
+            throw new NotImplementedException();
+        }
 
-        public new IRasterLayerProvider DataSource
+	    #region IRasterLayer Members
+
+	    public new IRasterLayerProvider DataSource
         {
             get { throw new NotImplementedException(); }
         }
 
-        #endregion
-    }
+	    #endregion
+	}
 }

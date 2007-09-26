@@ -18,7 +18,6 @@
 
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using SharpMap.CoordinateSystems;
 using SharpMap.CoordinateSystems.Transformations;
@@ -44,10 +43,28 @@ namespace SharpMap.Layers
 
         static Layer()
         {
-            _properties = TypeDescriptor.GetProperties(typeof (Layer));
+            _properties = TypeDescriptor.GetProperties(typeof(Layer));
         }
 
+        #region PropertyDescriptors
+
         // This pattern reminds me of DependencyProperties in WPF...
+
+        /// <summary>
+        /// Gets a PropertyDescriptor for Layer's <see cref="AsyncQuery"/> property.
+        /// </summary>
+        public static PropertyDescriptor AsyncQueryProperty
+        {
+            get { return _properties.Find("AsyncQuery", false); }
+        }
+
+        /// <summary>
+        /// Gets a PropertyDescriptor for Layer's <see cref="Enabled"/> property.
+        /// </summary>
+        public static PropertyDescriptor CoordinateTransformationProperty
+        {
+            get { return _properties.Find("CoordinateTransformation", false); }
+        }
 
         /// <summary>
         /// Gets a PropertyDescriptor for Layer's <see cref="Enabled"/> property.
@@ -58,6 +75,23 @@ namespace SharpMap.Layers
         }
 
         /// <summary>
+        /// Gets a PropertyDescriptor for Layer's <see cref="Extents"/> property.
+        /// </summary>
+        public static PropertyDescriptor ExtentsProperty
+        {
+            get { return _properties.Find("Extents", false); }
+        }
+
+        /// <summary>
+        /// Gets a PropertyDescriptor for Layer's <see cref="ShouldHandleDataCacheMissEvent"/> 
+        /// property.
+        /// </summary>
+        public static PropertyDescriptor ShouldHandleDataCacheMissEventProperty
+        {
+            get { return _properties.Find("ShouldHandleDataCacheMissEvent", false); }
+        }
+
+        /// <summary>
         /// Gets a PropertyDescriptor for Layer's <see cref="LayerName"/> property.
         /// </summary>
         public static PropertyDescriptor LayerNameProperty
@@ -65,16 +99,24 @@ namespace SharpMap.Layers
             get { return _properties.Find("LayerName", false); }
         }
 
-        #region Instance fields
+        /// <summary>
+        /// Gets a PropertyDescriptor for Layer's <see cref="Style"/> property.
+        /// </summary>
+        public static PropertyDescriptor StyleProperty
+        {
+            get { return _properties.Find("Style", false); }
+        }
+        #endregion
 
+        #region Instance fields
         private ICoordinateTransformation _coordinateTransform;
         private string _layerName;
         private IStyle _style;
         private bool _disposed;
-        private BoundingBox _visibleRegion;
         private readonly ILayerProvider _dataSource;
         private bool _asyncQuery = false;
-
+        private Geometry _loadedRegion;
+        private bool _handleDataCacheMissEvent = true;
         #endregion
 
         #region Object Creation / Disposal
@@ -211,16 +253,6 @@ namespace SharpMap.Layers
         #endregion
 
         #region ILayer Members
-
-        #region Events
-        /// <summary>
-        /// Event raised when layer data has been completely
-        /// loaded if <see cref="AsyncQuery"/> is true.
-        /// </summary>
-        public event EventHandler LayerDataAvailable; 
-        #endregion
-       
-        #region Properties
         /// <summary>
         /// Gets or sets a value indicating that data is obtained asynchronously.
         /// </summary>
@@ -230,7 +262,7 @@ namespace SharpMap.Layers
             set
             {
                 _asyncQuery = value;
-                OnPropertyChanged("AsyncQuery");
+                OnAsyncQueryChanged();
             }
         }
 
@@ -251,8 +283,13 @@ namespace SharpMap.Layers
             get { return _coordinateTransform; }
             set
             {
+                if (_coordinateTransform == value)
+                {
+                    return;
+                }
+
                 _coordinateTransform = value;
-                OnPropertyChanged("CoordinateTransformation");
+                OnCoordinateTransformationChanged();
             }
         }
 
@@ -283,11 +320,16 @@ namespace SharpMap.Layers
             {
                 if (Style == null)
                 {
-                    Style = new Style();
+                    Style = CreateStyle();
+                }
+
+                if (Enabled == value)
+                {
+                    return;
                 }
 
                 Style.Enabled = value;
-                OnPropertyChanged("Enabled");
+                OnEnabledChanged();
             }
         }
 
@@ -298,7 +340,7 @@ namespace SharpMap.Layers
         /// A <see cref="BoundingBox"/> defining the extent of 
         /// all data available to the layer.
         /// </returns>
-        public BoundingBox Envelope
+        public BoundingBox Extents
         {
             get
             {
@@ -317,6 +359,27 @@ namespace SharpMap.Layers
         }
 
         /// <summary>
+        /// Gets or sets a value which causes the layer to handle
+        /// an event from a data store indicating that the data is not cached
+        /// and must be read from <see cref="DataSource"/>.
+        /// </summary>
+        public bool ShouldHandleDataCacheMissEvent
+        {
+            get { return _handleDataCacheMissEvent; }
+            set
+            {
+                if (_handleDataCacheMissEvent == value)
+                {
+                    return;
+                }
+
+                _handleDataCacheMissEvent = value;
+
+                OnShouldHandleDataCacheMissEventChanged();
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the name of the layer.
         /// </summary>
         public string LayerName
@@ -329,13 +392,18 @@ namespace SharpMap.Layers
                     throw new ArgumentException("LayerName must not be null or empty.");
                 }
 
+                if (_layerName == value)
+                {
+                    return;
+                }
+
                 _layerName = value;
-                OnPropertyChanged("LayerName");
+                OnLayerNameChanged();
             }
         }
 
         /// <summary>
-        /// The spatial reference ID of the layer data source, if one is set.
+        /// Gets the spatial reference ID of the layer data source, if one is set.
         /// </summary>
         public virtual int? Srid
         {
@@ -352,41 +420,99 @@ namespace SharpMap.Layers
         }
 
         /// <summary>
-        /// The style for the layer.
+        /// Gets or sets the style for the layer.
         /// </summary>
         public IStyle Style
         {
             get { return _style; }
             set
             {
-                _style = value;
-                OnPropertyChanged("Style");
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the visible region for this layer.
-        /// </summary>
-        public BoundingBox VisibleRegion
-        {
-            get { return _visibleRegion; }
-            set
-            {
-                if (value == VisibleRegion)
+                if (_style == value)
                 {
                     return;
                 }
 
-                bool cancel = false;
-                OnVisibleRegionChanging(value, ref cancel);
-                // TODO: Need to actually cancel now
-                _visibleRegion = value;
-                OnVisibleRegionChanged();
-                OnPropertyChanged("VisibleRegion");
+                _style = value;
+                OnStyleChanged();
             }
-        } 
+        }
+
         #endregion
 
+        #region Protected members
+
+        protected void AddLoadedRegion(BoundingBox region)
+        {
+            AddLoadedRegion(region.ToGeometry());
+        }
+
+        protected void AddLoadedRegion(Geometry region)
+        {
+            if (region == null)
+            {
+                return;
+            }
+
+            if (_loadedRegion == null)
+            {
+                _loadedRegion = region;
+            }
+            else
+            {
+                _loadedRegion = _loadedRegion.Union(region);
+                _loadedRegion = simplifyRegion(_loadedRegion);
+            }
+        }
+
+        protected virtual IStyle CreateStyle()
+        {
+            return new Style();
+        }
+
+        protected virtual Geometry LoadedRegion
+        {
+            get { return _loadedRegion; }
+        }
+
+        protected virtual void LoadLayerDataForRegion(BoundingBox region)
+        {
+            AddLoadedRegion(region.ToGeometry());
+        }
+
+        protected virtual void LoadLayerDataForRegion(Geometry region)
+        {
+            AddLoadedRegion(region);
+        }
+
+        protected virtual void OnAsyncQueryChanged()
+        {
+            OnPropertyChanged(AsyncQueryProperty.Name);
+        }
+
+        protected virtual void OnCoordinateTransformationChanged()
+        {
+            OnPropertyChanged(CoordinateTransformationProperty.Name);
+        }
+
+        protected virtual void OnEnabledChanged()
+        {
+            OnPropertyChanged(EnabledProperty.Name);
+        }
+
+        protected virtual void OnShouldHandleDataCacheMissEventChanged()
+        {
+            OnPropertyChanged(ShouldHandleDataCacheMissEventProperty.Name);
+        }
+
+        protected virtual void OnLayerNameChanged()
+        {
+            OnPropertyChanged(LayerNameProperty.Name);
+        }
+
+        protected virtual void OnStyleChanged()
+        {
+            OnPropertyChanged(StyleProperty.Name);
+        }
         #endregion
 
         #region INotifyPropertyChanged Members
@@ -424,20 +550,10 @@ namespace SharpMap.Layers
 
         #endregion
 
-        #region Protected methods
-        protected virtual void OnVisibleRegionChanged() { }
-
-        protected abstract void OnVisibleRegionChanging(BoundingBox value, ref bool cancel);
-
-        protected virtual void OnLayerDataAvailable()
+        private static Geometry simplifyRegion(Geometry region)
         {
-            EventHandler e = LayerDataAvailable;
-
-            if (e != null)
-            {
-                e(this, EventArgs.Empty);
-            }
+            // TODO: perform simplification...
+            return region;
         }
-        #endregion
     }
 }

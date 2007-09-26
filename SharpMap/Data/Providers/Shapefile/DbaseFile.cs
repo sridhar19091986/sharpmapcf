@@ -23,7 +23,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
-using SharpMap.Features;
 using System.IO;
 using System.Globalization;
 
@@ -198,6 +197,8 @@ namespace SharpMap.Data.Providers.ShapeFile
             }
 
             dispose(true);
+            GC.SuppressFinalize(this);
+            IsDisposed = true;
         }
 
         #endregion
@@ -387,6 +388,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 
         internal void DeleteRow(UInt32 rowIndex)
         {
+            // TODO: implement DbaseFile.DeleteRow
             throw new NotImplementedException("Not implemented in this version.");
         }
 
@@ -420,7 +422,7 @@ namespace SharpMap.Data.Providers.ShapeFile
             if (oid < 0 || oid >= RecordCount)
             {
                 throw new ArgumentOutOfRangeException(
-                    "Invalid DataRow requested at index " + oid.ToString());
+                    "Invalid DataRow requested at index " + oid);
             }
 
             if (ReferenceEquals(table, null))
@@ -505,12 +507,14 @@ namespace SharpMap.Data.Providers.ShapeFile
 
             // TODO: implement asynchronous access
 #if !CFBuild
-			_dbaseFileStream = new FileStream(_filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, 
+_dbaseFileStream = new FileStream(_filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, 
 				exclusive ? FileShare.None : FileShare.Read, 4096, FileOptions.None);
 #else
             _dbaseFileStream = new FileStream(_filename, FileMode.OpenOrCreate, FileAccess.ReadWrite,
                 exclusive ? FileShare.None : FileShare.Read, 4096);
 #endif
+			
+
             _isOpen = true;
 
             if (!_headerIsParsed) //Don't read the header if it's already parsed

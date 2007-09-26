@@ -31,35 +31,32 @@ using System.Xml;
 using System.Xml.Schema;
 using SharpMap.Geometries;
 
-namespace SharpMap.Features
+namespace SharpMap.Data
 {
     /// <summary>
     /// Represents an in-memory cache of spatial data. 
     /// </summary>
     /// <remarks>
-    /// The FeatureDataSet is an extension of System.Data.DataSet.
+    /// The FeatureDataSet is an extension of System.Data.DataSet, and can be used 
+    /// in much the same way.
     /// </remarks>
 #if !CFBuild
     [Serializable()]
 #endif
     public class FeatureDataSet : DataSet
     {
-        #region Nested Types
-
+        #region Nested types
         private delegate void SetDefaultViewManagerDelegate(FeatureDataSet dataSet, FeatureDataViewManager viewManager);
-
         private delegate FeatureDataViewManager GetDefaultViewManagerDelegate(FeatureDataSet dataSet);
-
         #endregion
 
-        #region Type Fields
+        #region Type fields
         private static readonly SetDefaultViewManagerDelegate _setDefaultViewManager;
         private static readonly GetDefaultViewManagerDelegate _getDefaultViewManager;
         private static int _nameSeries = -1;
         #endregion
 
-        #region Static Constructor
-
+        #region Static constructor
         static FeatureDataSet()
         {
             // Create DefaultViewManager getter method
@@ -68,25 +65,21 @@ namespace SharpMap.Features
             // Create DefaultViewManager setter method
             _setDefaultViewManager = generateSetDefaultViewManagerDelegate();
         }
-
         #endregion
 
-        #region Object Fields
-
+        #region Object fields
         private FeatureTableCollection _featureTables;
-        private BoundingBox _visibleRegion;
-        private object _defaultViewManagerSync = new object();
+        private readonly object _defaultViewManagerSync = new object();
         private int _defaultViewManagerInitialized = 0;
-
         #endregion
 
-        #region Constructors
+        #region Object constructors
 
         /// <summary>
         /// Initializes a new instance of the FeatureDataSet class.
         /// </summary>
         public FeatureDataSet()
-           : this(generateName()) { }
+            : this(generateName()) { }
 
         /// <summary>
         /// Initializes a new instance of the FeatureDataSet class with the given name.
@@ -99,7 +92,7 @@ namespace SharpMap.Features
             Relations.CollectionChanged += schemaChangedHandler;
         }
 
-#if !CFBuild //No SerializationInfo
+#if !CFBuild
         /// <summary>
         /// Initializes a new instance of the FeatureDataSet class.
         /// </summary>
@@ -169,10 +162,19 @@ namespace SharpMap.Features
             }
         }
 
-        public BoundingBox VisibleRegion
+        public BoundingBox Extents
         {
-            get { return _visibleRegion; }
-            set { _visibleRegion = value; }
+            get
+            {
+                BoundingBox extents = BoundingBox.Empty;
+
+                foreach (FeatureDataTable table in _featureTables)
+                {
+                    extents.ExpandToInclude(table.Extents);
+                }
+
+                return extents;
+            }
         }
 
         /// <summary>
@@ -203,6 +205,7 @@ namespace SharpMap.Features
         /// <returns></returns>
         protected override bool ShouldSerializeTables()
         {
+            // TODO: no clue what to do here...
             return false;
         }
 
@@ -212,6 +215,7 @@ namespace SharpMap.Features
         /// <returns></returns>
         protected override bool ShouldSerializeRelations()
         {
+            // TODO: no clue what to do here...
             return false;
         }
 
@@ -248,7 +252,6 @@ namespace SharpMap.Features
             stream.Position = 0;
             return XmlSchema.Read(new XmlTextReader(stream), null);
         }
-
         #endregion
 
         #region Private static helper methods
@@ -278,7 +281,7 @@ namespace SharpMap.Features
                                                                                    typeof (FeatureDataViewManager)
                                                                                },
                                                                            typeof (DataSet));
-           
+
             ILGenerator il = set_DefaultViewManagerMethod.GetILGenerator();
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldarg_1);
@@ -293,19 +296,18 @@ namespace SharpMap.Features
 #endif
         }
 
+
 #if CFBuild  //Is this what previous il.Emit(OpCodes.Stfld, FieldInfo) does??
         //Stfld Replaces the value stored in the field of an object reference or pointer with a new value.
-        static void SetDefaultViewManagerInvoker(FeatureDataSet dataSet, FeatureDataViewManager viewManager) {
-            FieldInfo field = typeof(DataSet).GetField("defaultViewManager", 
+        static void SetDefaultViewManagerInvoker(FeatureDataSet dataSet, FeatureDataViewManager viewManager)
+        {
+            FieldInfo field = typeof(DataSet).GetField("defaultViewManager",
                                                 BindingFlags.Instance | BindingFlags.NonPublic);
 
             field.SetValue(dataSet, viewManager);
-        
+
         }
 #endif
-
-
-
 
 
         private static GetDefaultViewManagerDelegate generateGetDefaultViewManagerDelegate()
@@ -331,14 +333,14 @@ namespace SharpMap.Features
         }
 #if CFBuild
         //OpCodes.ldfld  Finds the value of a field in the object whose reference is currently on the evaluation stack.
-        static FeatureDataViewManager GetDefaultViewManagerInvoker(FeatureDataSet dataSet) {
+        static FeatureDataViewManager GetDefaultViewManagerInvoker(FeatureDataSet dataSet)
+        {
             FieldInfo field = typeof(DataSet).GetField("defaultViewManager", BindingFlags.Instance | BindingFlags.NonPublic);
             FeatureDataViewManager fvManager = (FeatureDataViewManager)field.GetValue(dataSet);
             return fvManager;
         }
 
 #endif
-
 
         #endregion
 

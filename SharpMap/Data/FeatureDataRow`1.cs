@@ -17,14 +17,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System.Data;
+using SharpMap.Data;
 
-namespace SharpMap.Features
+namespace SharpMap.Data
 {
     /// <summary>
     /// Represents a row of data in a <see cref="FeatureDataTable{TOid}"/>.
     /// </summary>
     /// <typeparam name="TOid">Type of the object id (OID).</typeparam>
-    public class FeatureDataRow<TOid>: FeatureDataRow
+    public class FeatureDataRow<TOid> : FeatureDataRow
     {
         #region Constructors
 

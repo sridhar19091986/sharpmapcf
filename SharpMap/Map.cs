@@ -24,7 +24,7 @@ using System.ComponentModel;
 using NPack;
 using NPack.Interfaces;
 using SharpMap.CoordinateSystems;
-using SharpMap.Features;
+using SharpMap.Data;
 using SharpMap.Geometries;
 using SharpMap.Layers;
 using SharpMap.Styles;
@@ -42,31 +42,53 @@ namespace SharpMap
     [DesignTimeVisible(false)]
     public class Map : INotifyPropertyChanged, IDisposable
     {
-        #region Property name constants
+        private static readonly PropertyDescriptorCollection _properties;
+
+        static Map()
+        {
+            _properties = TypeDescriptor.GetProperties(typeof(Map));
+        }
+
+        #region PropertyDescriptors
         /// <summary>
-        /// The name of the ActiveTool property.
+        /// Gets a PropertyDescriptor for the Map's <see cref="ActiveTool"/> property.
         /// </summary>
-        public const string ActiveToolPropertyName = "ActiveTool";
+        public static PropertyDescriptor ActiveToolProperty
+        {
+            get { return _properties.Find("ActiveTool", false); }
+        }
 
         /// <summary>
-        /// The name of the SpatialReference property.
+        /// Gets a PropertyDescriptor for the Map's <see cref="Extents"/> property.
         /// </summary>
-        public const string SpatialReferencePropertyName = "SpatialReference";
+        public static PropertyDescriptor ExtentsProperty
+        {
+            get { return _properties.Find("Extents", false); }
+        }
 
         /// <summary>
-        /// The name of the VisibleRegion property.
+        /// Gets a PropertyDescriptor for the Map's <see cref="SpatialReference"/> property.
         /// </summary>
-        public const string VisibleRegionPropertyName = "VisibleRegion";
+        public static PropertyDescriptor SpatialReferenceProperty
+        {
+            get { return _properties.Find("SpatialReference", false); }
+        }
 
         /// <summary>
-        /// The name of the SelectedLayers property.
+        /// Gets a PropertyDescriptor for the Map's <see cref="SelectedLayers"/> property.
         /// </summary>
-        public const string SelectedLayersPropertyName = "SelectedLayers";
+        public static PropertyDescriptor SelectedLayersProperty
+        {
+            get { return _properties.Find("SelectedLayers", false); }
+        }
 
         /// <summary>
-        /// The name of the <see cref="Map.Title"/> property.
+        /// Gets a PropertyDescriptor for the Map's <see cref="Title"/> property.
         /// </summary>
-        public const string TitlePropertyName = "Title"; 
+        public static PropertyDescriptor TitleProperty
+        {
+            get { return _properties.Find("Title", false); }
+        }
         #endregion
 
         #region Nested types
@@ -87,9 +109,10 @@ namespace SharpMap
 
             static LayerCollection()
             {
-                PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof (ILayer));
+                PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(ILayer));
                 PropertyDescriptor[] propsArray = new PropertyDescriptor[props.Count];
                 props.CopyTo(propsArray, 0);
+
 #if !CFBuild
                 _layerProperties = new PropertyDescriptorCollection(propsArray, true);
 #else
@@ -151,6 +174,11 @@ namespace SharpMap
                 throw new InvalidOperationException();
             }
 
+            /// <summary>
+            /// Adding new layers through LayerCollection is not supported. Always gets
+            /// <see langword="false"/> and throws an exception if set.
+            /// </summary>
+            /// <exception cref="NotSupportedException">Thrown if set.</exception>
             public new bool AllowNew
             {
                 get { return false; }
@@ -258,11 +286,12 @@ namespace SharpMap
                             "Layer name must be a non-null, non-empty string.");
                     }
 
-                    IEnumerable<ILayer> found = _map.FindLayers(layerName);
-
-                    foreach (ILayer layer in found)
+                    foreach (ILayer layer in this)
                     {
-                        return IndexOf(layer);
+                        if(String.Compare(layerName, layer.LayerName, StringComparison.CurrentCultureIgnoreCase) == 0)
+                        {
+                            return IndexOf(layer);
+                        }
                     }
 
                     return -1;
@@ -296,7 +325,7 @@ namespace SharpMap
                 // having a ListChangedEventArgs.NewIndex == -1 and
                 // the index of the item pending removal to be 
                 // ListChangedEventArgs.OldIndex.
-                ListChangedEventArgs args 
+                ListChangedEventArgs args
                     = new ListChangedEventArgs(ListChangedType.ItemDeleted, -1, index);
 
                 OnListChanged(args);
@@ -323,7 +352,7 @@ namespace SharpMap
 
             public PropertyDescriptorCollection GetItemProperties(PropertyDescriptor[] listAccessors)
             {
-                if(listAccessors != null)
+                if (listAccessors != null)
                 {
                     throw new NotSupportedException(
                         "Child lists not supported in LayersCollection.");
@@ -362,7 +391,7 @@ namespace SharpMap
         private readonly LayerCollection _layers;
         private readonly FeatureDataSet _featureDataSet;
         private readonly List<ILayer> _selectedLayers = new List<ILayer>();
-        private BoundingBox _envelope = BoundingBox.Empty;
+        private BoundingBox _extents = BoundingBox.Empty;
         private MapTool _activeTool = StandardMapTools2D.None;
         private ICoordinateSystem _spatialReference;
         private bool _disposed;
@@ -371,6 +400,10 @@ namespace SharpMap
         #endregion
 
         #region Object Creation / Disposal
+        /// <summary>
+        /// Creates a new instance of a Map with a title describing 
+        /// when the map was created.
+        /// </summary>
         public Map()
             : this("Map created " + DateTime.Now.ToShortDateString())
         {
@@ -383,6 +416,7 @@ namespace SharpMap
         public Map(string title)
         {
             _layers = new LayerCollection(this);
+            _layers.ListChanged += handleLayersChanged;
             _featureDataSet = new FeatureDataSet(title);
         }
 
@@ -641,6 +675,16 @@ namespace SharpMap
         }
 
         /// <summary>
+        /// Gets the extents of the map based on the extents of all the layers 
+        /// in the layers collection.
+        /// </summary>
+        /// <returns>Full map extents.</returns>
+        public BoundingBox Extents
+        {
+            get { return _extents; }
+        }
+
+        /// <summary>
         /// Returns an enumerable set of all layers containing the string 
         /// <paramref name="layerNamePart"/>  in the <see cref="ILayer.LayerName"/> property.
         /// </summary>
@@ -655,6 +699,7 @@ namespace SharpMap
                 foreach (ILayer layer in Layers)
                 {
                     String layerName = layer.LayerName.ToLower(CultureInfo.CurrentCulture);
+
 #if !CFBuild //Contains true if the value parameter occurs within this string, or if value is the empty string (""); otherwise, false. 
                     if (layerName.Contains(layerNamePart))
                     {
@@ -683,23 +728,6 @@ namespace SharpMap
         }
 
         /// <summary>
-        /// Gets the extents of the map based on the extents of all the layers 
-        /// in the layers collection.
-        /// </summary>
-        /// <returns>Full map extents.</returns>
-        public BoundingBox GetExtents()
-        {
-            BoundingBox extents = BoundingBox.Empty;
-
-            foreach (ILayer layer in Layers)
-            {
-                extents.ExpandToInclude(layer.Envelope);
-            }
-
-            return extents;
-        }
-
-        /// <summary>
         /// Returns a layer by its name, or <see langword="null"/> if the layer isn't found.
         /// </summary>
         /// <remarks>
@@ -714,8 +742,8 @@ namespace SharpMap
             lock (Layers.LayersChangeSync)
             {
                 int index = (_layers as IBindingList).Find(Layer.LayerNameProperty, name);
-               
-                if(index < 0)
+
+                if (index < 0)
                 {
                     return null;
                 }
@@ -880,8 +908,8 @@ namespace SharpMap
         }
 
         /// <summary>
-        /// Deselects a layer given by it's index from being 
-        /// the targets of action on the map.
+        /// Deselects a layer given by its index from being 
+        /// the target of action on the map.
         /// </summary>
         /// <param name="index">The index of the layer to deselect.</param>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -893,11 +921,27 @@ namespace SharpMap
             DeselectLayers(new int[] { index });
         }
 
+        /// <summary>
+        /// Deselects a layer given by its name from being 
+        /// the target of action on the map.
+        /// </summary>
+        /// <param name="name">The name of the layer to deselect.</param>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="name"/> is <see langword="null"/>.
+        /// </exception>
         public void DeselectLayer(string name)
         {
             DeselectLayers(new string[] { name });
         }
 
+        /// <summary>
+        /// Deselects a layer from being 
+        /// the target of action on the map.
+        /// </summary>
+        /// <param name="layer">The layer to deselect.</param>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="layer"/> is <see langword="null"/>.
+        /// </exception>
         public void DeselectLayer(ILayer layer)
         {
             DeselectLayers(new ILayer[] { layer });
@@ -933,7 +977,7 @@ namespace SharpMap
         /// from being the targets of action on the map.
         /// </summary>
         /// <param name="layerNames">A set of names of layers to deselect.</param>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="ArgumentNullException">
         /// If <paramref name="layerNames"/> is <see langword="null"/>.
         /// </exception>
         public void DeselectLayers(IEnumerable<string> layerNames)
@@ -950,7 +994,7 @@ namespace SharpMap
         /// Deselects a set of layers from being the targets of action on the map.
         /// </summary>
         /// <param name="layers">The set of layers to deselect.</param>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="ArgumentNullException">
         /// If <paramref name="layers"/> is <see langword="null"/>.
         /// </exception>
         public void DeselectLayers(IEnumerable<ILayer> layers)
@@ -1001,7 +1045,7 @@ namespace SharpMap
         /// </summary>
         public GeoPoint Center
         {
-            get { return _envelope.GetCentroid(); }
+            get { return _extents.GetCentroid(); }
         }
 
         /// <summary>
@@ -1092,36 +1136,37 @@ namespace SharpMap
         }
 
         /// <summary>
-        /// Gets the currently visible features in all the enabled layers in the map.
+        /// Gets a FeatureDataSet containing all the loaded 
+        /// features in all the enabled layers in the map.
         /// </summary>
-        public FeatureDataSet VisibleFeatures
+        public FeatureDataSet Features
         {
             get { throw new NotImplementedException(); }
         }
 
-        /// <summary>
-        /// Gets or sets the current visible envelope of the map.
-        /// </summary>
-        public BoundingBox VisibleRegion
-        {
-            get { return _envelope; }
-            set
-            {
-                if (_envelope == value)
-                {
-                    return;
-                }
+        ///// <summary>
+        ///// Gets or sets the current visible envelope of the map.
+        ///// </summary>
+        //public BoundingBox VisibleRegion
+        //{
+        //    get { return _visibleEnvelope; }
+        //    set
+        //    {
+        //        if (_visibleEnvelope == value)
+        //        {
+        //            return;
+        //        }
 
-                _envelope = value;
+        //        _visibleEnvelope = value;
 
-                foreach (ILayer layer in Layers)
-                {
-                    layer.VisibleRegion = value;
-                }
+        //        foreach (ILayer layer in Layers)
+        //        {
+        //            layer.VisibleRegion = value;
+        //        }
 
-                onVisibleRegionChanged();
-            }
-        }
+        //        onVisibleRegionChanged();
+        //    }
+        //}
 
         #endregion
 
@@ -1131,27 +1176,22 @@ namespace SharpMap
 
         private void onActiveToolChanged()
         {
-            raisePropertyChanged(ActiveToolPropertyName);
+            raisePropertyChanged(ActiveToolProperty.Name);
         }
 
         private void onSpatialReferenceChanged()
         {
-            raisePropertyChanged(SpatialReferencePropertyName);
-        }
-
-        private void onVisibleRegionChanged()
-        {
-            raisePropertyChanged(VisibleRegionPropertyName);
+            raisePropertyChanged(SpatialReferenceProperty.Name);
         }
 
         private void onSelectedLayersChanged()
         {
-            raisePropertyChanged(SelectedLayersPropertyName);
+            raisePropertyChanged(SelectedLayersProperty.Name);
         }
 
         private void onNameChanged()
         {
-            raisePropertyChanged(TitlePropertyName);
+            raisePropertyChanged(TitleProperty.Name);
         }
 
         private void raisePropertyChanged(string propertyName)
@@ -1178,19 +1218,55 @@ namespace SharpMap
             if (_layers.Exists(namesMatch)) throw new DuplicateLayerException(layer.LayerName);
         }
 
-        private void recomputeEnvelope()
+        private void handleLayersChanged(object sender, ListChangedEventArgs args)
         {
-            BoundingBox envelope = BoundingBox.Empty;
+            switch (args.ListChangedType)
+            {
+                case ListChangedType.ItemAdded:
+                    {
+                        ILayer layer = _layers[args.NewIndex];
+                        _extents.ExpandToInclude(layer.Extents);
+                    }
+                    break;
+                case ListChangedType.ItemChanged:
+#if !CFBuild
+                    if (args.PropertyDescriptor.Name == Layer.ExtentsProperty.Name)
+                    {
+                        ILayer layer = _layers[args.NewIndex];
+                        _extents.ExpandToInclude(layer.Extents);
+                    }
+#else // Wronggggg!
+                    throw new InvalidOperationException("NOT IMPLEMENTED IN CF");
+#endif
+                    break;
+                case ListChangedType.ItemDeleted:
+                    recomputeExtents();
+                    break;
+                case ListChangedType.Reset:
+                    recomputeExtents();
+                    break;
+                case ListChangedType.ItemMoved:
+                case ListChangedType.PropertyDescriptorAdded:
+                case ListChangedType.PropertyDescriptorChanged:
+                case ListChangedType.PropertyDescriptorDeleted:
+                default:
+                    break;
+            }
+        }
+
+        private void recomputeExtents()
+        {
+            BoundingBox extents = BoundingBox.Empty;
 
             foreach (ILayer layer in Layers)
             {
                 if (layer.Enabled)
                 {
-                    envelope.ExpandToInclude(layer.Envelope);
+                    extents.ExpandToInclude(layer.Extents);
                 }
             }
 
-            VisibleRegion = envelope;
+            _extents = extents;
         }
 
         private static void changeLayerEnabled(ILayer layer, bool enabled)
@@ -1257,9 +1333,10 @@ namespace SharpMap
 #if !CFBuild
                     throw new ArgumentOutOfRangeException("layerIndexes", index,
                         String.Format("Layer index must be between 0 and {0}", _layers.Count));
+
 #else
                     throw new ArgumentOutOfRangeException("layerIndexes",
-                        "layerIndexes("+index+") "+
+                        "layerIndexes(" + index + ") " +
                         String.Format("Layer index must be between 0 and {0}", _layers.Count));
 #endif
                 }
@@ -1277,7 +1354,12 @@ namespace SharpMap
                     throw new ArgumentException("Layer name must not be null or empty.", "layerNames");
                 }
 
-                yield return GetLayerByName(name);
+                ILayer layer = GetLayerByName(name);
+
+                if (layer != null)
+                {
+                    yield return layer;
+                }
             }
         }
 

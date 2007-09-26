@@ -15,58 +15,60 @@
 // along with SharpMap; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-using System;
-
 namespace SharpMap.Data
 {
     /// <summary>
-    /// Specifies how to merge schema when FeatureDataTable instances or
-    /// FeatureDataSet instances are merged.
+    /// Indicates the type of spatial query to execute.
     /// </summary>
-    [Flags]
-	public enum SchemaMergeAction
-	{
+    /// <remarks>
+    /// See section 6.1.15 Relational operators in Open Geospatial Consortium's Simple Features Access 
+    /// (reference number: OGC 06-103r3) for more careful definitions of these terms.
+    /// </remarks>
+    public enum SpatialQueryType
+    {
         /// <summary>
-        /// Specifies that schema information should not be merged. If schema
-        /// differs and data doesn't match, an exception will probably be thrown.
+        /// No spatial relation. Returns an empty set.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// Adds schema from the source to the target if it is missing.
+        /// A query for geometries which are spatially contained in the query geometry.
         /// </summary>
-		Add = 1,
+        Contains,
 
         /// <summary>
-        /// Adds schema from the source to the target if it is missing, and
-        /// adds any key information from the source to the target if it is missing.
+        /// A query for geometries which spatially cross the query geometry.
         /// </summary>
-        AddWithKey = 5,
+        Crosses,
 
         /// <summary>
-        /// Replaces the schema in the target by converting columns to a type
-        /// which supports both source data and target data, if possible.
+        /// A query for geometries which are spatially disjoint from the query geometry.
         /// </summary>
-        Replace = 2,
+        Disjoint,
 
         /// <summary>
-        /// Adds any key information from the source to the target if it is missing.
+        /// A query for geometries which are spatially equal to the query geometry.
         /// </summary>
-		Key = 4,
+        Equals,
 
         /// <summary>
-        /// Matches key columns if their type matches, regardless of the column names.
+        /// A query for geometries which spatially intersect the query geometry.
         /// </summary>
-		KeyByType = 32,
+        Intersects,
 
         /// <summary>
-        /// Matches columns by their names in a case-insensitive manner.
+        /// A query for geometries which spatially overlap the query geometry.
         /// </summary>
-        CaseInsensitive = 8,
+        Overlaps,
 
         /// <summary>
-        /// Converts the source column to the target column type if a conversion exists.
+        /// A query for geometries which spatially touch the query geometry.
         /// </summary>
-        ConvertTypes = 16
-	}
+        Touches,
+
+        /// <summary>
+        /// A query for geometries which are spatially within the query geometry.
+        /// </summary>
+        Within,
+    }
 }

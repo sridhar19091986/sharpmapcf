@@ -24,17 +24,16 @@ using SharpMap.Rendering;
 using IMatrixD = NPack.Interfaces.IMatrix<NPack.DoubleComponent>;
 using IVectorD = NPack.Interfaces.IVector<NPack.DoubleComponent>;
 
-namespace SharpMap.Presentation
-{
+namespace SharpMap.Presentation {
 #if !CFBuild
     [Serializable]
 #endif
-    public class ViewPointActionEventArgs<TViewPoint> : EventArgs
-        where TViewPoint : IVectorD
+    public class ViewPointActionEventArgs<TPoint> : EventArgs
+        where TPoint : IVectorD
     {
-        private TViewPoint _viewPoint;
+        private TPoint _viewPoint;
 
-        public TViewPoint ViewPoint
+        public TPoint ViewPoint
         {
             get { return _viewPoint; }
             set { _viewPoint = value; }

@@ -16,13 +16,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System.Collections.Generic;
-using System.ComponentModel;
+using SharpMap.Presentation.Presenters;
+using SharpMap.Presentation.Views;
 using SharpMap.Tools;
 
-namespace SharpMap.Presentation
+namespace SharpMap.Presentation.Presenters
 {
     /// <summary>
-    /// The presenter for managing a <see cref="IToolsView">view</see> of <see cref="MapTool"/> instances.
+    /// The presenter for managing a <see cref="MapTool">view</see> of <see cref="IToolsView"/> instances.
     /// </summary>
     public class ToolsPresenter : BasePresenter<IToolsView>
     {
@@ -40,7 +41,9 @@ namespace SharpMap.Presentation
             List<MapTool> mapTools = new List<MapTool>(
                 new MapTool[]
                     {
-                        StandardMapTools2D.Pan, StandardMapTools2D.Query, StandardMapTools2D.ZoomIn,
+                        StandardMapTools2D.Pan, 
+                        StandardMapTools2D.Query, 
+                        StandardMapTools2D.ZoomIn,
                         StandardMapTools2D.ZoomOut
                     });
 
@@ -49,24 +52,28 @@ namespace SharpMap.Presentation
 
         protected override void OnMapPropertyChanged(string propertyName)
         {
-            switch (propertyName)
+            if (propertyName == Map.SelectedLayersProperty.Name)
             {
-                case Map.ActiveToolPropertyName:
-                    View.SelectedTool = Map.ActiveTool;
-                    break;
-                case Map.SelectedLayersPropertyName:
-                    break;
-                case Map.SpatialReferencePropertyName:
-                    break;
-                case Map.VisibleRegionPropertyName:
-                    break;
-                default:
-                    break;
+                View.SelectedTool = Map.ActiveTool;
+            }
+
+            if (propertyName == Map.ActiveToolProperty.Name)
+            {
+                View.SelectedTool = Map.ActiveTool;
+            }
+
+            if (propertyName == Map.SpatialReferenceProperty.Name)
+            {
             }
         }
 
         private void handleToolChangeRequested(object sender, ToolChangeRequestedEventArgs e)
         {
+            if(e.RequestedTool == Map.ActiveTool)
+            {
+                return;
+            }
+
             Map.ActiveTool = e.RequestedTool;
         }
     }

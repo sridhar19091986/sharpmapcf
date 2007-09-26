@@ -21,7 +21,7 @@ using SharpMap.Data;
 using System.Data;
 using SharpMap.Geometries;
 
-namespace SharpMap.Features
+namespace SharpMap.Data
 {
     /// <summary>
     /// Provides a fast-forward, read-only data stream to feature data
@@ -36,7 +36,12 @@ namespace SharpMap.Features
             _table = table;
         }
 
-        #region IFeatureDataReader Members
+        #region IFeatureDataRecord Members
+
+        public Geometry Geometry
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         public object GetOid()
         {
@@ -46,6 +51,16 @@ namespace SharpMap.Features
         public bool HasOid
         {
             get { throw new NotImplementedException(); }
+        }
+
+        public Type OidType
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public bool IsFullyLoaded
+        {
+            get { return true; }
         }
 
         #endregion
@@ -227,40 +242,22 @@ namespace SharpMap.Features
 
         #endregion
 
-        #region IFeatureDataRecord Members
+        #region IEnumerable<IFeatureDataRecord> Members
 
-        public Geometry Geometry
+        public IEnumerator<IFeatureDataRecord> GetEnumerator()
         {
-            get { throw new NotImplementedException(); }
+            throw new Exception("The method or operation is not implemented.");
         }
 
         #endregion
 
-        #region IFeatureDataRecord Members
+        #region IEnumerable Members
 
-        public Type OidType
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            get { throw new NotImplementedException(); }
+            throw new Exception("The method or operation is not implemented.");
         }
 
         #endregion
-
-		#region IEnumerable<IFeatureDataRecord> Members
-
-		public IEnumerator<IFeatureDataRecord> GetEnumerator()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		#endregion
-
-		#region IEnumerable Members
-
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		#endregion
-	}
+    }
 }
