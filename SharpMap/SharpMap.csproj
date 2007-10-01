@@ -44,15 +44,35 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib" />
+    <Reference Include="mscorlib, Version=3.5.0.0, Culture=neutral, PublicKeyToken=969db8053d3322ac, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Archivos de programa\Microsoft.NET\SDK\CompactFramework\v3.5\WindowsCE\mscorlib.dll</HintPath>
+    </Reference>
     <Reference Include="NPack, Version=0.7.8392.0, Culture=neutral, PublicKeyToken=56f174b1685ddc6a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalReferences\NPack.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <Reference Include="nunit.framework, Version=2.4.0.2, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ExternalReferences\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="system, Version=3.5.0.0, Culture=neutral, PublicKeyToken=969db8053d3322ac, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Archivos de programa\Microsoft.NET\SDK\CompactFramework\v3.5\WindowsCE\system.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="system.data, Version=3.5.0.0, Culture=neutral, PublicKeyToken=969db8053d3322ac, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Archivos de programa\Microsoft.NET\SDK\CompactFramework\v3.5\WindowsCE\system.data.dll</HintPath>
+    </Reference>
+    <Reference Include="system.windows.forms, Version=3.5.0.0, Culture=neutral, PublicKeyToken=969db8053d3322ac, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Archivos de programa\Microsoft.NET\SDK\CompactFramework\v3.5\WindowsCE\system.windows.forms.dll</HintPath>
+    </Reference>
+    <Reference Include="system.xml, Version=3.5.0.0, Culture=neutral, PublicKeyToken=969db8053d3322ac, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Archivos de programa\Microsoft.NET\SDK\CompactFramework\v3.5\WindowsCE\system.xml.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CFUtils\ComponentModel\BackgroundWorker.cs">
@@ -115,7 +135,7 @@
     <Compile Include="CoordinateSystems\IUnit.cs" />
     <Compile Include="CoordinateSystems\IVerticalCoordinateSystem.cs" />
     <Compile Include="CoordinateSystems\IVerticalDatum.cs" />
-    <Compile Include="CoordinateSystems\LinearUnit.cs" />
+    <Compile Include="CoordinateSystems\LinearUni?.cs" />
     <Compile Include="CoordinateSystems\Parameter.cs" />
     <Compile Include="CoordinateSystems\PrimeMeridian.cs" />
     <Compile Include="CoordinateSystems\ProjectedCoordinateSystem.cs" />
@@ -173,29 +193,22 @@
     <Compile Include="Data\Providers\GeometryProvider\GeometryDataReader.cs" />
     <Compile Include="Data\Providers\GeometryProvider\GeometryProvider.cs" />
     <Compile Include="Data\Providers\OgcEnumerations.cs" />
-    <None Include="Data\Providers\ProviderSchemaHelper.cs.old" />
     <Compile Include="Data\Providers\ProviderSchemaHelper.cs" />
     <Compile Include="Data\Providers\Shapefile\DbaseConstants.cs" />
-    <Compile Include="Data\Providers\Shapefile\DbaseEncodingRegistry.cs" />
+    <Compile Include="Data\Providers\Shapefile\DbaseEncodingRegist?y.cs" />
     <Compile Include="Data\Providers\Shapefile\DbaseField.cs" />
-    <None Include="Data\Providers\Shapefile\DbaseFile.cs.old" />
     <Compile Include="Data\Providers\Shapefile\DbaseFile.cs" />
     <Compile Include="Data\Providers\Shapefile\DbaseHeader.cs" />
-    <None Include="Data\Providers\Shapefile\DbaseReader.cs.old" />
     <Compile Include="Data\Providers\Shapefile\DbaseReader.cs" />
-    <None Include="Data\Providers\Shapefile\DbaseSchema.cs.old" />
     <Compile Include="Data\Providers\Shapefile\DbaseSchema.cs" />
     <Compile Include="Data\Providers\Shapefile\DbaseWriter.cs" />
-    <None Include="Data\Providers\Shapefile\DbfSchemaMismatchException.cs.old" />
     <Compile Include="Data\Providers\Shapefile\DbfSchemaMismatchException.cs" />
     <Compile Include="Data\Providers\Shapefile\InvalidDbaseFileException.cs" />
     <Compile Include="Data\Providers\Shapefile\InvalidDbaseFileOperationException.cs" />
     <Compile Include="Data\Providers\Shapefile\ShapeFileConstants.cs" />
-    <None Include="Data\Providers\Shapefile\ShapeFileDataReader.cs.old" />
     <Compile Include="Data\Providers\Shapefile\ShapeFileDataReader.cs" />
     <Compile Include="Data\Providers\Shapefile\ShapeFileException.cs" />
     <Compile Include="Data\Providers\Shapefile\ShapeFileHeader.cs" />
-    <None Include="Data\Providers\Shapefile\ShapeFileIndex.cs.old" />
     <Compile Include="Data\Providers\Shapefile\ShapeFileIndex.cs" />
     <Compile Include="Data\Providers\Shapefile\ShapeFileInvalidOperationException.cs" />
     <Compile Include="Data\Providers\Shapefile\ShapeFileIsInvalidException.cs" />
@@ -207,9 +220,7 @@
     <Compile Include="Data\RasterBand.cs" />
     <Compile Include="Data\RasterDataSet.cs" />
     <Compile Include="Data\RasterDataView.cs" />
-    <None Include="Data\SchemaMergeAction.cs.old" />
     <Compile Include="Data\SchemaMergeAction.cs" />
-    <None Include="Data\SharpMapDataException.cs.old" />
     <Compile Include="Data\SharpMapDataException.cs" />
     <Compile Include="Data\SpatialQueryType.cs" />
     <Compile Include="Geometries\BoundingBox.cs" />
@@ -249,7 +260,7 @@
     <Compile Include="Indexing\QuadTree\QuadTreeNode.cs" />
     <None Include="Indexing\RTree\DynamicRTree.cs.old" />
     <Compile Include="Indexing\RTree\DynamicRTree.cs" />
-    <Compile Include="Indexing\RTree\DynamicRTreeBalanceHeuristic.cs" />
+    <Compile Include="Indexing\RTree\D?namicRTreeBalanceHeuristic.cs" />
     <Compile Include="Indexing\RTree\GuttmanQuadraticInsert.cs" />
     <Compile Include="Indexing\RTree\GuttmanQuadraticSplit.cs" />
     <Compile Include="Indexing\RTree\NullRestructuringStrategy.cs" />
@@ -285,7 +296,6 @@
     <Compile Include="Layers\LayersChangedEventArgs.cs" />
     <Compile Include="Layers\MultipartGeometryLabelingBehavor.cs" />
     <None Include="Layers\RasterLayer.cs.old" />
-    <None Include="Map.cs.old" />
     <None Include="Presentation\FeatureChangeRequestEventArgs.cs.old" />
     <Compile Include="Layers\RasterLayer.cs" />
     <Compile Include="Map.cs" />
@@ -317,7 +327,7 @@
     <Compile Include="Presentation\ViewSelection.cs" />
     <Compile Include="Presentation\ViewSelection2D.cs" />
     <None Include="Presentation\Views\IAttributeView.cs.old" />
-    <Compile Include="Presentation\Views\IAttributeView.cs" />
+    <Compile Include="Presentati?n\Views\IAttributeView.cs" />
     <None Include="Presentation\Views\ILayerStyleView.cs.old" />
     <Compile Include="Presentation\Views\ILayerStyleView.cs" />
     <None Include="Presentation\Views\ILayersView.cs.old" />
