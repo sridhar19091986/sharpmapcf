@@ -1,8 +1,12 @@
 #summary Execution Errors
 = Introduction =
 
-Once changes made in order to build without errors, during execution arise new problems
+Once the project can be built without errors, execution will arise new problems
 
 = Culture/Encoding problems =
 
 SharpMap\Data\Providers\Shapefile\DbaseEncodingRegistry.cs is used as a dictionary for storing LCID values in the dbf file, and associate them with a Culture+Encoding pair. These will be used later in DbaseFile.CreateDbaseFile() for writting the LDID value in the dbf header. Also, the Encoding bound to each LCID will be used to get a Encoding object for reading (bytes) and writting (characters) (DbaseFile, DbaseReader, DbaseWritter)
+
+DbaseEncodingRegistry.setupDbaseToEncodingMap() tries to get encodings with codepages not supported by the PPC, so *NotSupportedException* is thrown.
+
+ 
