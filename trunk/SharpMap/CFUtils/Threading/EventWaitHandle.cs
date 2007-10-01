@@ -85,12 +85,14 @@ namespace OpenNETCF.Threading{
 		public EventWaitHandle(bool initialState, EventResetMode mode):this(initialState, mode, null){}
 
 		/// <summary>
-		/// Initializes a newly created <see cref="EventWaitHandle"/> object, specifying whether the wait handle is initially signaled, whether it resets automatically or manually, and the name of a system synchronization event.
+		/// Initializes a newly created <see cref="EventWaitHandle"/> object, specifying whether the wait handle is initially signaled,
+        /// whether it resets automatically or manually, and the name of a system synchronization event.
 		/// </summary>
 		/// <param name="initialState">true to set the initial state to signaled, false to set it to nonsignaled.</param>
 		/// <param name="mode">An Threading.EventResetMode value that determines whether the event resets automatically or manually.</param>
 		/// <param name="name">The name of a system-wide synchronization event.</param>
-		public EventWaitHandle(bool initialState, EventResetMode mode, string name):this(NativeMethods.CreateEvent(IntPtr.Zero, mode == EventResetMode.ManualReset, initialState, name)){}
+		public EventWaitHandle(bool initialState, EventResetMode mode, string name)
+            :this(NativeMethods.CreateEvent(IntPtr.Zero, mode == EventResetMode.ManualReset, initialState, name)){}
 
 		/// <summary>
 		/// Initializes a newly created <see cref="EventWaitHandle"/> object, specifying whether the wait handle is initially signaled, whether it resets automatically or manually, the name of a system synchronization event, and a bool variable whose value after the call indicates whether the named system event was created.
