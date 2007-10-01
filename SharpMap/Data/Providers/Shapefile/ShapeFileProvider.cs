@@ -823,7 +823,8 @@ namespace SharpMap.Data.Providers.ShapeFile
 		/// True if exclusive access is desired, false otherwise.
 		/// </param>
 		public void Open(bool exclusive)
-		{
+        {
+            Console.WriteLine("EN OPEN");
 			if (!_isOpen)
 			{
 				try
