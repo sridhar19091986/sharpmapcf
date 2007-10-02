@@ -120,6 +120,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 		// Found here: http://downloads.esri.com/support/documentation/pad_/ArcPad_RefGuide_1105.pdf
         private static void setupDbaseToEncodingMap()
         {
+#if !CFBuild
             _dbaseToEncoding[0x01] = new CultureWithEncoding(CultureInfo.GetCultureInfo(1033), CodePageChoice.Oem); //DOS USA code page 437 
             _dbaseToEncoding[0x02] = new CultureWithEncoding(CultureInfo.GetCultureInfo(1033), Encoding.GetEncoding(850)); // DOS Multilingual code page 850 
             _dbaseToEncoding[0x03] = new CultureWithEncoding(CultureInfo.GetCultureInfo(1033), CodePageChoice.Ansi); // Windows ANSI code page 1252 
@@ -187,6 +188,16 @@ namespace SharpMap.Data.Providers.ShapeFile
             _dbaseToEncoding[0xCA] = new CultureWithEncoding(CultureInfo.GetCultureInfo(31), CodePageChoice.Ansi); // Turkish Windows
             _dbaseToEncoding[0xCB] = new CultureWithEncoding(CultureInfo.GetCultureInfo(8), CodePageChoice.Ansi); // Greek Windows
             _dbaseToEncoding[0xCC] = new CultureWithEncoding(CultureInfo.InvariantCulture, Encoding.GetEncoding(1257)); // Baltic Windows
+#else
+            //CultureInfo.GetCultureInfo value is used when creating a dbaseFile to get and write its associated LCID
+            //Encoding.Default used To get the encoding associated with the default ANSI code page in the 
+            //system's regional settings, use GetEncoding(0) or the Default property.
+            for (byte h = 0x01; h <= 0xCC; h++)
+            {
+                _dbaseToEncoding[h] = new CultureWithEncoding(CultureInfo.CurrentCulture, Encoding.Default);
+            }
+            
+#endif
         }
 
         private static void setupEncodingToDbaseMap()
@@ -220,6 +231,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 		/// A <see cref="CultureInfo"/> which uses the encoding represented by 
 		/// <paramref name="dBaseEncoding"/> by default.
 		/// </returns>
+#if !CFBuild
         public static CultureInfo GetCulture(byte dBaseEncoding)
         {
             CultureWithEncoding pair;
@@ -233,8 +245,15 @@ namespace SharpMap.Data.Providers.ShapeFile
                 return CultureInfo.InvariantCulture;
             }
         }
-
-		/// <summary>
+#else   //For PPC let's always use the culture used in Regional Settings.
+        public static CultureInfo GetCulture(byte dBaseEncoding)
+        {
+                
+                return CultureInfo.CurrentCulture;
+        }
+#endif
+        
+        /// <summary>
 		/// Gets the <see cref="Encoding"/> which matches the 
 		/// given dBase LDID.
 		/// </summary>
