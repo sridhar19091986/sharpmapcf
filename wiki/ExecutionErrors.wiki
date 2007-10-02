@@ -15,11 +15,7 @@ must provide character data as an array of bytes specific to a code page such as
 or Windows-1252.
 
 You can use the GetEncoding static method of the Encoding class to create an Encoding 
-object for a specific code page. The Encoding class is defined in the System.Text 
-namespace. The Encoding class provides the GetBytes method, which can be used to convert
- Unicode data to a code page–specific byte array. The Encoding class also provides the 
-GetChars method, which can be used to convert a byte array to an array of Unicode
- characters.
+object for a specific code page. The Encoding class is defined in the System.Text namespace. The Encoding class provides the GetBytes method, which can be used to convert Unicode data to a code page–specific byte array. The Encoding class also provides the GetChars method, which can be used to convert a byte array to an array of Unicode characters.
 
 SharpMap\Data\Providers\Shapefile\DbaseEncodingRegistry.cs is used as a dictionary for storing LCID values in the dbf file, and associate them with a Culture+Encoding pair. These will be used later in DbaseFile.CreateDbaseFile() for writting the LDID value in the dbf header. Also, the Encoding bound to each LCID will be used to get a Encoding object for reading (bytes) and writting (characters) (DbaseFile, DbaseReader, DbaseWritter)
 
