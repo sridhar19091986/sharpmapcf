@@ -7,12 +7,7 @@ Once the project can be built without errors, execution will arise new problems
 ArcPad will automatically recognize a shapefile’s codepage if a supported Language Driver ID (LDID) is found in the header of the shapefile’s DBF table (in the 29th byte). If the codepage is available on the system, it will be used to translate the attribute contents and field names into displayable characters. If a valid LDID is not found in the header of the shapefile’s DBF table, then ArcPad will look in the following places to determine
 the codepage (see http://downloads.esri.com/support/documentation/pad_/ArcPad_RefGuide_1105.pdf)
 
-The .NET Compact Framework uses Unicode internally to represent character data. 
-Unicode is a useful way to store character data because it provides a way to identify 
-the characters used in any language in the world. You can use encoding to map Unicode
- characters to other character representations, which can be useful if your application 
-must provide character data as an array of bytes specific to a code page such as ASCII 
-or Windows-1252.
+The .NET Compact Framework uses Unicode internally to represent character data. Unicode is a useful way to store character data because it provides a way to identify the characters used in any language in the world. You can use encoding to map Unicode characters to other character representations, which can be useful if your application must provide character data as an array of bytes specific to a code page such as ASCII or Windows-1252.
 
 You can use the GetEncoding static method of the Encoding class to create an Encoding 
 object for a specific code page. The Encoding class is defined in the System.Text namespace. The Encoding class provides the GetBytes method, which can be used to convert Unicode data to a code page–specific byte array. The Encoding class also provides the GetChars method, which can be used to convert a byte array to an array of Unicode characters.
