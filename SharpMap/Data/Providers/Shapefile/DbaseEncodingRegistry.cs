@@ -188,20 +188,12 @@ namespace SharpMap.Data.Providers.ShapeFile
             _dbaseToEncoding[0xCA] = new CultureWithEncoding(CultureInfo.GetCultureInfo(31), CodePageChoice.Ansi); // Turkish Windows
             _dbaseToEncoding[0xCB] = new CultureWithEncoding(CultureInfo.GetCultureInfo(8), CodePageChoice.Ansi); // Greek Windows
             _dbaseToEncoding[0xCC] = new CultureWithEncoding(CultureInfo.InvariantCulture, Encoding.GetEncoding(1257)); // Baltic Windows
-#else
-            //CultureInfo.GetCultureInfo value is used when creating a dbaseFile to get and write its associated LCID
-            //Encoding.Default used To get the encoding associated with the default ANSI code page in the 
-            //system's regional settings, use GetEncoding(0) or the Default property.
-            for (byte h = 0x01; h <= 0xCC; h++)
-            {
-                _dbaseToEncoding[h] = new CultureWithEncoding(CultureInfo.CurrentCulture, Encoding.Default);
-            }
-            
 #endif
         }
 
         private static void setupEncodingToDbaseMap()
         {
+#if !CFBuild
             foreach (KeyValuePair<byte, CultureWithEncoding> item in _dbaseToEncoding)
             {
 				// These encodings are duplicated. When a dBase file is created by
@@ -218,6 +210,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 				int codePage = item.Value.Encoding.CodePage;
 				_encodingToDbase.Add(new KeyValuePair<int, int>(lcid, codePage), item.Key);	
             }
+#endif
         }
 
 		/// <summary>
@@ -264,6 +257,7 @@ namespace SharpMap.Data.Providers.ShapeFile
 		/// An <see cref="Encoding"/> which corresponds to the the
 		/// <paramref name="dBaseEncoding"/> code established by ESRI.
 		/// </returns>
+#if !CFBuild
         public static Encoding GetEncoding(byte dBaseEncoding)
         {
             CultureWithEncoding pair;
@@ -277,6 +271,13 @@ namespace SharpMap.Data.Providers.ShapeFile
                 return Encoding.ASCII;
             }
         }
+#else
+        public static Encoding GetEncoding(byte dBaseEncoding)
+        {
+            return Encoding.Default;
+        }
+#endif
+
 
 		/// <summary>
 		/// Gets the language driver id (LDID) for a given pair of <see cref="CultureInfo"/>
