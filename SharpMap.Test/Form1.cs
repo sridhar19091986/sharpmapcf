@@ -8,7 +8,13 @@ using System.Windows.Forms;
 
 using SharpMap.Layers;
 using SharpMap.Data.Providers.ShapeFile;
+using SharpMap.Data;
+using SharpMap.CoordinateSystems;
+using SharpMap.Data.Providers.ShapeFile;
+using SharpMap.Geometries;
 
+using NUnit.Framework;
+using NPack;
 
 namespace SharpMap.Test {
     public partial class Form1 : Form {
@@ -24,8 +30,14 @@ namespace SharpMap.Test {
                 System.Diagnostics.Trace.Assert(false, "Pon DEBUG_PC para emular en el PC");
 #endif
             //end debug   // 
-
-            GuiTest1();
+            try{
+                GuiTest1();
+            }
+            catch (Exception niex)
+            {
+                Console.WriteLine("Exception executing query:" + niex.Message);
+            }
+            
             //System.Diagnostics.Trace.Assert(false, "hola");
         }
 
@@ -40,19 +52,35 @@ namespace SharpMap.Test {
 
         public void GuiTest1()
         {
-            Map myMap = new Map("Mi mapa 1");
+            //Map myMap = new Map("Mi mapa 1");
 
-            ShapeFileProvider shpData = new ShapeFileProvider(shapesDir, false);
+            //ShapeFileProvider shpData = new ShapeFileProvider(shapesDir, false);
             //Assert.IsNotNull(shpData);
-            shpData.Open();
+            //shpData.Open();
             //Assert.IsTrue(!File.Exists(@"..\..\..\TestData\BCROADS.shp.sidx"));
 
-
             //GeometryLayer gLayer = new GeometryLayer("My layer", shpData);
-
-
             //myMap.Layers.Add(gLayer);
 
+            Console.WriteLine("EN ExecuteIntersectionQueryByBoundingBoxTest");
+            ShapeFileProvider shapeFile = new ShapeFileProvider(@"..\..\..\TestData\rivers.shp");
+            shapeFile.Open();
+            FeatureDataSet data = new FeatureDataSet("ShapeFile test");
+            shapeFile.ExecuteIntersectionQuery(shapeFile.GetExtents(), data);
+
+            foreach (FeatureDataTable fdt in data.Tables)
+            {
+                Console.WriteLine("una fdt");
+                foreach (FeatureDataRow fdr in fdt.Rows)
+                {
+                    Geometry geom = fdr.Geometry;
+                    Console.WriteLine("fdr.Geometry:" + geom.AsText());
+                }
+                Console.WriteLine("fdt.Rows.Count:" + fdt.Rows.Count);
+            }
+            Assert.AreEqual(1, data.Tables.Count);
+            Assert.AreEqual(shapeFile.GetFeatureCount(), data.Tables[0].Rows.Count);
+            shapeFile.Close();
 
 
 

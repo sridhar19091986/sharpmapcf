@@ -5,58 +5,57 @@
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{87B09B83-7BC7-4D22-9A4D-FB409BE12A45}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SharpMap.Test</RootNamespace>
     <AssemblyName>SharpMap.Test</AssemblyName>
-    <ProjectTypeGuids>{4D628B5B-2FBC-4AA6-8C16-197242AEB884};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PlatformFamilyName>PocketPC</PlatformFamilyName>
-    <PlatformID>3C41C503-53EF-4c2a-8DD4-A8217CAD115E</PlatformID>
-    <OSVersion>4.20</OSVersion>
-    <DeployDirSuffix>SharpMap.Test</DeployDirSuffix>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <FormFactorID>
-    </FormFactorID>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CFBuild</DefineConstants>
-    <NoStdLib>true</NoStdLib>
-    <NoConfig>true</NoConfig>
+    <DefineConstants>TRACE;DEBUG;DEBUG_PC</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <FileAlignment>512</FileAlignment>
     <WarningLevel>4</WarningLevel>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;$(PlatformFamilyName)</DefineConstants>
-    <NoStdLib>true</NoStdLib>
-    <NoConfig>true</NoConfig>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <FileAlignment>512</FileAlignment>
     <WarningLevel>4</WarningLevel>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib" />
     <Reference Include="NPack, Version=0.7.8392.0, Culture=neutral, PublicKeyToken=56f174b1685ddc6a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalReferences\NPack.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.4.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
+    <Reference Include="system, Version=3.5.0.0, Culture=neutral, PublicKeyToken=969db8053d3322ac, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Archivos de programa\Microsoft.NET\SDK\CompactFramework\v3.5\WindowsCE\system.dll</HintPath>
+    </Reference>
+    <Reference Include="system.data, Version=3.5.0.0, Culture=neutral, PublicKeyToken=969db8053d3322ac, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Archivos de programa\Microsoft.NET\SDK\CompactFramework\v3.5\WindowsCE\system.data.dll</HintPath>
+    </Reference>
+    <Reference Include="system.drawing, Version=3.5.0.0, Culture=neutral, PublicKeyToken=969db8053d3322ac, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Archivos de programa\Microsoft.NET\SDK\CompactFramework\v3.5\WindowsCE\system.drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="system.windows.forms, Version=3.5.0.0, Culture=neutral, PublicKeyToken=969db8053d3322ac, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Archivos de programa\Microsoft.NET\SDK\CompactFramework\v3.5\WindowsCE\system.windows.forms.dll</HintPath>
+    </Reference>
+    <Reference Include="system.xml, Version=3.5.0.0, Culture=neutral, PublicKeyToken=969db8053d3322ac, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Archivos de programa\Microsoft.NET\SDK\CompactFramework\v3.5\WindowsCE\system.xml.dll</HintPath>
+    </Reference>
+    <Compile Include="CFGui\GuiTest1.cs" />
     <Compile Include="DataSourceHelper.cs" />
     <Compile Include="DataTableHelper.cs" />
     <Compile Include="Data\Providers\FeatureProvider\FeatureProviderTests.cs" />
@@ -71,6 +70,17 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Geometries\BoundingBoxTests.cs" />
+    <Compile Include="Geometries\LinestringTests.cs" />
+    <Compile Include="Geometries\MultiLinestringsTests.cs" />
+    <Compile Include="Geometries\PointTests.cs" />
+    <Compile Include="Geometries\PolygonTests.cs" />
+    <Compile Include="Indexing\BinaryTreeTests.cs" />
+    <Compile Include="Indexing\QuadTreeTests.cs" />
+    <Compile Include="Indexing\RTreeTests.cs" />
+    <Compile Include="Indexing\SelfOptimizingSpatialIndexTests.cs" />
+    <Compile Include="Layers\LayersCollectionTests.cs" />
+    <Compile Include="Layers\LayerTests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -81,7 +91,22 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="Rendering\BasicGeometryRenderer2DTests.cs" />
+    <Compile Include="Rendering\ColorMatrixTests.cs" />
+    <Compile Include="Rendering\GraphicsFigure2DTests.cs" />
+    <Compile Include="Rendering\GraphicsPath2DTests.cs" />
+    <Compile Include="Rendering\Label2DTests.cs" />
+    <Compile Include="Rendering\LabelCollisionDetection2DTests.cs" />
+    <Compile Include="Rendering\Matrix2DTests.cs" />
+    <Compile Include="Rendering\Point2DTests.cs" />
+    <Compile Include="Rendering\RasterRenderer2DTests.cs" />
+    <Compile Include="Rendering\Rectangle2DTests.cs" />
+    <Compile Include="Rendering\Size2DTests.cs" />
+    <Compile Include="Rendering\Symbol2DTests.cs" />
+    <Compile Include="Rendering\ThematicsTests.cs" />
+    <Compile Include="Rendering\VectorRenderer2DTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpMap\SharpMap.csproj">
@@ -89,75 +114,7 @@
       <Name>SharpMap</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Data\.svn\all-wcprops" />
-    <None Include="Data\.svn\entries" />
-    <None Include="Data\.svn\format" />
-    <None Include="Data\Providers\.svn\all-wcprops" />
-    <None Include="Data\Providers\.svn\entries" />
-    <None Include="Data\Providers\.svn\format" />
-    <None Include="Data\Providers\FeatureProvider\.svn\all-wcprops" />
-    <None Include="Data\Providers\FeatureProvider\.svn\entries" />
-    <None Include="Data\Providers\FeatureProvider\.svn\format" />
-    <None Include="Data\Providers\FeatureProvider\.svn\text-base\FeatureProviderTests.cs.svn-base" />
-    <None Include="Data\Providers\GeometryProvider\.svn\all-wcprops" />
-    <None Include="Data\Providers\GeometryProvider\.svn\entries" />
-    <None Include="Data\Providers\GeometryProvider\.svn\format" />
-    <None Include="Data\Providers\GeometryProvider\.svn\text-base\GeometryProviderTests.cs.svn-base" />
-    <None Include="Data\Providers\ShapeFile\.svn\all-wcprops" />
-    <None Include="Data\Providers\ShapeFile\.svn\entries" />
-    <None Include="Data\Providers\ShapeFile\.svn\format" />
-    <None Include="Data\Providers\ShapeFile\.svn\text-base\ShapeFileTests.cs.svn-base" />
-    <None Include="Features\.svn\all-wcprops" />
-    <None Include="Features\.svn\entries" />
-    <None Include="Features\.svn\format" />
-    <None Include="Features\.svn\text-base\FeatureDataSetTests.cs.svn-base" />
-    <None Include="Features\.svn\text-base\FeatureDataTableTests.cs.svn-base" />
-    <None Include="Features\.svn\text-base\FeatureDataViewTests.cs.svn-base" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\.svn\prop-base\" />
-    <Folder Include="Data\.svn\props\" />
-    <Folder Include="Data\.svn\text-base\" />
-    <Folder Include="Data\.svn\tmp\prop-base\" />
-    <Folder Include="Data\.svn\tmp\props\" />
-    <Folder Include="Data\.svn\tmp\text-base\" />
-    <Folder Include="Data\Providers\.svn\prop-base\" />
-    <Folder Include="Data\Providers\.svn\props\" />
-    <Folder Include="Data\Providers\.svn\text-base\" />
-    <Folder Include="Data\Providers\.svn\tmp\prop-base\" />
-    <Folder Include="Data\Providers\.svn\tmp\props\" />
-    <Folder Include="Data\Providers\.svn\tmp\text-base\" />
-    <Folder Include="Data\Providers\FeatureProvider\.svn\prop-base\" />
-    <Folder Include="Data\Providers\FeatureProvider\.svn\props\" />
-    <Folder Include="Data\Providers\FeatureProvider\.svn\tmp\prop-base\" />
-    <Folder Include="Data\Providers\FeatureProvider\.svn\tmp\props\" />
-    <Folder Include="Data\Providers\FeatureProvider\.svn\tmp\text-base\" />
-    <Folder Include="Data\Providers\GeometryProvider\.svn\prop-base\" />
-    <Folder Include="Data\Providers\GeometryProvider\.svn\props\" />
-    <Folder Include="Data\Providers\GeometryProvider\.svn\tmp\prop-base\" />
-    <Folder Include="Data\Providers\GeometryProvider\.svn\tmp\props\" />
-    <Folder Include="Data\Providers\GeometryProvider\.svn\tmp\text-base\" />
-    <Folder Include="Data\Providers\ShapeFile\.svn\prop-base\" />
-    <Folder Include="Data\Providers\ShapeFile\.svn\props\" />
-    <Folder Include="Data\Providers\ShapeFile\.svn\tmp\prop-base\" />
-    <Folder Include="Data\Providers\ShapeFile\.svn\tmp\props\" />
-    <Folder Include="Data\Providers\ShapeFile\.svn\tmp\text-base\" />
-    <Folder Include="Features\.svn\prop-base\" />
-    <Folder Include="Features\.svn\props\" />
-    <Folder Include="Features\.svn\tmp\prop-base\" />
-    <Folder Include="Features\.svn\tmp\props\" />
-    <Folder Include="Features\.svn\tmp\text-base\" />
-  </ItemGroup>
-  <Import Condition="'$(TargetFrameworkVersion)' == 'v1.0'" Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.v1.targets" />
-  <Import Condition="'$(TargetFrameworkVersion)' == 'v2.0'" Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
-  <ProjectExtensions>
-    <VisualStudio>
-      <FlavorProperties GUID="{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}">
-        <HostingProcess disable="1" />
-      </FlavorProperties>
-    </VisualStudio>
-  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

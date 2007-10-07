@@ -396,10 +396,22 @@ namespace SharpMap.Tests.Data.Providers.ShapeFile
 		[Test]
 		public void ExecuteIntersectionQueryByBoundingBoxTest()
 		{
-			ShapeFileProvider shapeFile = new ShapeFileProvider(@"..\..\..\TestData\BCROADS.SHP");
+            Console.WriteLine("EN ExecuteIntersectionQueryByBoundingBoxTest");
+            //ShapeFileProvider shapeFile = new ShapeFileProvider(@"..\..\..\TestData\BCROADS.SHP");
+            ShapeFileProvider shapeFile = new ShapeFileProvider(@"..\..\..\TestData\rivers.shp");
 			shapeFile.Open();
-			FeatureDataSet data = new FeatureDataSet("ShapeFile test");
+            FeatureDataSet data = new FeatureDataSet("ShapeFile test");
 			shapeFile.ExecuteIntersectionQuery(shapeFile.GetExtents(), data);
+            foreach (FeatureDataTable fdt in data.Tables)
+            {
+                Console.WriteLine("una fdt");
+                foreach (FeatureDataRow fdr in fdt.Rows)
+                {
+                    Geometry geom = fdr.Geometry;
+                    Console.WriteLine("fdr.Geometry:" + geom.AsText());
+                }
+                Console.WriteLine("fdt.Rows.Count:" + fdt.Rows.Count);
+            }
 			Assert.AreEqual(1, data.Tables.Count);
 			Assert.AreEqual(shapeFile.GetFeatureCount(), data.Tables[0].Rows.Count);
 			shapeFile.Close();
