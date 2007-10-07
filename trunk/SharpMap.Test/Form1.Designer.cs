@@ -28,7 +28,7 @@ namespace SharpMap.Test {
         private void InitializeComponent()
         {
             this.mainMenu1 = new System.Windows.Forms.MainMenu();
-            this.Menu = this.mainMenu1;
+//            this.Menu = this.mainMenu1;
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.Text = "Form1";
