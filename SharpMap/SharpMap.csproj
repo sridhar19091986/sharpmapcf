@@ -23,7 +23,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;PocketPC;CFBuild</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;PocketPC;CFBuild;DEBUG_PC</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -48,7 +48,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Archivos de programa\Microsoft.NET\SDK\CompactFramework\v3.5\WindowsCE\mscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="NPack, Version=0.7.8392.0, Culture=neutral, PublicKeyToken=56f174b1685ddc6a, processorArchitecture=MSIL">
+    <Reference Include="NPack, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalReferences\NPack.dll</HintPath>
     </Reference>
@@ -240,7 +240,6 @@
     <Compile Include="Geometries\MultiPolygon.cs" />
     <Compile Include="Geometries\MultiSurface.cs" />
     <Compile Include="Geometries\Point.cs" />
-    <None Include="Geometries\Polygon.cs.old" />
     <Compile Include="Geometries\Polygon.cs" />
     <Compile Include="Geometries\SpatialRelations.cs" />
     <Compile Include="Geometries\Surface.cs" />
