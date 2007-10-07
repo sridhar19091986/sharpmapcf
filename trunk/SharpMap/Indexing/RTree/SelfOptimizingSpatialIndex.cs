@@ -36,6 +36,10 @@ namespace SharpMap.Indexing.RTree
 		private readonly EventWaitHandle _userIdleEvent;
 		private readonly EventWaitHandle _machineIdleEvent;
 		private readonly EventWaitHandle _terminateEvent;
+#elif DEBUG_PC
+        private readonly EventWaitHandle _userIdleEvent;
+        private readonly EventWaitHandle _machineIdleEvent;
+        private readonly EventWaitHandle _terminateEvent;
 #else
         private readonly OpenNETCF.Threading.EventWaitHandle _userIdleEvent;
         private readonly OpenNETCF.Threading.EventWaitHandle _machineIdleEvent;
@@ -78,6 +82,10 @@ namespace SharpMap.Indexing.RTree
 			_userIdleEvent = new AutoResetEvent(false);
 			_machineIdleEvent = new AutoResetEvent(false);
 			_terminateEvent = new ManualResetEvent(false);
+#elif DEBUG_PC
+            _userIdleEvent = new AutoResetEvent(false);
+            _machineIdleEvent = new AutoResetEvent(false);
+            _terminateEvent = new ManualResetEvent(false);
 #else  //In the .NET Framework version 2.0, AutoResetEvent derives from the new EventWaitHandle class.
        //An AutoResetEvent is functionally equivalent to an EventWaitHandle created with EventResetMode.AutoReset
        //An ManualResetEvent is functionally equivalent to an EventWaitHandle created with EventResetMode.ManalReset
